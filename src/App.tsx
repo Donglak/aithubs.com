@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -13,33 +13,22 @@ import ToolDetailPage from './pages/ToolDetailPage';
 import ToolsPage from './pages/ToolsPage';
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(false);
-
+  // Always force dark mode
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      setDarkMode(true);
-      document.documentElement.classList.add('dark');
-    }
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
   }, []);
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    if (!darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'dark');
-    }
-  };
+  const darkMode = true;
+  const toggleDarkMode = () => {}; // disabled
 
   return (
     <Router>
-      <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+      {/* Only dark styling */}
+      <div className="min-h-screen bg-gray-900 text-gray-100 transition-colors duration-300">
         <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <main>
-          <ScrollToTop/>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/tools" element={<ToolsPage />} />
@@ -56,4 +45,3 @@ export default function App() {
     </Router>
   );
 }
-

@@ -1,6 +1,6 @@
+import { Menu, Moon, Sun, X, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Moon, Sun, Zap } from 'lucide-react';
 
 interface HeaderProps {
   darkMode: boolean;
@@ -83,12 +83,6 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
 
           {/* Right side buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-            >
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
             <Link
               to="/tools"
               className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"

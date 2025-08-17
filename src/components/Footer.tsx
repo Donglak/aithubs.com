@@ -1,8 +1,55 @@
-import React from 'react';
+import { AlertCircle, CheckCircle, Facebook, Linkedin, Mail, Twitter, Youtube, Zap } from 'lucide-react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Zap, Twitter, Linkedin, Facebook, Mail, Youtube } from 'lucide-react';
+import { submitToGoogleSheets, validateEmail } from '../services/googleSheets';
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Reset states
+    setError('');
+    
+    if (!email.trim()) {
+      setError('Please enter your email address');
+      return;
+    }
+
+    if (!validateEmail(email.trim())) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await submitToGoogleSheets({
+        name: '',
+        email: email.trim(),
+        timestamp: new Date().toISOString(),
+        source: 'footer_newsletter'
+      });
+
+      setIsSuccess(true);
+      setEmail('');
+      
+      // Reset success state after 3 seconds
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Newsletter subscription failed:', error);
+      setError('An error occurred. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer className="bg-gray-900 dark:bg-gray-950 text-white py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,16 +70,45 @@ const Footer = () => {
             {/* Newsletter Signup */}
             <div className="space-y-3">
               <h4 className="font-semibold text-white">Stay Updated</h4>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                />
-                <button className="bg-primary-600 hover:bg-primary-700 px-6 py-2 rounded-lg font-semibold transition-colors">
-                  Subscribe
-                </button>
-              </div>
+              {isSuccess ? (
+                <div className="flex items-center gap-2 text-green-400 font-medium bg-green-500/10 p-3 rounded-lg">
+                  <CheckCircle className="w-5 h-5" />
+                  Thank you for subscribing!
+                </div>
+              ) : (
+                <form onSubmit={handleNewsletterSubmit}>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setError('');
+                      }}
+                      placeholder="Enter your email"
+                      className="flex-1 px-4 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 transition-all"
+                      disabled={isSubmitting}
+                    />
+                    <button 
+                      type="submit"
+                      disabled={isSubmitting || !email.trim()}
+                      className="bg-primary-600 hover:bg-primary-700 px-6 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[100px]"
+                    >
+                      {isSubmitting ? (
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
+                      ) : (
+                        'Subscribe'
+                      )}
+                    </button>
+                  </div>
+                  {error && (
+                    <div className="flex items-center gap-2 text-red-400 text-sm mt-2">
+                      <AlertCircle className="w-4 h-4" />
+                      {error}
+                    </div>
+                  )}
+                </form>
+              )}
             </div>
           </div>
 
@@ -40,9 +116,12 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4 text-white">Categories</h4>
             <ul className="space-y-2">
-              <li><Link to="/tools?category=ai" className="text-gray-300 hover:text-white transition-colors">AI Tools</Link></li>
+              <li><Link to="/tools?category=ai" className="card--hover text-gray-300 hover:text-white transition-colors">AI Tools</Link></li>
               <li><Link to="/tools?category=marketing" className="text-gray-300 hover:text-white transition-colors">Marketing Tools</Link></li>
               <li><Link to="/tools?category=mmo" className="text-gray-300 hover:text-white transition-colors">MMO Tools</Link></li>
+              <li><Link to="/tools?category=saas" className="text-gray-300 hover:text-white transition-colors">SaaS Tools</Link></li>
+              <li><Link to="/tools?category=design" className="text-gray-300 hover:text-white transition-colors">Design Tools</Link></li>
+              <li><Link to="/tools?category=automation" className="text-gray-300 hover:text-white transition-colors">Automation Tools</Link></li>
               <li><Link to="/tools?tag=free" className="text-gray-300 hover:text-white transition-colors">Free Tools</Link></li>
             </ul>
           </div>

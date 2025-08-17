@@ -1,23 +1,14 @@
 import React from 'react';
-import NewsletterPopup from './NewsletterPopup';
 import { useNewsletterPopup } from '../hooks/useNewsletterPopup';
-import { submitToGoogleSheets } from '../services/googleSheets';
-
+import NewsletterPopup from './NewsletterPopup';
 const PopupManager: React.FC = () => {
   const { isPopupOpen, closePopup, handleSubscribe } = useNewsletterPopup();
 
   const onSubscribe = async (email: string, name: string) => {
     try {
-      // Submit to Google Sheets
-      await submitToGoogleSheets({
-        name,
-        email,
-        timestamp: new Date().toISOString(),
-        source: 'newsletter_popup'
-      });
-
+           
       // Handle subscription in the hook
-      await handleSubscribe(email, name);
+      await handleSubscribe();
     } catch (error) {
       console.error('Subscription failed:', error);
       throw error;

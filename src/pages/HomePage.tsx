@@ -1,31 +1,124 @@
+import { ArrowRight, Bot, DollarSign, Mail, Palette, Server, Star, TrendingUp, Zap } from 'lucide-react';
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Bot, TrendingUp, DollarSign, Star, Users, Award, CheckCircle, Mail } from 'lucide-react';
+import '../../css/style.css';
+import NewsletterForm from '../components/NewsletterForm';
+import { aiSubcategoryDescriptions } from '../data/aiSubcategoryDescriptions';
+import { categoryDescriptions } from '../data/categoryDescriptions';
+import { tools } from '../data/tools';
+
+// Helpers
+const norm = (v?: unknown) =>
+  (typeof v === 'string' ? v : v == null ? '' : String(v))
+    .trim()
+    .toLowerCase()
+    .replace(/\s+tools?$/, ''); // "AI Tools" -> "ai", "Marketing Tool" -> "marketing"
+
+const toArr = <T,>(x: T | T[] | undefined): T[] => (Array.isArray(x) ? x : x != null ? [x] : []);
+
+const toSlug = (s: string) => s.trim().toLowerCase().replace(/\s+tools?$/i, "");
+const getCatDesc = (titleOrSlug: string) =>
+categoryDescriptions[titleOrSlug] ?? categoryDescriptions[toSlug(titleOrSlug)] ?? "";
+
+// Chuẩn hoá nhẹ để tránh lệch "AI X Tools" vs "AI X"
+const normalize = (s: string) =>
+  s.trim().replace(/\s+tools?$/i, "");
+
+const getSubDesc = (title: string) => {
+  const exact = aiSubcategoryDescriptions[title];
+  if (exact) return exact;
+  const key = normalize(title);
+  return aiSubcategoryDescriptions[key] || ""; // fallback rỗng nếu chưa có
+};
+
+const primaryCatSlug = (t: any) => {
+  const cats = toArr<string>(t.category).map(norm);
+  return cats[0] ?? '';
+};
+
+const priceLabel = (p?: string) => {
+  if (!p) return '—';
+  if (/^free\b/i.test(p)) return 'Free';
+  const m = p.match(/\$\s*\d+(?:\.\d{2})?/);
+  return m ? m[0].replace(/\s+/g, '') : p;
+};
+
 
 const HomePage = () => {
-  const categories = [
-    {
-      icon: Bot,
-      title: 'AI Tools',
-      description: 'Cutting-edge artificial intelligence tools to automate and enhance your workflow',
-      color: 'from-blue-500 to-purple-600',
-      tools: '150+ Tools'
-    },
-    {
-      icon: TrendingUp,
-      title: 'Marketing Tools',
-      description: 'Powerful marketing automation and analytics tools to grow your business',
-      color: 'from-green-500 to-teal-600',
-      tools: '200+ Tools'
-    },
-    {
-      icon: DollarSign,
-      title: 'MMO Tools',
-      description: 'Proven tools and platforms to help you make money online effectively',
-      color: 'from-orange-500 to-red-600',
-      tools: '100+ Tools'
-    }
-  ];
+  const CATEGORY_ICON = {
+  ai: Bot,
+  marketing: TrendingUp,
+  mmo: DollarSign,
+  saas: Server,
+  design: Palette,
+  automation: Zap,
+} as const;
+const { byCategory, bySubcategory } = React.useMemo(() => {
+    const byCategory = new Map<string, number>();
+    const bySubcategory = new Map<string, number>();
+
+    tools.forEach(t => {
+      // category có thể là string hoặc mảng -> chuẩn hóa
+      toArr<string>(t.category).map(norm).forEach(c => {
+        if (!c) return;
+        byCategory.set(c, (byCategory.get(c) || 0) + 1);
+      });
+      // subcategory có thể là string hoặc mảng
+      toArr<string>(t.subcategory).map(norm).forEach(s => {
+        if (!s) return;
+        bySubcategory.set(s, (bySubcategory.get(s) || 0) + 1);
+      });
+    });
+
+    return { byCategory, bySubcategory };
+  }, [tools]);
+
+  // 2) Tạo trending bên trong component
+  const trendingTools = React.useMemo(
+    () =>
+      tools
+        .filter(t => t.featured)
+        .slice()
+        .sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0))
+        .slice(0, 3),
+    [tools]
+  );
+const CATEGORY_COLOR = {
+  ai: 'from-blue-500 to-purple-600',
+  marketing: 'from-green-500 to-teal-600',
+  mmo: 'from-orange-500 to-red-600',
+  saas: 'from-indigo-500 to-blue-600',
+  design: 'from-pink-500 to-rose-600',
+  automation: 'from-yellow-500 to-orange-600',
+} as const;
+
+const AI_SUBS = [
+  ['AI Productivity Tools', 'from-blue-500 to-indigo-600', Bot],
+  ['AI Text Generators', 'from-green-500 to-emerald-600', TrendingUp],
+  ['AI Image Tools', 'from-purple-500 to-pink-600', Palette],
+  ['AI Art Generators', 'from-pink-500 to-rose-600', Palette],
+  ['AI Video Tools', 'from-red-500 to-orange-600', Server],
+  ['AI Audio Generators', 'from-yellow-500 to-amber-600', Server],
+  ['AI Code Tools', 'from-indigo-500 to-blue-600', Bot],
+  ['AI Business Tools', 'from-teal-500 to-cyan-600', DollarSign],
+  ['AI Agent & Automation Tools', 'from-gray-500 to-slate-600', Zap],
+] as const;
+
+const categoryList = ([
+  ['AI Tools', 'ai'],
+  ['Marketing Tools', 'marketing'],
+  ['MMO Tools', 'mmo'],
+  ['SaaS Tools', 'saas'],
+  ['Design Tools', 'design'],
+  ['Automation Tools', 'automation'],
+] as const).map(([title, slug]) => ({
+  title,
+  slug,
+  icon: CATEGORY_ICON[slug],
+  color: CATEGORY_COLOR[slug],
+  count: byCategory.get(slug) || 0,
+}));
 
   const testimonials = [
     {
@@ -55,15 +148,21 @@ const HomePage = () => {
   ];
 
   const stats = [
-    { number: '450+', label: 'Digital Tools' },
+    { number: `${tools.length}+`, label: 'Digital Tools' },
     { number: '50K+', label: 'Happy Users' },
     { number: '98%', label: 'Success Rate' },
     { number: '$2M+', label: 'Saved by Users' }
   ];
 
+  
   return (
     <div className="pt-16">
       {/* Hero Section */}
+      <Helmet>
+        <title>DigitalToolsHub — Discover the Best Digital, AI, Marketing, and MMO Tools</title>
+        <meta name="description" content="Find, compare, and access powerful AI, marketing, MMO, SaaS, and design tools to boost productivity and income." />
+        <link rel="canonical" href="https://aithubs.com/" />
+     </Helmet>
       <section className="bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-900 dark:to-gray-800 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -104,45 +203,36 @@ const HomePage = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <Bot className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-white">ChatGPT Plus</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">AI Assistant</div>
-                      </div>
-                    </div>
-                    <div className="text-green-600 dark:text-green-400 font-semibold">$20/mo</div>
+                <div className="card card--hover p-6 block space-y-4">
+                  {trendingTools.map((tool) => {
+                  const slug = primaryCatSlug(tool) as keyof typeof CATEGORY_ICON;
+                  const Icon = CATEGORY_ICON[slug] ?? Bot;
+                  const grad = CATEGORY_COLOR[slug] ?? 'from-gray-500 to-gray-600';
+
+                return (
+                <Link
+                key={tool.id}
+                to={`/tools/${tool.id}`}
+                className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                >
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 bg-gradient-to-r ${grad} rounded-lg flex items-center justify-center`}>
+                  <Icon className="w-5 h-5 text-white" />
                   </div>
-                  
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
-                        <TrendingUp className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-white">HubSpot</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Marketing Hub</div>
-                      </div>
-                    </div>
-                    <div className="text-green-600 dark:text-green-400 font-semibold">Free</div>
+                <div>
+                <div className="font-medium text-gray-900 dark:text-white">{tool.name}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 capitalize">
+                  {(slug || 'misc')} Tool
                   </div>
-                  
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
-                        <DollarSign className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-white">Shopify</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">E-commerce</div>
-                      </div>
-                    </div>
-                    <div className="text-green-600 dark:text-green-400 font-semibold">$29/mo</div>
                   </div>
+                </div>
+              <div className="text-green-600 dark:text-green-400 font-semibold">
+                {priceLabel(tool.price)}
+              </div>
+              </Link>
+                 );
+              })}
+
                 </div>
               </div>
             </div>
@@ -176,34 +266,81 @@ const HomePage = () => {
               Explore Tool Categories
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Discover powerful digital tools across three main categories designed to boost your productivity and income
+              Discover powerful digital tools across five main categories designed to boost your productivity and income
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {categories.map((category, index) => (
-              <Link
-                key={index}
-                to={`/tools?category=${category.title.toLowerCase().split(' ')[0]}`}
-                className="group bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-soft hover:shadow-large transition-all duration-300 transform hover:-translate-y-2"
-              >
-                <div className={`w-16 h-16 bg-gradient-to-r ${category.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                  <category.icon className="w-8 h-8 text-white" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            <div className="xl:col-span-5">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {categoryList.map((category) => (
+                <Link
+                  key={category.slug}
+                  to={`/tools?category=${category.slug}`}
+                  className="card card--hover p-6 block"
+                  data-accent={category.slug}
+                >
+                <div className={`w-12 h-12 bg-gradient-to-r ${category.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                  <category.icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                  {category.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
-                  {category.description}
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{category.title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 leading-relaxed">
+                {getCatDesc(category.title)}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
-                    {category.tools}
-                  </span>
-                  <ArrowRight className="w-5 h-5 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
+                <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                {category.count}+ Tools
+                </span>
+                <ArrowRight className="w-5 h-5 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
             ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* AI Subcategories Section */}
+      <section className="py-20 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              AI Tools by Category
+              
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Explore specialized AI tools organized by their specific use cases and applications
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* ... */}
+{AI_SUBS.map(([name, color, Icon]) => {
+  const count = bySubcategory.get(norm(name)) || 0;
+  return (
+    <Link
+      key={name}
+      to={`/tools?subcategory=${encodeURIComponent(name)}`}
+      className=" card card--hover p-6 block group bg-gray-50 dark:bg-gray-800 rounded-xl p-6 shadow-soft hover:shadow-medium transition-all duration-300 transform hover:-translate-y-1"
+    >
+      <div className={`w-10 h-10 bg-gradient-to-r ${color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+        <Icon className="w-5 h-5 text-white" />
+      </div>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{name}</h3>
+      <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 leading-relaxed line-clamp-2">
+        {getSubDesc(name)}
+     </p>
+
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          {count} tools
+        </span>
+        <ArrowRight className="w-5 h-5 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
+      </div>
+    </Link>
+  );
+})}
           </div>
         </div>
       </section>
@@ -228,8 +365,9 @@ const HomePage = () => {
               >
                 <div className="flex items-center mb-6">
                   <img
+                    loading="lazy"
                     src={testimonial.image}
-                    alt={testimonial.name}
+                    alt={`${testimonial.name} avatar`}
                     className="w-12 h-12 rounded-full object-cover mr-4"
                   />
                   <div>
@@ -274,20 +412,7 @@ const HomePage = () => {
               delivered straight to your inbox.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-6 py-4 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
-              />
-              <button className="bg-white text-primary-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition-colors">
-                Subscribe
-              </button>
-            </div>
-            
-            <p className="text-white/70 text-sm mt-4">
-              Join 50,000+ subscribers. No spam, unsubscribe anytime.
-            </p>
+            <NewsletterForm />
           </div>
         </div>
       </section>

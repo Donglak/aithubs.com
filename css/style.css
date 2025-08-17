@@ -1,0 +1,204 @@
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --dark: #0f0f1a;
+            --darker: #07070f;
+            --neon: #00f2ff;
+          }
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: white;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(15, 15, 26, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #7c1eff, #00cbf7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% auto;
+        }
+        .gradient-text_style1 {
+            background: linear-gradient(90deg, #543283, #13a0c0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 150% auto;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #7c1eff 0%, #00cbf7 100%);
+        }
+        
+        .nav-link::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #7c1eff, #00cbf7);
+            transition: width 0.3s;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .active-nav::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #7c1eff, #00cbf7);
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(124, 30, 255, 0.3);
+        }
+        
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: .15em solid #00cbf7;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: 
+                typing 3.5s steps(40, end),
+                blink-caret .75s step-end infinite;
+        }
+        /* ==== Card base (dùng chung cho Tool & Category) ==== */
+        .card {
+        position: relative;
+        background: rgba(15, 15, 26, 0.55);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+        will-change: transform, box-shadow;
+        }
+
+/* hiệu ứng đổ bóng + nâng thẻ khi hover/focus */
+        .card--hover:hover,
+        .card--hover:focus-visible {
+        transform: translateY(-6px);
+        box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.55),                 /* bóng chính */
+        0 8px 24px rgba(0, 255, 157, 0.295);               /* glow theo --neon */
+        border-color: rgba(0, 242, 255, 0.35);
+        outline: none;
+        }
+
+        /* viền phát sáng rất nhẹ */
+        .card--hover::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity .25s ease;
+        box-shadow: 0 0 0 1px rgba(0, 242, 255, 0.25), 0 0 30px rgba(0, 242, 255, 0.12);
+        }
+        .card--hover:hover::after,
+        .card--hover:focus-visible::after { opacity: 1; }
+
+        /* Hỗ trợ màu nhấn theo category bằng data-attribute */
+        .card--hover[data-accent="ai"]         { --neon: #6e48ff; }
+        .card--hover[data-accent="marketing"]  { --neon: #10b981; }
+        .card--hover[data-accent="mmo"]        { --neon: #f97316; }
+        .card--hover[data-accent="saas"]       { --neon: #6366f1; }
+        .card--hover[data-accent="design"]     { --neon: #ec4899; }
+        .card--hover[data-accent="automation"] { --neon: #f59e0b; }
+
+        /* Tôn trọng người dùng giảm chuyển động */
+        @media (prefers-reduced-motion: reduce) {
+        .card, .card--hover, .tool-card { transition: none; }
+        }
+
+        /* Giữ lại rule cũ cho tool-card nhưng mạnh hơn chút và đồng bộ với card */
+        .tool-card {
+        border-radius: 16px;
+        transition: transform .25s ease, box-shadow .25s ease;
+        }
+        .tool-card:hover {
+        transform: translateY(-6px);
+        box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.55),
+        0 8px 24px rgba(124, 30, 255, 0.18);
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #00cbf7; }
+        }
+        
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .scroll-animate.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            width: 100%;
+            background: transparent;
+          }
+           
+          .marquee-wrapper {
+            position: relative;
+            width: 70%;
+            height: 3rem;
+            overflow: hidden;
+            background: transparent;
+          }
+          
+          .marquee-content {
+            position: absolute;
+            white-space: nowrap;
+            left: 0;
+            animation: pingpong 8s ease-in-out infinite alternate;
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: rgb(3, 19, 245);
+          }
+          
+          @keyframes pingpong {
+            0% {
+              transform: translateX(0%);
+            }
+            100% {
+              transform: translateX(calc(100% - 30px));
+            }
+          }

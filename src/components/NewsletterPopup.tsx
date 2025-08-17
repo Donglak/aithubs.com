@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { X, Mail, Gift, CheckCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, CheckCircle, Gift, Mail, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { submitToGoogleSheets, validateEmail } from '../services/googleSheets';
 
 interface NewsletterPopupProps {
   isOpen: boolean;
@@ -26,7 +27,7 @@ const NewsletterPopup: React.FC<NewsletterPopupProps> = ({ isOpen, onClose, onSu
     
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (!validateEmail(formData.email)) {
       newErrors.email = 'Please enter a valid email';
     }
     
@@ -42,7 +43,17 @@ const NewsletterPopup: React.FC<NewsletterPopupProps> = ({ isOpen, onClose, onSu
     setIsSubmitting(true);
     
     try {
+      // Submit to Google Sheets
+      await submitToGoogleSheets({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        timestamp: new Date().toISOString(),
+        source: 'newsletter_popup'
+      });
+
+      // Call the parent callback
       await onSubscribe(formData.email, formData.name);
+      
       setIsSuccess(true);
       
       // Close popup after 2 seconds of success
@@ -53,6 +64,7 @@ const NewsletterPopup: React.FC<NewsletterPopupProps> = ({ isOpen, onClose, onSu
       }, 2000);
     } catch (error) {
       console.error('Subscription failed:', error);
+      setErrors({ email: 'An error occurred. Please try again later.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -160,7 +172,10 @@ const NewsletterPopup: React.FC<NewsletterPopupProps> = ({ isOpen, onClose, onSu
                       }`}
                     />
                     {errors.name && (
-                      <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                      <div className="flex items-center gap-2 text-red-500 text-sm mt-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.name}
+                      </div>
                     )}
                   </div>
 
@@ -178,7 +193,10 @@ const NewsletterPopup: React.FC<NewsletterPopupProps> = ({ isOpen, onClose, onSu
                       }`}
                     />
                     {errors.email && (
-                      <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                      <div className="flex items-center gap-2 text-red-500 text-sm mt-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.email}
+                      </div>
                     )}
                   </div>
 

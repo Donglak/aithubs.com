@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
+import { useEffect, useState } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Footer from './components/Footer';
+import Header from './components/Header';
 import PopupManager from './components/PopupManager';
-import HomePage from './pages/HomePage';
-import ToolsPage from './pages/ToolsPage';
-import ToolDetailPage from './pages/ToolDetailPage';
+import ScrollToTop from './components/ScrollToTop';
+import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
-import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import HomePage from './pages/HomePage';
+import ToolDetailPage from './pages/ToolDetailPage';
+import ToolsPage from './pages/ToolsPage';
 
-function App() {
+export default function App() {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ function App() {
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <main>
+          <ScrollToTop/>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/tools" element={<ToolsPage />} />
@@ -55,4 +57,3 @@ function App() {
   );
 }
 
-export default App;

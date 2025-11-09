@@ -1,199 +1,247 @@
 import {
-  Activity, Box,
-  Brain,
-  Palette,
-  Search,
-  TrendingUp,
-  Zap
+  ArrowUp,
+  Search
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useSearchParams } from 'react-router-dom';
+import '../../css/style.css';
 import '../../css/style_Aitool.css';
-import { aiSubcategories, tools } from '../data/tools';
+import { tools } from '../data/tools';
+import { toSlug } from '../utils/slug';
+
+// --------- Helpers ---------
+// --------- Helpers ---------
+const s = (v: unknown) => (typeof v === 'string' ? v : v == null ? '' : String(v));
+const arr = <T,>(v: T | T[] | undefined | null): T[] =>
+  v == null ? [] : Array.isArray(v) ? v : [v];
+
+const norm = (v: unknown) =>
+  s(v).trim().toLowerCase();
+
+// Fallback đơn giản → map 1 số tag sang industry / function khi dataset chưa có field riêng
+const TAG_MAPPING = {
+  industry: new Map<string, string>([
+    ['ecommerce', 'E‑commerce'],
+    ['finance', 'Finance'],
+    ['marketing', 'Marketing'],
+    ['education', 'Education'],
+    ['health', 'Health'],
+    ['design', 'Design'],
+    ['productivity', 'Productivity'],
+  ]),
+  function: new Map<string, string>([
+    ['copywriting', 'Copywriting'],
+    ['image', 'Image Generation'],
+    ['audio', 'Audio Tools'],
+    ['video', 'Video Tools'],
+    ['code', 'Code Assistant'],
+    ['chat', 'Chatbot'],
+    ['seo', 'SEO'],
+    ['automation', 'Automation'],
+    ['workflow','automation'],
+    ['analytics', 'Analytics'],
+  ]),
+};
+
+function deriveIndustries(t: any): string[] {
+  const fromField = arr(t.industry).map(s).filter(Boolean);
+  if (fromField.length) return fromField;
+
+  // fallback từ tags
+  const tags = arr<string>(t.tags).map(norm);
+  const got = new Set<string>();
+  tags.forEach(tag => {
+    TAG_MAPPING.industry.forEach((label, key) => {
+      if (tag.includes(key)) got.add(label);
+    });
+  });
+  return Array.from(got);
+}
+
+function deriveFunctions(t: any): string[] {
+  const fromField = arr(t.functions).map(s).filter(Boolean);
+  if (fromField.length) return fromField;
+
+  // fallback từ tags
+  const tags = arr<string>(t.tags).map(norm);
+  const got = new Set<string>();
+  tags.forEach(tag => {
+    TAG_MAPPING.function.forEach((label, key) => {
+      if (tag.includes(key)) got.add(label);
+    });
+  });
+  return Array.from(got);
+}
+
+const PAGE_SIZE = 30;
 
 const ToolsPage = () => {
   // ====== Filters ======
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
-  // Pricing -> multi-select
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
+  const [selectedFunctions, setSelectedFunctions] = useState<string[]>([]);
   const [selectedPricing, setSelectedPricing] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>('popularity');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  // Scroll-to-top (mobile FAB)
+const [showToTop, setShowToTop] = useState(false);
+
+useEffect(() => {
+  const onScroll = () => setShowToTop(window.scrollY > 320);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  return () => window.removeEventListener('scroll', onScroll);
+}, []);
+
+const scrollToTop = () => {
+  const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  try { navigator.vibrate?.(10); } catch {}
+  window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
+};
+
+
+  // ====== URL params (để share link lọc) ======
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const updateParamArray = (key: 'industry' | 'function' | 'pricing', arrVal: string[]) => {
+    const next = new URLSearchParams(searchParams);
+    next.delete(key);
+    if (arrVal.length) next.set(key, arrVal.join(','));
+    setSearchParams(next, { replace: false });
+  };
+
+  const handleToggleIndustry = (val: string) => {
+    setSelectedIndustries(prev => {
+      const next = prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val];
+      updateParamArray('industry', next);
+      return next;
+    });
+  };
+
+  const handleToggleFunction = (val: string) => {
+    setSelectedFunctions(prev => {
+      const next = prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val];
+      updateParamArray('function', next);
+      return next;
+    });
+  };
+
+  const handleTogglePricing = (key: 'free' | 'freemium' | 'paid') => {
+    setSelectedPricing(prev => {
+      const next = prev.includes(key) ? prev.filter(x => x !== key) : [...prev, key];
+      updateParamArray('pricing', next);
+      return next;
+    });
+  };
+
+  // Đọc params từ URL lần đầu / khi URL đổi
+  useEffect(() => {
+    const inds = (searchParams.get('industry') ?? '')
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+    const funcs = (searchParams.get('function') ?? '')
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+    const pric = (searchParams.get('pricing') ?? '')
+      .split(',')
+      .map(s => s.trim() as 'free'|'freemium'|'paid')
+      .filter(Boolean);
+
+    setSelectedIndustries(inds);
+    setSelectedFunctions(funcs);
+    setSelectedPricing(pric);
+  }, [searchParams]);
+
+  // ====== Tập facet: industries / functions ======
+  const { allIndustries, allFunctions } = useMemo(() => {
+    const inds = new Map<string, number>();
+    const funcs = new Map<string, number>();
+
+    tools.forEach(t => {
+      deriveIndustries(t).forEach(i => inds.set(i, (inds.get(i) ?? 0) + 1));
+      deriveFunctions(t).forEach(f => funcs.set(f, (funcs.get(f) ?? 0) + 1));
+    });
+
+    return {
+      allIndustries: Array.from(inds.entries()).sort((a, b) => b[1] - a[1]), // [label, count]
+      allFunctions: Array.from(funcs.entries()).sort((a, b) => b[1] - a[1]),
+    };
+  }, []);
 
   // ====== Paging / Infinite Scroll ======
-  const PAGE_SIZE = 30;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const resultRef = useRef<HTMLDivElement | null>(null);
-    // ====== UI meta ======
-  const categoryIcons: Record<string, JSX.Element> = {
-    ai: <Brain className="w-4 h-4 text-primary-500" />,
-    marketing: <TrendingUp className="w-4 h-4 text-primary-500" />,
-    mmo: <Activity className="w-4 h-4 text-primary-500" />,
-    saas: <Box className="w-4 h-4 text-primary-500" />,
-    design: <Palette className="w-4 h-4 text-primary-500" />,
-    automation: <Zap className="w-4 h-4 text-primary-500" />
-  };
-
-  const categories = [
-    { value: 'ai', label: 'AI Tools' },
-    { value: 'marketing', label: 'Marketing Tools' },
-    { value: 'mmo', label: 'MMO Tools' },
-    { value: 'saas', label: 'SaaS Tools' },
-    { value: 'design', label: 'Design Tools' },
-    { value: 'automation', label: 'Automation Tools' }
-  ] as const;
-
-  // ====== Handlers ======
-  const updateParamArray = (key: 'category'|'subcategory'|'pricing', arr: string[]) => {
-  const next = new URLSearchParams(searchParams);
-  next.delete(key);
-  if (arr.length) next.set(key, arr.join(','));
-  setSearchParams(next, { replace: false });
-};
-
-const handleToggleCategory = (category: string) => {
-  setSelectedCategories(prev => {
-    const next = prev.includes(category) ? prev.filter(x => x !== category) : [...prev, category];
-    updateParamArray('category', next);
-    return next;
-  });
-};
-
-const handleToggleSubcategory = (subcategory: string) => {
-  setSelectedSubcategories(prev => {
-    const next = prev.includes(subcategory) ? prev.filter(x => x !== subcategory) : [...prev, subcategory];
-    updateParamArray('subcategory', next);
-    return next;
-  });
-};
-
-const handleTogglePricing = (key: 'free' | 'freemium' | 'paid') => {
-  setSelectedPricing(prev => {
-    const next = prev.includes(key) ? prev.filter(x => x !== key) : [...prev, key];
-    updateParamArray('pricing', next);
-    return next;
-  });
-};
- 
-  // them de thuc hien loc khi chọn dung category ben home
-const [searchParams, setSearchParams] = useSearchParams();
-
-const norm = (v: unknown) =>
-  (typeof v === 'string' ? v : v == null ? '' : String(v))
-    .trim()
-    .toLowerCase()
-    .replace(/\s+tools?$/,'');   // "AI Tools" -> "ai", "Marketing Tool" -> "marketing"
-
-// Lấy giá trị ban đầu từ URL (chạy khi location.search đổi)
-useEffect(() => {
-  const cats = (searchParams.get('category') ?? '')
-    .split(',')
-    .map(s => s.trim().toLowerCase())    // slug: ai, marketing,...
-    .filter(Boolean);
-
-  const subs = (searchParams.get('subcategory') ?? '')
-    .split(',')
-    .map(s => s.trim())                   // <-- chuẩn hóa từng sub
-    .filter(Boolean);
-
-  setSelectedCategories(cats);
-  setSelectedSubcategories(subs);
-}, [searchParams]);
-
 
   // ====== Filtering / Sorting ======
-  const s = (v: unknown) => (typeof v === 'string' ? v : v == null ? '' : String(v));
   const filteredTools = useMemo(() => {
-  const filtered = tools.filter(tool => {
-    // Chuẩn hóa dữ liệu để tránh undefined
-    const name = s(tool.name);
-    const description = s(tool.description);
-    const tags: string[] = Array.isArray(tool.tags) ? tool.tags : [];
-    const priceText = s(tool.price).toLowerCase();
-
-    // search
     const q = searchTerm.toLowerCase();
-    const matchesSearch =
-      name.toLowerCase().includes(q) ||
-      description.toLowerCase().includes(q) ||
-      tags.some(tag => s(tag).toLowerCase().includes(q));
 
-    // category: string | string[] | undefined
-    const tCat = tool.category;
-    const toolCats = Array.isArray(tCat) ? tCat.map(norm) : [norm(tCat)];
+    const list = tools.filter(tool => {
+      // search
+      const name = s(tool.name);
+      const desc = s(tool.description);
+      const tags = arr<string>(tool.tags).map(s);
 
-const matchesCategory =
-  selectedCategories.length === 0 ||
-  toolCats.some(c => selectedCategories.includes(c));
+      const matchesSearch =
+        name.toLowerCase().includes(q) ||
+        desc.toLowerCase().includes(q) ||
+        tags.some(tag => tag.toLowerCase().includes(q));
 
-    // subcategory: string | string[] | undefined
-    const tSub = tool.subcategory;
-    const toolSubs = Array.isArray(tSub) ? tSub.map(x => s(x).toLowerCase()) : [s(tSub).toLowerCase()];
-    const selectedSubsNorm = selectedSubcategories.map(x => x.toLowerCase());
+      // industry
+      const inds = deriveIndustries(tool); // string[]
+      const matchesIndustry =
+        selectedIndustries.length === 0 ||
+        inds.some(i => selectedIndustries.includes(i));
 
-    const matchesSubcategory =
-    selectedSubsNorm.length === 0 ||
-    toolSubs.some(sub => selectedSubsNorm.includes(sub));
+      // function
+      const funcs = deriveFunctions(tool);
+      const matchesFunction =
+        selectedFunctions.length === 0 ||
+        funcs.some(f => selectedFunctions.includes(f));
 
-    // pricing: multi-select
-    const hasDash = s(tool.price).includes('-'); // "Free - $20/month" => Freemium
-    const isFree = priceText.includes('free');
-    const matchesPricing =
-      selectedPricing.length === 0 ||
-      selectedPricing.some(p => {
-        if (p === 'free') return isFree && !hasDash;
-        if (p === 'freemium') return isFree && hasDash;
-        if (p === 'paid') return !isFree;
-        return false;
-      });
+      // pricing
+      const priceText = s(tool.price).toLowerCase();
+      const isFree = priceText.includes('free');
+      const hasDash = s(tool.price).includes('-');
+      const matchesPricing =
+        selectedPricing.length === 0 ||
+        selectedPricing.some(p => {
+          if (p === 'free') return isFree && !hasDash;
+          if (p === 'freemium') return isFree && hasDash;
+          if (p === 'paid') return !isFree;
+          return false;
+        });
 
-    return matchesSearch && matchesCategory && matchesSubcategory && matchesPricing;
-  });
+      return matchesSearch && matchesIndustry && matchesFunction && matchesPricing;
+    });
 
-  // sort
-  filtered.sort((a, b) => {
-    switch (sortBy) {
-      case 'popularity':
-        return (b.reviews || 0) - (a.reviews || 0);
-      case 'rating':
-        return (b.rating || 0) - (a.rating || 0);
-      case 'name':
-        return s(a.name).localeCompare(s(b.name));
-      case 'price': {
-        const aPrice = parseFloat(s(a.price).replace(/[^0-9.]/g, '')) || 0;
-        const bPrice = parseFloat(s(b.price).replace(/[^0-9.]/g, '')) || 0;
-        return aPrice - bPrice;
+    // sort
+    list.sort((a, b) => {
+      switch (sortBy) {
+        case 'popularity': return (b.reviews || 0) - (a.reviews || 0);
+        case 'rating':     return (b.rating || 0) - (a.rating || 0);
+        case 'name':       return s(a.name).localeCompare(s(b.name));
+        case 'price': {
+          const aPrice = parseFloat(s(a.price).replace(/[^0-9.]/g, '')) || 0;
+          const bPrice = parseFloat(s(b.price).replace(/[^0-9.]/g, '')) || 0;
+          return aPrice - bPrice;
+        }
+        default: return 0;
       }
-      default:
-        return 0;
-    }
-  });
+    });
 
-  return filtered;
-}, [searchTerm, selectedCategories, selectedSubcategories, selectedPricing, sortBy, tools]);
+    return list;
+  }, [searchTerm, selectedIndustries, selectedFunctions, selectedPricing, sortBy]);
 
-
-  // ====== Category counters (tính theo dữ liệu gốc) ======
-  const categoryStats = useMemo(() => {
-  return categories.map(cat => {
-    const count = tools.filter(t => {
-      const tCat = t.category;
-      const toolCats = Array.isArray(tCat) ? tCat.map(norm) : [norm(tCat)];
-      return toolCats.includes(cat.value); // cat.value đã là slug: ai, marketing,...
-    }).length;
-    return { ...cat, count };
-  });
-}, []);
-
-  // ====== Reset paging khi filter đổi ======
+  // Reset paging khi filter đổi
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [searchTerm, selectedCategories, selectedSubcategories, selectedPricing, sortBy]);
+  }, [searchTerm, selectedIndustries, selectedFunctions, selectedPricing, sortBy]);
 
-  // ====== Infinite Scroll với IntersectionObserver ======
+  // Infinite scroll
   useEffect(() => {
     if (!sentinelRef.current) return;
     const io = new IntersectionObserver(
@@ -208,7 +256,6 @@ const matchesCategory =
     return () => io.disconnect();
   }, [filteredTools.length]);
 
-  // ====== Phần nhìn thấy ======
   const visibleTools = useMemo(
     () => filteredTools.slice(0, visibleCount),
     [filteredTools, visibleCount]
@@ -220,16 +267,16 @@ const matchesCategory =
         <title>Explore the Best Digital Tools | DigitalToolsHub</title>
         <meta
           name="description"
-          content="Compare top digital tools for AI, marketing, SaaS, and automation. Read reviews and find the best fit for your business."
+          content="Filter AI & digital tools by industry and functions. Compare pricing, features, and ratings to pick the best tool for your use case."
         />
         <link rel="canonical" href="https://aithubs.com/tools" />
       </Helmet>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero */}
-        <h2 className="max-w-2xl mx-auto sm:text-3xl md:text-4xl font-bold text-center gradient-text mb-6 break-words leading-tight">
-          DigitalToolsHub Collects & Organizes All The Best AI Tools So YOU Too Can Become Superhuman!
-        </h2>
+        <h1 className="mt-3 text-3xl sm:text-5xl leading-tight font-hero font-extrabold tracking-tight text-white">
+          <span className="bg-gradient-to-r from-sky-400 via-fuchsia-400 to-emerald-400 bg-clip-text text-transparent"> Find The Best Tools — Filtered by Industry & Functions</span>
+        </h1>
 
         {/* Search */}
         <div className="max-w-xl mx-auto mb-8">
@@ -237,7 +284,7 @@ const matchesCategory =
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search tools by name..."
+              placeholder="Search tools by name, description or tags…"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -245,61 +292,55 @@ const matchesCategory =
           </div>
         </div>
 
-        {/* Category Stats */}
-        <div className="flex flex-wrap gap-4 mb-6 text-sm font-medium text-white justify-center">
-          {categoryStats.map(cat => (
-            <span
-              key={cat.value}
-              className="px-3 py-1 bg-gradient-to-r from-purple-700 to-indigo-600 rounded-full shadow"
-            >
-              ({cat.count}) {cat.label}
-            </span>
-          ))}
-        </div>
-
         {/* Filters card */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-soft p-6 mb-8 transition-all duration-500">
-          {/* Categories */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {categories.map(category => (
-              <label key={category.value} className="flex items-center gap-2 text-sm text-gray-700 dark:text-white">
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(category.value)}
-                  onChange={() => handleToggleCategory(category.value)}
-                  className="form-checkbox text-blue-600 dark:text-blue-400"
-                />
-                {categoryIcons[category.value]}
-                <span>{category.label}</span>
-              </label>
-            ))}
+        <div className=" glow-mobile bg-white dark:bg-gray-800 rounded-lg shadow-soft p-6 mb-8 transition-all duration-500">
+          {/* Industries */}
+          <div>
+            <h4 className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-300">
+              Filter by <span className="text-primary-600">Industry</span>
+            </h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {allIndustries.map(([label, count]) => (
+                <label key={label} className="flex items-center gap-2 text-sm text-gray-800 dark:text-white">
+                  <input
+                    type="checkbox"
+                    checked={selectedIndustries.includes(label)}
+                    onChange={() => handleToggleIndustry(label)}
+                    className="form-checkbox text-primary-600"
+                  />
+                  <span className="btn-neon text-xs px-4 py-2 rounded-full font-semibold">
+                    {label} <span className="opacity-70">({count})</span>
+                  </span>
+                </label>
+              ))}
+            </div>
           </div>
 
-          {/* AI Subcategories */}
-          {selectedCategories.includes('ai') && (
-            <div className="mt-6">
-              <h4 className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-300">AI Subcategories:</h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {(aiSubcategories ?? []).map((sub) => (
-                  <label key={sub} className="flex items-center space-x-2 text-sm text-gray-800 dark:text-white">
-                    <input
-                      type="checkbox"
-                      checked={selectedSubcategories.map(s => s.toLowerCase()).includes(sub.toLowerCase())}
-                      onChange={() => handleToggleSubcategory(sub)}
-                      className="form-checkbox text-primary-500"
-                    />
-                    <span className="bg-primary-100 dark:bg-primary-700 px-2 py-1 rounded-full text-xs font-medium">
-                      {sub}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Pricing (checkboxes) */}
+          {/* Functions */}
           <div className="mt-6">
-            <h4 className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-300">Pricing:</h4>
+            <h4 className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-300">
+              Filter by <span className="text-primary-600">Functions</span>
+            </h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {allFunctions.map(([label, count]) => (
+                <label key={label} className="flex items-center gap-2 text-sm text-gray-800 dark:text-white">
+                  <input
+                    type="checkbox"
+                    checked={selectedFunctions.includes(label)}
+                    onChange={() => handleToggleFunction(label)}
+                    className="form-checkbox text-primary-600"
+                  />
+                  <span className="btn-neon text-xs px-4 py-2 rounded-full font-semibold">
+                    {label} <span className="opacity-70">({count})</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Pricing */}
+          <div className="mt-6">
+            <h4 className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-300">Pricing</h4>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {/* Free */}
               <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-white">
@@ -340,10 +381,10 @@ const matchesCategory =
             </div>
           </div>
 
-          {/* Sort & View (giữ ngắn gọn) */}
+          {/* Sort & View */}
           <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              Showing {filteredTools.length} of {tools.length} tools
+              Showing {filteredTools.length} tools
             </div>
             <div className="flex items-center gap-2">
               <select
@@ -377,15 +418,15 @@ const matchesCategory =
           {/* Clear filters */}
           <div className="mt-4">
             <button
-                 onClick={() => {
-                  setSelectedCategories([]);
-                  setSelectedSubcategories([]);
-                  setSelectedPricing([]);
-                  setSearchTerm('');
-                  setSearchParams(new URLSearchParams(), { replace: false }); // <-- thêm dòng này
-                }}
-                className="px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 text-sm"
-              >
+              onClick={() => {
+                setSelectedIndustries([]);
+                setSelectedFunctions([]);
+                setSelectedPricing([]);
+                setSearchTerm('');
+                setSearchParams(new URLSearchParams(), { replace: false });
+              }}
+              className="px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 text-sm"
+            >
               Clear filters
             </button>
           </div>
@@ -396,75 +437,71 @@ const matchesCategory =
           ref={resultRef}
           className={viewMode === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}
         >
-          {visibleTools.map(tool => (
-            <div key={tool.id} className="glass-card tool-card p-4 flex flex-col justify-between h-full transition-all">
-              {/* Top row: logo + name/rating + price badge */}
-              <div className="flex items-center justify-between gap-4">
-                <img
-                  src={tool.image}
-                  alt={tool.name}
-                  loading="lazy"
-                  className="w-12 h-12 rounded object-cover flex-shrink-0"
-                />
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white">{tool.name}</h3>
+          {visibleTools.map(tool => {
+            const inds = deriveIndustries(tool);
+            const funcs = deriveFunctions(tool);
+            return (
+              <div key={tool.id} className="glow-mobile glass-card tool-card p-4 flex flex-col justify-between h-full transition-all">
+                {/* Top row: logo + name/rating + price badge */}
+                <div className="flex items-center justify-between gap-4">
+                  <img
+                    src={tool.image}
+                    alt={tool.name}
+                    loading="lazy"
+                    className="w-12 h-12 rounded object-cover flex-shrink-0"
+                  />
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-white">{tool.name}</h3>
                     <div className="flex items-center text-sm text-yellow-400 mt-1">
-                    {'★'.repeat(Math.max(0, Math.floor(tool.rating || 0)))}
-                    <span className="ml-1 text-gray-300">{tool.rating ?? '—'}</span>
+                      {'★'.repeat(Math.max(0, Math.floor(tool.rating || 0)))}
+                      <span className="ml-1 text-gray-300">{tool.rating ?? '—'}</span>
                     </div>
-
+                  </div>
+                  <div className="flex-shrink-0">
+                    {s(tool.price).toLowerCase().includes('free') && s(tool.price).includes('-') ? (
+                      <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Freemium</span>
+                    ) : s(tool.price).toLowerCase().includes('free') ? (
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Free</span>
+                    ) : (
+                      <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Paid</span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex-shrink-0">
-                  {tool.price.toLowerCase().includes('free') && tool.price.includes('-') ? (
-                    <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Freemium</span>
-                  ) : tool.price.toLowerCase().includes('free') ? (
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Free</span>
-                  ) : (
-                    <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Paid</span>
-                  )}
-                </div>
-              </div>
 
-              {/* Description */}
-              <p className="text-sm text-gray-300 mt-2">{tool.description}</p>
+                {/* Description */}
+                <p className="text-sm text-gray-300 mt-2">{tool.description}</p>
 
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2 mt-2">
-                {(tool.tags ?? []).slice(0, 4).map((tag, idx) => (
-                <span key={idx} className="bg-gray-700 text-gray-200 px-2 py-1 rounded-full text-xs">
-                {s(tag)}
-                </span>
-                 ))}
-              </div>
-
-
-              {/* Category chips (nếu là mảng) */}
-              {Array.isArray(tool.category) && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {tool.category.map((cat, idx) => (
-                    <span key={idx} className="bg-blue-900 text-blue-200 text-xs px-2 py-1 rounded-full">
-                      {cat.toUpperCase()}
+                {/* Industries & Functions chips */}
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {inds.slice(0, 3).map((i, idx) => (
+                    <span key={`i-${idx}`} className="bg-indigo-900 text-indigo-200 text-xs px-2 py-1 rounded-full">
+                      {i}
+                    </span>
+                  ))}
+                  {funcs.slice(0, 3).map((f, idx) => (
+                    <span key={`f-${idx}`} className="bg-blue-900 text-blue-200 text-xs px-2 py-1 rounded-full">
+                      {f}
                     </span>
                   ))}
                 </div>
-              )}
 
-              {/* Actions */}
-              <div className="mt-auto pt-4 flex justify-between items-center">
-                <Link to={`/tools/${tool.id}`} className="btn-neon text-xs px-4 py-2 rounded font-semibold">
-                  Details
-                </Link>
-                <a
-                  href={tool.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-gradient px-4 py-2 rounded-full text-sm"
-                >
-                  Try Now
-                </a>
+                {/* Actions */}
+                <div className="mt-auto pt-4 flex justify-between items-center">
+                  <Link to={`/tools/${toSlug(tool.name)}`} className="btn-neon text-xs px-4 py-2 rounded font-semibold">
+                    Details
+                  </Link>
+                  <a
+                    href={tool.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-gradient px-4 py-2 rounded-full text-sm pulseGlow"
+                  >
+                    Try Now
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* See more */}
@@ -481,10 +518,34 @@ const matchesCategory =
 
         {/* Sentinel for IntersectionObserver */}
         <div ref={sentinelRef} style={{ height: 1 }} />
+        {/* Scroll-to-top FAB (mobile only) */}
+        <button
+          type="button"
+          onClick={scrollToTop}
+          aria-label="Scroll to top"
+          className={[
+            "fixed z-50 right-4",
+            // chừa safe-area iOS + tránh đè footer
+            "bottom-[calc(env(safe-area-inset-bottom)+88px)]",
+            // chỉ hiện trên mobile
+            "md:hidden",
+            // hình tròn, nền mờ, viền nhẹ
+            "w-12 h-12 rounded-full bg-gray-900/85 text-white backdrop-blur",
+            "ring-1 ring-white/10 shadow-lg",
+            // hiệu ứng xuất hiện/ẩn
+            "transition-all duration-300",
+            showToTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 pointer-events-none",
+            // feedback khi chạm & accessibility
+            "active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
+          ].join(" ")}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') scrollToTop(); }}
+        >
+          <ArrowUp className="w-5 h-5 mx-auto" />
+        </button>
+
       </div>
     </div>
   );
 };
 
 export default ToolsPage;
-

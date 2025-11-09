@@ -9,7 +9,7 @@ export type VideoItem = {
 export type PricingTier = {
   name: string;
   price: string;
-  billing?: 'monthly' | 'yearly';
+  billing?: string;
   features: string[];
 };
 
@@ -19,8 +19,8 @@ export type ToolBase = {
   image: string;
   website: string;
   company?: string;
-  category: string | string[];         // có thể là mảng
-  subcategory?: string | string[];
+  industry: string | string[];         // có thể là mảng
+  functions?: string | string[];
   rating?: number;
   reviews?: number;
   featured: boolean;

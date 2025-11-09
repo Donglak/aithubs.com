@@ -5,9 +5,11 @@ import Header from './components/Header';
 import PopupManager from './components/PopupManager';
 import ScrollToTop from './components/ScrollToTop';
 import AboutPage from './pages/AboutPage';
+import AuthorPage from './pages/AuthorPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import ContactPage from './pages/ContactPage';
+import CoursesPage from './pages/CoursesPage';
 import HomePage from './pages/HomePage';
 import ToolDetailPage from './pages/ToolDetailPage';
 import ToolsPage from './pages/ToolsPage';
@@ -29,15 +31,19 @@ export default function App() {
         <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <main>
           <ScrollToTop />
-          <Routes>
+          
+            <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/tools" element={<ToolsPage />} />
-            <Route path="/tools/:id" element={<ToolDetailPage />} />
+            <Route path="/tools/:slug" element={<ToolDetailPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/courses" element={<CoursesPage />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/author/:slug" element={<AuthorPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
-          </Routes>
+            </Routes>
+          
         </main>
         <Footer />
         <PopupManager />

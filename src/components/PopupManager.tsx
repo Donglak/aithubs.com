@@ -1,27 +1,25 @@
-import React from 'react';
 import { useNewsletterPopup } from '../hooks/useNewsletterPopup';
-import NewsletterPopup from './NewsletterPopup';
-const PopupManager: React.FC = () => {
-  const { isPopupOpen, closePopup, handleSubscribe } = useNewsletterPopup();
+import NewsletterPopup from './NewsletterPopup'; // (file ở trên)
 
-  const onSubscribe = async (email: string, name: string) => {
-    try {
-           
-      // Handle subscription in the hook
-      await handleSubscribe();
-    } catch (error) {
-      console.error('Subscription failed:', error);
-      throw error;
-    }
-  };
+export default function PopupManager() {
+  const { open, close } = useNewsletterPopup({
+    delayMs: 18000,
+    scrollRatio: 0.55,
+    suppressionDays: 7,
+  });
 
   return (
-    <NewsletterPopup
-      isOpen={isPopupOpen}
-      onClose={closePopup}
-      onSubscribe={onSubscribe}
-    />
+    <>
+      <NewsletterPopup
+        isOpen={open}
+        onClose={close}
+        // Nếu có backend: đổi URL bên dưới
+        submitUrl="/api/subscribe"
+        onSubmitted={() => {
+          // optional: GA event, toast, v.v.
+          close();
+        }}
+      />
+    </>
   );
-};
-
-export default PopupManager;
+}

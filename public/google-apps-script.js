@@ -1,44 +1,39 @@
-// Google Apps Script code to deploy as a Web App
-// This should be deployed in Google Apps Script and the URL should be added to your environment variables
+// Code.gs
+const SPREADSHEET_ID = '1xd9Ml3qzK9EmOXyrBhHJOablLQCybCK_ElH6R85AXds'; // ID của file Google Sheet
+const MAP_SHEETS = {
+  newsletter: 'newsletter',
+  survey: 'survey',
+};
 
 function doPost(e) {
   try {
-    // Parse the request data
-    const data = JSON.parse(e.postData.contents);
-    
-    // Open the Google Sheet (replace with your sheet ID)
-    const SHEET_ID = '1yo39qlG02_yKby5is8LcFadZMNAZ-eyZQavIC37ki7M';
-    const sheet = SpreadsheetApp.openById(SHEET_ID).getActiveSheet();
-    
-    // Add headers if this is the first row
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['Timestamp', 'Name', 'Email', 'Source']);
+    const body = JSON.parse(e.postData.contents);
+    const sheetName = MAP_SHEETS[body.sheet] || body.sheet;
+    const data = body.data || {};
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sh = ss.getSheetByName(sheetName) || ss.insertSheet(sheetName);
+
+    // Tự ánh xạ các keys của object thành 1 hàng (append)
+    // Lấy header (hàng 1) để giữ thứ tự cột ổn định
+    const header = sh.getRange(1,1,1,sh.getLastColumn() || 1).getValues()[0].filter(Boolean);
+    const keys = Object.keys(data);
+    const allKeys = Array.from(new Set([...header, ...keys]));
+
+    if (header.length !== allKeys.length) {
+      // cập nhật header nếu có key mới
+      sh.getRange(1,1,1,allKeys.length).setValues([allKeys]);
     }
-    
-    // Add the new subscription data
-    sheet.appendRow([
-      data.timestamp,
-      data.name,
-      data.email,
-      data.source
-    ]);
-    
-    // Return success response
+
+    const row = allKeys.map(k => data[k] ?? '');
+    sh.appendRow(row);
+
     return ContentService
-      .createTextOutput(JSON.stringify({ success: true, message: 'Subscription recorded' }))
+      .createTextOutput(JSON.stringify({ ok: true, sheet: sheetName }))
       .setMimeType(ContentService.MimeType.JSON);
-      
-  } catch (error) {
-    // Return error response
+  } catch (err) {
     return ContentService
-      .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
+      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
       .setMimeType(ContentService.MimeType.JSON);
   }
-}
-
-// Handle GET requests (optional)
-function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({ message: 'Newsletter subscription endpoint' }))
-    .setMimeType(ContentService.MimeType.JSON);
 }

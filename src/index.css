@@ -1,3 +1,54 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Highlight style for in-article <mark> elements */
+mark {
+	background: linear-gradient(90deg, rgba(99,102,241,0.18), rgba(236,72,153,0.12));
+	color: #fff8; /* subtle light text when inside dark theme */
+	padding: 0.1rem 0.25rem;
+	border-radius: 0.25rem;
+}
+
+/* Ensure mark stands out in prose classes */
+.prose mark {
+	background: linear-gradient(90deg, rgba(99,102,241,0.22), rgba(236,72,153,0.16));
+	color: #fff; /* bright text for highlighted content */
+	font-weight: 700;
+}
+
+/* Strong text inside article */
+.prose strong {
+	color: lab(#FFFFFF); /* dark blue */
+	font-weight: 900;
+}
+
+/* Emphasis (italic) */
+.prose em {
+	font-style: italic;
+	color: #FFFFFF;
+	font-weight: 700;
+}
+
+/* Bold + italic */
+.prose strong em,
+.prose em strong,
+.prose em strong em,
+.prose strong em strong {
+	font-style: italic;
+	font-weight: 900;
+	color: #0f0a53; /* even darker blue for combined emphasis */
+}
+
+/* Increase base size for article text and headings */
+.prose p,
+.prose li,
+.prose blockquote {
+	font-size: 1.0625rem; /* 17px */
+	line-height: 1.8;
+}
+
+.prose h1, .prose h2, .prose h3 {
+	color: #66B2FF;
+	font-weight: 900;
+}

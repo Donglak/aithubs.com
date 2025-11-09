@@ -1,204 +1,64 @@
+/* ==== Glowing Border – tiết kiệm tài nguyên ==== */
+.glow-mobile {
+  position: relative;
+  border-radius: 16px;
+  background: rgba(10, 15, 25, 0.9);
+  overflow: hidden;
+  isolation: isolate;
+}
 
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
-        :root {
-            --primary: #6e48aa;
-            --secondary: #9d50bb;
-            --dark: #0f0f1a;
-            --darker: #07070f;
-            --neon: #00f2ff;
-          }
-        body {
-            background: linear-gradient(135deg, var(--darker), var(--dark));
-            color: white;
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-        }
-        
-        .glass-card {
-            background: rgba(15, 15, 26, 0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
-            transition: all 0.3s ease;
-        }
-        
-        .gradient-text {
-            background: linear-gradient(90deg, #7c1eff, #00cbf7);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            background-size: 200% auto;
-        }
-        .gradient-text_style1 {
-            background: linear-gradient(90deg, #543283, #13a0c0);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            background-size: 150% auto;
-        }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #7c1eff 0%, #00cbf7 100%);
-        }
-        
-        .nav-link::after {
-            content: '';
-            display: block;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #7c1eff, #00cbf7);
-            transition: width 0.3s;
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
-        
-        .active-nav::after {
-            content: '';
-            display: block;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, #7c1eff, #00cbf7);
-        }
-        
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(124, 30, 255, 0.3);
-        }
-        
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-        }
-        
-        .typewriter {
-            overflow: hidden;
-            border-right: .15em solid #00cbf7;
-            white-space: nowrap;
-            margin: 0 auto;
-            letter-spacing: .15em;
-            animation: 
-                typing 3.5s steps(40, end),
-                blink-caret .75s step-end infinite;
-        }
-        /* ==== Card base (dùng chung cho Tool & Category) ==== */
-        .card {
-        position: relative;
-        background: rgba(15, 15, 26, 0.55);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 16px;
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-        will-change: transform, box-shadow;
-        }
+/* Chỉ vẽ viền, KHÔNG animate mặc định */
+.glow-mobile::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(#22d3ee, #6366f1, #a78bfa, #34d399, #22c55e, #f59e0b, #22d3ee);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  filter: drop-shadow(0 0 10px rgba(99,102,241,.28));
+  pointer-events: none;
+  opacity: .9;
+  animation: none;                /* dừng mặc định */
+}
 
-/* hiệu ứng đổ bóng + nâng thẻ khi hover/focus */
-        .card--hover:hover,
-        .card--hover:focus-visible {
-        transform: translateY(-6px);
-        box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.55),                 /* bóng chính */
-        0 8px 24px rgba(0, 255, 157, 0.295);               /* glow theo --neon */
-        border-color: rgba(0, 242, 255, 0.35);
-        outline: none;
-        }
+/* Chỉ thiết bị có hover mới chạy animation khi hover/focus */
+@media (hover: hover) and (pointer: fine) {
+  .glow-mobile:hover::after,
+  .glow-mobile:focus-visible::after {
+    animation: linear infinite;
+  }
+}
 
-        /* viền phát sáng rất nhẹ */
-        .card--hover::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity .25s ease;
-        box-shadow: 0 0 0 1px rgba(0, 242, 255, 0.25), 0 0 30px rgba(0, 242, 255, 0.12);
-        }
-        .card--hover:hover::after,
-        .card--hover:focus-visible::after { opacity: 1; }
+@keyframes glow-rotate { to { transform: rotate(360deg); } }
 
-        /* Hỗ trợ màu nhấn theo category bằng data-attribute */
-        .card--hover[data-accent="ai"]         { --neon: #6e48ff; }
-        .card--hover[data-accent="marketing"]  { --neon: #10b981; }
-        .card--hover[data-accent="mmo"]        { --neon: #f97316; }
-        .card--hover[data-accent="saas"]       { --neon: #6366f1; }
-        .card--hover[data-accent="design"]     { --neon: #ec4899; }
-        .card--hover[data-accent="automation"] { --neon: #f59e0b; }
+/* Tắt glow trên màn hình lớn số lượng card nhiều (tuỳ chọn) */
+@media (min-width: 1024px) {
+  /* Nếu cần, có thể comment dòng dưới nếu vẫn muốn giữ glow */
+  /* .glow-mobile::after { display: none; } */
+}
 
-        /* Tôn trọng người dùng giảm chuyển động */
-        @media (prefers-reduced-motion: reduce) {
-        .card, .card--hover, .tool-card { transition: none; }
-        }
+/* Mobile giảm blur đắt tiền ở glass-card để đỡ INP */
+@media (pointer: coarse) {
+  .glass-card {
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+    background: rgba(15,15,26,.7);
+  }
+}
+/* Hero aurora background (light but impressive) */
+.hero-aurora {
+  pointer-events: none;
+  background:
+    radial-gradient(60% 120% at 15% 40%, rgba(56,189,248,.25), transparent 60%),
+    radial-gradient(50% 160% at 85% 25%, rgba(168,85,247,.25), transparent 60%),
+    radial-gradient(60% 140% at 55% 85%, rgba(16,185,129,.22), transparent 60%);
+  filter: blur(44px);
+  opacity: .9;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-aurora { animation: auroraFloat 14s ease-in-out infinite alternate; }
+  @keyframes auroraFloat { to { transform: translateY(10px); } }
+}
 
-        /* Giữ lại rule cũ cho tool-card nhưng mạnh hơn chút và đồng bộ với card */
-        .tool-card {
-        border-radius: 16px;
-        transition: transform .25s ease, box-shadow .25s ease;
-        }
-        .tool-card:hover {
-        transform: translateY(-6px);
-        box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.55),
-        0 8px 24px rgba(124, 30, 255, 0.18);
-        }
-
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-        
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: #00cbf7; }
-        }
-        
-        .scroll-animate {
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: all 0.6s ease-out;
-        }
-        
-        .scroll-animate.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-            width: 100%;
-            background: transparent;
-          }
-           
-          .marquee-wrapper {
-            position: relative;
-            width: 70%;
-            height: 3rem;
-            overflow: hidden;
-            background: transparent;
-          }
-          
-          .marquee-content {
-            position: absolute;
-            white-space: nowrap;
-            left: 0;
-            animation: pingpong 8s ease-in-out infinite alternate;
-            font-size: 1.75rem;
-            font-weight: bold;
-            color: rgb(3, 19, 245);
-          }
-          
-          @keyframes pingpong {
-            0% {
-              transform: translateX(0%);
-            }
-            100% {
-              transform: translateX(calc(100% - 30px));
-            }
-          }
+/* Optional hero font */
+.font-hero { font-family: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, Inter, sans-serif; }

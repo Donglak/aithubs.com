@@ -45,6 +45,22 @@ body {
     box-shadow: 0 12px 40px 0 rgba(110, 72, 170, 0.3);
     border: 1px solid rgba(110, 72, 170, 0.5);
 }
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.8; }
+}
+
+.blink {
+  animation: pulseGlow 1.5s infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.blink {
+  animation: blink 1s infinite;
+}
 
 .editor-choice {
     position: absolute;

@@ -1,93 +1,170 @@
+// Auto-generated from tool_details_template.xlsx. Do not edit by hand.
 import { ToolDetail } from '../types/tool';
-
 export const TOOL_DETAILS: Partial<ToolDetail>[] = [
   {
-    id: 1,                      // match với id trong data/tools.ts
-    name: "Spellbook-ai",
-    longDescription:
-      "Unlock the full potential of legal drafting with Spellbook, the AI-powered contract assistant designed to streamline the work of lawyers and legal teams. Built on advanced language models, Spellbook integrates directly into Microsoft Word, enabling professionals to draft, review, and edit contracts faster and with greater confidence",
+    id: 85,
+    name: "Campaignmonitor",
+    longDescription: "Campaign Monitor is an intuitive email marketing platform built for growing brands. Create stunning campaigns, automate customer journeys, and personalize messaging with powerful analytics and integrations that turn subscribers into loyal customers",
     features: [
-      "Inline writing assistant",
-      "Context aware summarization",
-      "Database insights",
-      "Multi language support"
+      "Basic email campaigns, drag-and-drop builder, analytics",
+      "Automation workflows, segmentation, priority support",
+      "Advanced analytics, pre-built journeys, dynamic content",
+      "Dedicated onboarding, custom integrations, deliverability consulting"
     ],
     pros: [
-      "Deep integration with Notion",
-      "Fast onboarding",
-      "Good summaries for long docs"
+      "Exceptionally user-friendly interface with a sleek drag-and-drop builder",
+      "Beautiful, customizable templates optimized for conversion.",
+      "Strong deliverability rates and reliable sending infrastructure.",
+      "Built-in personalization and segmentation for targeted campaigns.",
+      "Seamless integrations with CRMs, e-commerce platforms, and analytics tools"
     ],
     cons: [
-      "Quality varies on niche topics",
-      "Works best when data is inside Notion"
+      "Limited automation depth compared to enterprise tools (like HubSpot or ActiveCampaign)",
+      "No native SMS marketing — email-only platform",
+      "Reporting is solid but lacks advanced predictive insights",
+      "Pricing increases with subscriber list size, which may be costly for large brands."
     ],
-    screenshots: [
-      "/screens/notion-1.png",
-      "/screens/notion-2.png"
+    useCases: [
+      "Email Campaigns: Build branded newsletters with a drag-and-drop editor",
+      "Marketing Automation",
+      "E-commerce Promotions",
+      "Event & Announcement Campaigns",
+      "Agency Campaign Management"
     ],
-    videoReviews: [
+    idealFor: [
+      "SMBs and startups",
+      "Marketing agencies",
+      "E-commerce stores",
+      "Nonprofits and educators"
+    ],
+    metrics: {
+      users: "3M",
+      founded: "2023",
+      lastUpdated: "2025-02-01 00:00:00"
+    },
+    pricingTiers: [
       {
-        title: "Bioptimus overview and demo",
-        url: "https://www.youtube.com/watch?v=nk-8pYW7xh0",
-        channel: "AI Reviews",
-        publishedAt: "2025-06-01"
+        name: "Lite",
+        price: "$11/mo",
+        billing: "monthly, billed annually",
+        features: [
+          "Get everything in the Free plan, plus:\n5x subscriber emails/month\nSelect core features like custom coded templates and unlimited signup forms\nAdvanced email features like AI Writer, automated emails access, pre-built journeys, and transactional emails"
+        ]
       },
       {
-        title: "Hands-on with Bioptimus",
-        url: "https://www.youtube.com/watch?v=Wdc2iLwFNWY",
-        channel: "Tech Lab",
-        publishedAt: "2025-05-12"
+        name: "Essentials",
+        price: "$27/mo",
+        billing: "monthly, billed annually",
+        features: [
+          "Get everything in the Lite plan, plus:\nUnlimited email sends, Priority level support\nAll core features included\nInbox preview\nUnlimited automated emails\nOption to purchase additional advanced feature access like non-human click filter, engagement segments, countdown timer, and time zone sending"
+        ]
+      },
+      {
+        name: "Premier",
+        price: "$143/mo",
+        billing: "monthly, billed annually",
+        features: [
+          "Get everything in the Essentials plan, plus:\nPremier level support, including phone support\nAdvanced, pre-built engagement segments\nSend time optimization\nEmail section locking\nAdvanced link tracking\nTemplate management for teams"
+        ]
+      },
+      {
+        name: "Enterprise",
+        price: "Contact sales",
+        billing: "",
+        features: [
+          "Get everything in the Premier plan, plus:\nCustom annual contract with predictable, consolidated billing\nDedicated account manager and customer success partner\nMulti-brand and multi-team account management\nProactive deliverability monitoring and expert optimization\nQuarterly business reviews with strategic insights\nEnterprise-grade security (GDPR, SOC2) with custom DPAs and invoice/PO billing"
+        ]
       }
     ],
-    useCases: ["Meeting notes", "Blog draft", "PRD outline"],
-    idealFor: ["Content team", "PM", "Solo creator"],
-    integrations: ["Notion DB", "Zapier"],
-    metrics: { users: "3M+", founded: "2016", lastUpdated: "2025-07-20" },
-    pricingTiers: [
-      { name: "Plus", price: "10 USD", billing: "monthly", features: ["Basic AI writing", "Summaries"] },
-      { name: "Business", price: "18 USD", billing: "monthly", features: ["Team features", "Admin controls"] }
-    ],
     seo: {
-      title: "Notion AI review, pricing, features",
-      description: "Hands on review of Notion AI with pricing and best use cases.",
-      canonical: "https://digitaltoolshub.app/tools/notion-ai"
+      title: "Send better emails that build stronger connections.",
+      description: "Campaign Monitor is an intuitive email marketing platform built for growing brands. Create stunning campaigns, automate customer journeys, and personalize messaging with powerful analytics and integrations that turn subscribers into loyal customers."
     }
   },
   {
-    id: 2,
-    name: "AgentVerse",
-    longDescription:
-      "AgentVerse is more than a framework. It is a launchpad for innovation, a playground for experimentation, and a reliable partner for scaling multi agent intelligence into impactful applications that redefine the limits of AI.",
+    id: 86,
+    name: "campaigner",
+    longDescription: "Campaigner is an advanced email and SMS marketing platform that helps businesses connect with customers through personalized automation. Build stunning campaigns, automate engagement workflows, and track real-time results to boost conversions and customer loyalty",
     features: [
-      "High quality image generation",
-      "Style presets",
-      "Community prompts"
+      "Email and SMS automation for multichannel campaigns.",
+      "Advanced segmentation & personalization based on customer behavior.",
+      "Drag-and-drop campaign builder with dynamic content support",
+      "A/B testing & reporting dashboards to optimize conversions.",
+      "E-commerce integrations with Shopify, Magento, and WooCommerce."
     ],
-    pros: ["Great quality", "Rich styles"],
-    cons: ["Requires learning prompt skills"],
-    screenshots: [
-      "/screens/mj-1.jpg",
-      "/screens/mj-2.jpg"
+    pros: [
+      "Comprehensive automation builder for both email and SMS workflows",
+      "Strong segmentation and personalization capabilities",
+      "E-commerce integrations and behavioral triggers for dynamic campaigns",
+      "Built-in A/B testing and detailed analytics dashboards",
+      "Deliverability optimization tools to improve inbox placement."
+    ],
+    cons: [
+      "Interface feels dated compared to newer competitors like Klaviyo or ActiveCampaign.",
+      "Limited AI-driven optimization and predictive analytics.",
+      "Learning curve for complex workflows if you’re new to automation",
+      "Advanced features (like transactional SMS) only available on higher-tier plans."
     ],
     videoReviews: [
       {
-        title: "Bioptimus overview and demo",
-        url: "https://www.youtube.com/watch?v=FflyAPU5Ih4",
-        channel: "AI Reviews",
-        publishedAt: "2025-06-01"
+        title: "Campaigner Review 2025: Is This the Best Email Marketing Platform?",
+        url: "https://www.youtube.com/watch?v=942XkyAeQwY",
+        channel: "StartupWise",
+        publishedAt: "6 thg 2, 2025"
       },
       {
-        title: "Hands-on with Bioptimus",
-        url: "https://www.youtube.com/watch?v=Dut5lRfPBMM",
-        channel: "Tech Lab",
-        publishedAt: "2025-05-12"
+        title: "12 Things You Need To Know Before Buying (Best Email Marketing Software)",
+        url: "https://www.youtube.com/watch?v=eBZix-6OXVw",
+        channel: "Dan Thorne",
+        publishedAt: "14 thg 1, 2025"
       }
     ],
-    metrics: { users: "15M+", founded: "2022", lastUpdated: "2025-06-10" },
+    useCases: [
+      "E-commerce Marketing",
+      "Customer Retention",
+      "Lead Nurturing",
+      "Transactional Messaging",
+      "Agency Campaign Management"
+    ],
+    idealFor: [
+      "e-commerce brands",
+      "marketers",
+      "and agencies"
+    ],
+    metrics: {
+      users: "2M",
+      founded: "2017",
+      lastUpdated: "2025-02-01 00:00:00"
+    },
+    pricingTiers: [
+      {
+        name: "Essentials",
+        price: "$14 / mo",
+        billing: "monthly",
+        features: [
+          "Great for those wanting the basics of great email marketing, Drag and drop editor, Email templates, Detailed campaign reporting"
+        ]
+      },
+      {
+        name: "Advanced",
+        price: "$35 / mo",
+        billing: "monthly",
+        features: [
+          "Great for experienced users with advanced needs"
+        ]
+      },
+      {
+        name: "Custom",
+        price: "Contact sales",
+        billing: "monthly, billed annually",
+        features: [
+          "Great for those sending at scale"
+        ]
+      }
+    ],
     seo: {
-      title: "Midjourney use cases and pricing",
-      description: "Guide to Midjourney strengths, limits and pricing options.",
-      canonical: "https://digitaltoolshub.app/tools/midjourney"
+      title: "Turn conversations into conversions with precision-driven automation",
+      description: "Campaigner is an advanced email and SMS marketing platform built for growth-focused brands. Design personalized campaigns, automate cross-channel workflows, and analyze performance in real time to engage customers and scale your marketing effortlessly"
     }
   }
 ];

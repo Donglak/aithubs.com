@@ -1,6 +1,6 @@
 import { AlertCircle, CheckCircle, Mail } from 'lucide-react';
 import React, { useState } from 'react';
-import { submitToGoogleSheets, validateEmail } from '../services/googleSheets';
+import { submitNewsletterToSheet, validateEmail } from '../services/googleSheets';
 
 interface NewsletterFormProps {
   className?: string;
@@ -37,7 +37,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
 
     try {
       // Submit to Google Sheets
-      await submitToGoogleSheets({
+      await submitNewsletterToSheet({
         name: '', // No name field in this form
         email: email.trim(),
         timestamp: new Date().toISOString(),

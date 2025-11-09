@@ -1,7 +1,7 @@
 import { AlertCircle, CheckCircle, Facebook, Linkedin, Mail, Twitter, Youtube, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { submitToGoogleSheets, validateEmail } from '../services/googleSheets';
+import { submitNewsletterToSheet, validateEmail } from '../services/googleSheets';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -28,12 +28,13 @@ const Footer = () => {
     setIsSubmitting(true);
 
     try {
-      await submitToGoogleSheets({
+      await submitNewsletterToSheet({
         name: '',
         email: email.trim(),
         timestamp: new Date().toISOString(),
-        source: 'footer_newsletter'
-      });
+        source: 'footer_newsletter',
+        
+        });
 
       setIsSuccess(true);
       setEmail('');
@@ -119,10 +120,10 @@ const Footer = () => {
               <li><Link to="/tools?category=ai" className="card--hover text-gray-300 hover:text-white transition-colors">AI Tools</Link></li>
               <li><Link to="/tools?category=marketing" className="text-gray-300 hover:text-white transition-colors">Marketing Tools</Link></li>
               <li><Link to="/tools?category=mmo" className="text-gray-300 hover:text-white transition-colors">MMO Tools</Link></li>
-              <li><Link to="/tools?category=saas" className="text-gray-300 hover:text-white transition-colors">SaaS Tools</Link></li>
-              <li><Link to="/tools?category=design" className="text-gray-300 hover:text-white transition-colors">Design Tools</Link></li>
-              <li><Link to="/tools?category=automation" className="text-gray-300 hover:text-white transition-colors">Automation Tools</Link></li>
-              <li><Link to="/tools?tag=free" className="text-gray-300 hover:text-white transition-colors">Free Tools</Link></li>
+              <li><Link to="tools?function=Code+Assistant" className="text-gray-300 hover:text-white transition-colors">Code Tools</Link></li>
+              <li><Link to="tools?industry=Creative+%26+Design" className="text-gray-300 hover:text-white transition-colors">Design Tools</Link></li>
+              <li><Link to="/tools?industry=Productivity+%26+Workflow" className="text-gray-300 hover:text-white transition-colors">Automation Tools</Link></li>
+              <li><Link to="tools?tag=free&pricing=free" className="text-gray-300 hover:text-white transition-colors">Free Tools</Link></li>
             </ul>
           </div>
 

@@ -1,105 +1,90 @@
-// Google Sheets integration service
-export interface SubscriptionData {
-  name: string;
+// src/services/googleSheets.ts
+// Service chạy TRÊN TRÌNH DUYỆT (Vite) → dùng import.meta.env
+// Hỗ trợ 2 sheet tách biệt: 'newsletter' & 'survey'.
+// Tự động xử lý CORS khi endpoint là Apps Script (script.google.com).
+
+type NewsletterPayload = {
+  name?: string;
   email: string;
-  timestamp: string;
-  source: string;
-  ipAddress?: string;
-  userAgent?: string;
+  timestamp?: string;
+  source?: string;
+};
+
+type SurveyPayload = {
+  role?: string;
+  goals?: string[] | string; // chấp nhận string, sẽ convert về array
+  budget?: string;
+  pain?: string;
+  name?: string;
+  email?: string;
+  consent?: boolean;
+  ua?: string;
+  path?: string;
+  timestamp?: string;
+};
+
+const ENDPOINT: string =
+  (typeof import.meta !== 'undefined' &&
+    (import.meta as any).env &&
+    (import.meta as any).env.VITE_SHEETS_API_ENDPOINT) ||
+  '/api/google-sheets'; // dùng khi bạn có proxy /api
+
+const isGAS = (url: string) => /script\.google\.com|apps-script/i.test(url);
+
+async function postToSheets(payload: { sheet: string; data: Record<string, any> }) {
+  const url = ENDPOINT;
+  const body = JSON.stringify(payload);
+  const useNoCors = isGAS(url);
+
+  // Gọi Apps Script trực tiếp → dùng no-cors, bỏ Content-Type (trình duyệt sẽ set text/plain)
+  const resp = await fetch(url, {
+    method: 'POST',
+    ...(useNoCors ? ({ mode: 'no-cors' } as RequestInit) : {}),
+    headers: useNoCors ? undefined : { 'Content-Type': 'application/json' },
+    body,
+  });
+
+  // no-cors → response opaque, không đọc được status/json nhưng request vẫn gửi OK
+  if (useNoCors) return { ok: true, opaque: true };
+
+  if (!resp.ok) {
+    const text = await resp.text().catch(() => '');
+    throw new Error(text || `HTTP ${resp.status}`);
+  }
+  return resp.json().catch(() => ({}));
 }
 
-export const submitToGoogleSheets = async (data: SubscriptionData): Promise<boolean> => {
-  try {
-    // Get the Google Apps Script Web App URL from environment variables
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzicAhGcLdLAbStA0PcevOZllqmZtlJKJoHs8LRkxnO-_PiLk1-lGdJccIp0Cys-hMuXg/exec";
-    
-    if (!GOOGLE_SCRIPT_URL) {
-      console.error('Google Script URL not configured');
-      throw new Error('Google Script URL not configured. Please set VITE_GOOGLE_SCRIPT_URL in your .env file');
-    }
+export async function submitNewsletterToSheet(
+  payload: NewsletterPayload,
+  sheetName = 'newsletter'
+) {
+  const data = {
+    ...payload,
+    timestamp: payload.timestamp ?? new Date().toISOString(),
+  };
+  return postToSheets({ sheet: sheetName, data });
+}
 
-    // Add additional data
-    const enrichedData = {
-      ...data,
-      userAgent: navigator.userAgent,
-      timestamp: new Date().toISOString(),
-    };
+export async function appendSurveyToSheet(
+  payload: SurveyPayload,
+  sheetName = 'survey'
+) {
+  const goals =
+    Array.isArray(payload.goals)
+      ? payload.goals
+      : String(payload.goals || '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
 
-    console.log('Submitting to Google Sheets:', enrichedData);
+  const data = {
+    ...payload,
+    goals,
+    timestamp: payload.timestamp ?? new Date().toISOString(),
+  };
+  return postToSheets({ sheet: sheetName, data });
+}
 
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Required for Google Apps Script
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(enrichedData),
-    });
-
-    // Note: With no-cors mode, we can't read the response
-    // We assume success if no error is thrown
-    console.log('Successfully submitted to Google Sheets');
-    return true;
-  } catch (error) {
-    console.error('Google Sheets submission error:', error);
-    throw new Error('Failed to submit to Google Sheets: ' + (error as Error).message);
-  }
-};
-
-// Alternative method with better error handling (requires CORS-enabled endpoint)
-export const submitToGoogleSheetsWithResponse = async (data: SubscriptionData): Promise<any> => {
-  try {
-    const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
-    
-    if (!GOOGLE_SCRIPT_URL) {
-      throw new Error('Google Script URL not configured');
-    }
-
-    const enrichedData = {
-      ...data,
-      userAgent: navigator.userAgent,
-      timestamp: new Date().toISOString(),
-    };
-
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(enrichedData),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    
-    if (!result.success) {
-      throw new Error(result.message || 'Submission failed');
-    }
-
-    return result;
-  } catch (error) {
-    console.error('Google Sheets submission error:', error);
-    throw error;
-  }
-};
-
-// Validate email format
-export const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-// Get user's IP address (optional)
-export const getUserIP = async (): Promise<string> => {
-  try {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    return data.ip;
-  } catch (error) {
-    console.error('Failed to get IP address:', error);
-    return 'Unknown';
-  }
-};
+export function validateEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}

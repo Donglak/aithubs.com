@@ -6,16 +6,19 @@ import VideoReviews from '../components/VideoReviews';
 import { tools } from '../data/tools';
 import { buildToolDetails } from '../lib/buildToolDetails';
 
+// simple slug helper used to match route slugs with tool names
+import { toSlug } from '../utils/slug';
 // ------------------------------------------------------------
 // 5) Page component
 // ------------------------------------------------------------
 
 
 const ToolDetailPage = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const [activeTab, setActiveTab] = useState<'overview' | 'pricing' | 'video'>('overview');
 
-  const toolBase = useMemo(() => tools.find(t => t.id === parseInt(id || '0')), [id]);
+  const toolBase = useMemo(() => tools.find(t => toSlug(t.name) === (slug ?? '')), [slug]);
+  
 
   if (!toolBase) {
     return (
@@ -40,17 +43,17 @@ const relatedTools = useMemo(() => {
   return tools
     .filter(t => t.id !== tool.id)
     .filter(t => {
-      if (Array.isArray(t.category) && Array.isArray(tool.category)) {
-        return t.category.some(cat => tool.category.includes(cat));
+      if (Array.isArray(t.industry) && Array.isArray(tool.industry)) {
+        return t.industry.some(cat => tool.industry.includes(cat));
       }
-      return t.category === tool.category;
+      return t.industry === tool.industry;
     })
     .sort((a, b) => {
-      const commonA = Array.isArray(tool.category) && Array.isArray(a.category)
-        ? a.category.filter(cat => tool.category.includes(cat)).length
+      const commonA = Array.isArray(tool.industry) && Array.isArray(a.industry)
+        ? a.industry.filter(cat => tool.industry.includes(cat)).length
         : 0;
-      const commonB = Array.isArray(tool.category) && Array.isArray(b.category)
-        ? b.category.filter(cat => tool.category.includes(cat)).length
+      const commonB = Array.isArray(tool.industry) && Array.isArray(b.industry)
+        ? b.industry.filter(cat => tool.industry.includes(cat)).length
         : 0;
       return commonB - commonA;
     })
@@ -58,14 +61,24 @@ const relatedTools = useMemo(() => {
 }, [tool]);
 
   
-  const categories = Array.isArray(tool.category) ? tool.category : [tool.category];
+  const industries = Array.isArray(tool.industry) ? tool.industry : [tool.industry];
+// khai bao màu cho nhan giá
+  const badgeTone = (name: string) => {
+  const k = name.toLowerCase();
+  if (k.includes('free')) return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300';
+  if (k.includes('hobby') || k.includes('starter')) return 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300';
+  if (k.includes('creator') || k.includes('pro')) return 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300';
+  if (k.includes('business') || k.includes('team')) return 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300';
+  if (k.includes('enterprise')) return 'bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300';
+  return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
+};
 
   return (
     <>
       <Helmet>
-        <title>{tool.seo?.title ?? `${tool.name} - ${categories.join(', ')}`}</title>
+        <title>{tool.seo?.title ?? `${tool.name} - ${industries.join(', ')}`}</title>
         <meta name="description" content={tool.seo?.description ?? tool.description} />
-        <link rel="canonical" href={tool.seo?.canonical ?? `https://aithubs.com/tools/${tool.id}`} />
+        <link rel="canonical" href={tool.seo?.canonical ?? `https://aithubs.com/tools/${tool.name}`} />
         <meta property="og:title" content={`${tool.name} | DigitalToolsHub`} />
         <meta property="og:description" content={tool.seo?.description ?? tool.description} />
         <meta property="og:image" content={tool.image} />
@@ -94,7 +107,7 @@ const relatedTools = useMemo(() => {
                   <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{tool.name}</h1>
                   <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
                     <span className="inline-flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" /> {(tool.rating ?? 0).toFixed(1)} ({tool.reviews} reviews)</span>
-                    <span className="inline-flex items-center gap-1"><Award className="w-4 h-4" /> {categories.join(' / ')}</span>
+                    <span className="inline-flex items-center gap-1"><Award className="w-4 h-4" /> {industries.join(' / ')}</span>
                     {tool.company && <span className="inline-flex items-center gap-1"><Users className="w-4 h-4" /> {tool.company}</span>}
                   </div>
                 </div>
@@ -138,71 +151,95 @@ const relatedTools = useMemo(() => {
 
               {/* Tab panels */}
               {activeTab === 'overview' && (
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Features */}
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Key features</h3>
-                    <ul className="space-y-2">
-                      {tool.features?.map((f, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <Check className="w-4 h-4 mt-1 text-green-600" />
-                          <span className="text-gray-700 dark:text-gray-300">{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Left column: Features + Usecases */}
+                    <div className="flex flex-col gap-6">
+                      {/* Features */}
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Key features</h3>
+                        <ul className="space-y-2">
+                          {tool.features?.map((f, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <Check className="w-4 h-4 mt-1 text-green-600" />
+                              <span className="text-gray-700 dark:text-gray-300">{f}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
 
-                  {/* Pros & Cons */}
-                  <div className="grid grid-cols-1 gap-6">
-                    <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Pros</h3>
-                      <ul className="space-y-2">
-                        {tool.pros?.map((p, idx) => (
-                          <li key={idx} className="flex items-start gap-2">
-                            <Check className="w-4 h-4 mt-1 text-green-600" />
-                            <span className="text-gray-700 dark:text-gray-300">{p}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      {/* Usecases moved up here */}
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Usecases</h3>
+                        <ul className="space-y-1">
+                          {tool.useCases?.map((f, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <Check className="w-4 h-4 mt-1 text-green-600" />
+                              <span className="text-gray-700 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis block">{f}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
 
-                    <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Cons</h3>
-                      <ul className="space-y-2">
-                        {tool.cons?.map((c, idx) => (
-                          <li key={idx} className="flex items-start gap-2">
-                            <X className="w-4 h-4 mt-1 text-red-600" />
-                            <span className="text-gray-700 dark:text-gray-300">{c}</span>
-                          </li>
-                        ))}
-                      </ul>
+                    {/* Right column: Pros & Cons */}
+                    <div className="grid grid-cols-1 gap-6">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Pros</h3>
+                        <ul className="space-y-2">
+                          {tool.pros?.map((p, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <Check className="w-4 h-4 mt-1 text-green-600" />
+                              <span className="text-gray-700 dark:text-gray-300">{p}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Cons</h3>
+                        <ul className="space-y-2">
+                          {tool.cons?.map((c, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <X className="w-4 h-4 mt-1 text-red-600" />
+                              <span className="text-gray-700 dark:text-gray-300">{c}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}                          
+             
 
               {activeTab === 'pricing' && (
                 <div className="mt-6">
                   {tool.pricingTiers && tool.pricingTiers.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {tool.pricingTiers.map((tier, idx) => (
+                      {tool.pricingTiers.map((tier, idx) => ( 
                         <div key={idx} className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="text-lg font-semibold">{tier.name}</div>
-                            <DollarSign className="w-4 h-4 text-gray-400" />
-                          </div>
-                          <div className="mt-1 text-2xl font-bold">{tier.price}</div>
-                          {tier.billing && (
-                            <div className="text-xs text-gray-500">Billed {tier.billing}</div>
-                          )}
-                          <ul className="mt-4 space-y-2">
-                            {tier.features.map((f, i) => (
-                              <li key={i} className="flex items-start gap-2 text-sm">
-                                <Check className="w-4 h-4 mt-0.5 text-green-600" />
-                                <span className="text-gray-700 dark:text-gray-300">{f}</span>
-                              </li>
-                            ))}
-                          </ul>
+                      {/* Header: account type badge + $ icon */}
+                      <div className="flex items-center justify-between">
+                        <span className={`px-6 py-2 rounded-full text-xs-200 font-semibold ${badgeTone(tier.name)}`}>
+                          {tier.name}
+                        </span>
+                        <DollarSign className="w-4 h-4 text-gray-400" />
+                      </div>
+
+                      {/* Price + billing */}
+                      <div className="mt-2 text-xl font-bold">{tier.price}</div>
+                      {tier.billing && (
+                        <div className="text-xs text-gray-500">Billed {tier.billing}</div>
+                      )}
+
+                      {/* Features */}
+                      <ul className="mt-4 space-y-2">
+                        {tier.features.map((f, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm">
+                            <Check className="w-4 h-4 mt-0.5 text-green-600" />
+                            <span className="text-gray-700 dark:text-gray-300">{f}</span>
+                          </li>
+                        ))}
+                      </ul>
                         </div>
                       ))}
                     </div>
@@ -233,7 +270,7 @@ const relatedTools = useMemo(() => {
           <div className="space-y-4">
         {/* Price and trial */}
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-500">Starting price</div>
+          <div className="text-sm text-pink-500">Starting price</div>
           <div className="font-semibold">{tool.price}</div>
         </div>
         {tool.freeTrial && (
@@ -243,19 +280,19 @@ const relatedTools = useMemo(() => {
         {/* Meta */}
         <div className="grid grid-cols-3 gap-4 mt-2">
           <div>
-            <div className="text-xs text-gray-500">Founded</div>
+            <div className="text-xs text-pink-500">Founded</div>
             <div className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
               <Calendar className="w-4 h-4 text-gray-400" /> {tool.metrics?.founded ?? '—'}
             </div>
           </div>
           <div>
-            <div className="text-xs text-gray-500">Users</div>
+            <div className="text-xs text-pink-500">Users</div>
             <div className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
               <Users className="w-4 h-4 text-gray-400" /> {tool.metrics?.users ?? '—'}
             </div>
           </div>
           <div>
-            <div className="text-xs text-gray-500">Updated</div>
+            <div className="text-xs text-pink-500">Updated</div>
             <div className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
               <Calendar className="w-4 h-4 text-gray-400" /> {tool.metrics?.lastUpdated ?? '—'}
             </div>
@@ -265,7 +302,7 @@ const relatedTools = useMemo(() => {
         {/* Ideal for */}
         {tool.idealFor && tool.idealFor.length > 0 && (
           <div className="mt-4">
-            <div className="text-sm text-gray-500 mb-2">Best for</div>
+            <div className="text-sm text-pink-500 mb-2">Best for</div>
             <div className="flex flex-wrap gap-2">
               {tool.idealFor.map((seg, i) => (
                 <span key={i} className="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-xs">
@@ -279,7 +316,7 @@ const relatedTools = useMemo(() => {
         {/* Integrations */}
         {tool.integrations && tool.integrations.length > 0 && (
           <div className="mt-4">
-            <div className="text-sm text-gray-500 mb-2">Integrations</div>
+            <div className="text-sm text-pink-500 mb-2">Integrations</div>
             <div className="flex flex-wrap gap-2">
               {tool.integrations.map((name, i) => (
                 <span key={i} className="px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-xs">
@@ -295,7 +332,7 @@ const relatedTools = useMemo(() => {
           href={tool.website}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
+          className="mt-4 inline-flex w-full blink items-center justify-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
         >
           Visit website <ExternalLink className="w-4 h-4" />
         </a>

@@ -1,4 +1,4 @@
-import { Menu, Moon, Sun, X, Zap } from 'lucide-react';
+import { Menu, X, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -7,7 +7,7 @@ interface HeaderProps {
   toggleDarkMode: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
+const Header: React.FC<HeaderProps> = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -60,6 +60,16 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
               Blog
             </Link>
             <Link
+              to="/courses"
+              className={`transition-colors ${
+                isActive('/Course') 
+                  ? 'text-primary-600 dark:text-primary-400' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
+              }`}
+            >
+              Course
+            </Link>
+            <Link
               to="/about"
               className={`transition-colors ${
                 isActive('/about') 
@@ -94,12 +104,6 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
             <button
-              onClick={toggleDarkMode}
-              className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-            >
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-            <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
             >
@@ -125,6 +129,13 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Tools
+              </Link>
+              <Link
+                to="/courses"
+                className="block px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Course
               </Link>
               <Link
                 to="/blog"

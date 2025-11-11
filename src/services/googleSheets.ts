@@ -22,7 +22,7 @@ type SurveyPayload = {
   path?: string;
   timestamp?: string;
 };
-
+VITE_SHEETS_API_ENDPOINT=https://script.google.com/macros/s/AKfycbzZQAxAzsenmrtf_vp6pn7EevldbBhe4z0pEZeu4_BBtg7b1_TVfIipAkLDp1HPT5Sg/exec
 const ENDPOINT: string =
   (typeof import.meta !== 'undefined' &&
     (import.meta as any).env &&

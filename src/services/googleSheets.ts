@@ -26,7 +26,7 @@ VITE_SHEETS_API_ENDPOINT=https://script.google.com/macros/s/AKfycbzZQAxAzsenmrtf
 const ENDPOINT: string =
   (typeof import.meta !== 'undefined' &&
     (import.meta as any).env &&
-    (import.meta as any).env.VITE_SHEETS_API_ENDPOINT) ||
+    VITE_SHEETS_API_ENDPOINT ||
   '/api/google-sheets'; // dùng khi bạn có proxy /api
 
 const isGAS = (url: string) => /script\.google\.com|apps-script/i.test(url);

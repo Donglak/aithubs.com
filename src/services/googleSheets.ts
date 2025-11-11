@@ -23,10 +23,7 @@ type SurveyPayload = {
   timestamp?: string;
 };
 const VITE_SHEETS_API_ENDPOINT= "https://script.google.com/macros/s/AKfycbzZQAxAzsenmrtf_vp6pn7EevldbBhe4z0pEZeu4_BBtg7b1_TVfIipAkLDp1HPT5Sg/exec"
-const ENDPOINT: string =
-  (typeof import.meta !== 'undefined' &&
-    (import.meta as any).env &&
-    VITE_SHEETS_API_ENDPOINT ||
+const ENDPOINT: string = VITE_SHEETS_API_ENDPOINT ||
   '/api/google-sheets'; // dùng khi bạn có proxy /api
 
 const isGAS = (url: string) => /script\.google\.com|apps-script/i.test(url);

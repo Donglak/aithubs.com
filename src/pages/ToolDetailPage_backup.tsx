@@ -1,4 +1,4 @@
-import { ArrowLeft, Award, Check, ChevronRight, ExternalLink, Star, Users, X } from 'lucide-react';
+import { ArrowLeft, Award, Calendar, Check, ChevronRight, DollarSign, ExternalLink, Star, Users, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useParams } from 'react-router-dom';
@@ -151,12 +151,12 @@ const relatedTools = useMemo(() => {
 
               {/* Tab panels */}
               {activeTab === 'overview' && (
-                  <div className="mt-6 flex flex-col gap-6">
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Left column: Features + Usecases */}
                     <div className="flex flex-col gap-6">
                       {/* Features */}
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-blue-500 mb-3">Key features</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Key features</h3>
                         <ul className="space-y-2">
                           {tool.features?.map((f, idx) => (
                             <li key={idx} className="flex items-start gap-2">
@@ -169,12 +169,12 @@ const relatedTools = useMemo(() => {
 
                       {/* Usecases moved up here */}
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-blue-500 mb-3">Usecases</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Usecases</h3>
                         <ul className="space-y-1">
                           {tool.useCases?.map((f, idx) => (
                             <li key={idx} className="flex items-start gap-2">
                               <Check className="w-4 h-4 mt-1 text-green-600" />
-                              <span className="text-gray-600 dark:text-gray-300 overflow-hidden text-ellipsis block">{f}</span>
+                              <span className="text-gray-700 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis block">{f}</span>
                             </li>
                           ))}
                         </ul>
@@ -182,9 +182,9 @@ const relatedTools = useMemo(() => {
                     </div>
 
                     {/* Right column: Pros & Cons */}
-                    <div className="mt-6 flex flex-col gap-6">
+                    <div className="grid grid-cols-1 gap-6">
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-blue-500 mb-3">Pros</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Pros</h3>
                         <ul className="space-y-2">
                           {tool.pros?.map((p, idx) => (
                             <li key={idx} className="flex items-start gap-2">
@@ -196,7 +196,7 @@ const relatedTools = useMemo(() => {
                       </div>
 
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-blue-500 mb-3">Cons</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Cons</h3>
                         <ul className="space-y-2">
                           {tool.cons?.map((c, idx) => (
                             <li key={idx} className="flex items-start gap-2">
@@ -222,7 +222,8 @@ const relatedTools = useMemo(() => {
                         <span className={`px-6 py-2 rounded-full text-xs-200 font-semibold ${badgeTone(tier.name)}`}>
                           {tier.name}
                         </span>
-                       </div>
+                        <DollarSign className="w-4 h-4 text-gray-400" />
+                      </div>
 
                       {/* Price + billing */}
                       <div className="mt-2 text-xl font-bold">{tier.price}</div>
@@ -245,25 +246,6 @@ const relatedTools = useMemo(() => {
                   ) : (
                     <div className="text-gray-600 dark:text-gray-300">Pricing details will be added soon.</div>
                   )}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-slate-700/60 bg-slate-900/70 px-4 py-3">
-      <p className="text-sm text-slate-200">
-        Ready to see full pricing, plans, and discounts on the official site?
-      </p>
-      <a
-        href={tool.website}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center justify-center px-5 py-2.5
-                   rounded-full bg-indigo-500 text-sm font-semibold text-white
-                   shadow-lg shadow-indigo-500/30
-                   hover:bg-indigo-400 hover:shadow-indigo-400/40
-                   focus:outline-none focus:ring-2 focus:ring-indigo-400
-                   transition-transform duration-150 hover:-translate-y-0.5"
-      >
-        View full pricing on website
-        <ExternalLink className="ml-2 h-4 w-4" />
-      </a>
-    </div>
                 </div>
               )}
 
@@ -286,38 +268,50 @@ const relatedTools = useMemo(() => {
           {/* Info card (giữ nguyên nội dung cũ) */}
         <aside className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6 sticky top-6">
           <div className="space-y-4">
+        {/* Price and trial */}
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-pink-500">Starting price</div>
+          <div className="font-semibold">{tool.price}</div>
+        </div>
+        {tool.freeTrial && (
+          <div className="text-xs text-green-600">Free trial available</div>
+        )}
 
-        
-  {/* Cột phải: CTA mời người dùng click Visit website */}
-  {/* CTA card bên phải */}
-<div className="flex items-center justify-center">
-  <div className="relative w-full max-w-xs overflow-hidden rounded-2xl
-                  bg-slate-900 border border-violet-500/60 p-4
-                  flex flex-col items-center text-center gap-3">
-    {/* Ảnh động dễ thương + click → website */}
-    <a
-      href={tool.website}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="w-54 h-54 mb-1 animate-bounce-slow cursor-pointer flex items-center justify-center"
-    >
-      <img
-        src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTlqNXV3NDAxeWx3MnVyMGQ1b3V1OGg1bXE5bDk4MHd5cTJuZ2ZnYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/MApP3BXb7LosQKoOvv/giphy.gif"
-        alt="Cute CTA"
-        className="w-full h-full object-contain"
-      />
-    </a>
+        {/* Meta */}
+        <div className="grid grid-cols-3 gap-4 mt-2">
+          <div>
+            <div className="text-xs text-pink-500">Founded</div>
+            <div className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
+              <Calendar className="w-4 h-4 text-gray-400" /> {tool.metrics?.founded ?? '—'}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs text-pink-500">Users</div>
+            <div className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
+              <Users className="w-4 h-4 text-gray-400" /> {tool.metrics?.users ?? '—'}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs text-pink-500">Updated</div>
+            <div className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
+              <Calendar className="w-4 h-4 text-gray-400" /> {tool.metrics?.lastUpdated ?? '—'}
+            </div>
+          </div>
+        </div>
 
-    <p className="text-sm text-slate-100 font-medium">
-      Discover more on the official website 💙
-    </p>
-    <p className="text-xs text-slate-400">
-      Click the <span className="text-indigo-300 font-semibold">Visit website</span> button below to explore all features.
-    </p>
-  </div>
-</div>
-
-
+        {/* Ideal for */}
+        {tool.idealFor && tool.idealFor.length > 0 && (
+          <div className="mt-4">
+            <div className="text-sm text-pink-500 mb-2">Best for</div>
+            <div className="flex flex-wrap gap-2">
+              {tool.idealFor.map((seg, i) => (
+                <span key={i} className="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-xs">
+                  {seg}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Integrations */}
         {tool.integrations && tool.integrations.length > 0 && (

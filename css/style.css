@@ -62,3 +62,11 @@
 
 /* Optional hero font */
 .font-hero { font-family: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, Inter, sans-serif; }
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2.8s infinite ease-in-out;
+}

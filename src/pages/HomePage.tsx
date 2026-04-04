@@ -26,6 +26,7 @@ import NewsletterForm from '../components/NewsletterForm';
 import RadialDistribution from '../components/RadialDistribution';
 import { FUNCTIONS_DESCRIPTIONS, INDUSTRY_DESCRIPTIONS } from '../data/categoryTemplates';
 import { tools } from '../data/tools';
+import { toSlug } from '../utils/slug';
 
 
 // --------- Helpers (kept aligned with ToolsPage) ---------
@@ -327,21 +328,20 @@ const HomePage: React.FC = () => {
                       {trendingTools.map((tool: any) => {
                         const price = s(tool.price);
                         const priceLabel =
-                        /^free\b/i.test(price)
-                        ? 'Free'
-                        : price.match(/\$\s*\d+(?:\.\d{2})?/)?.[0]?.replace(/\s+/g, '') ?? (price || '—');
+                          /^free\b/i.test(price)
+                            ? 'Free'
+                            : price.match(/\$\s*\d+(?:\.\d{2})?/)?.[0]?.replace(/\s+/g, '') ?? (price || '—');
 
-                        // pick one function to color the badge
                         const fn = deriveFunctions(tool)[0] || 'Automation';
                         const Icon = FUNCTION_ICON[fn] || Bot;
                         const grad = pickGrad(fn, 'function');
 
                         return (
                           <Link
-                            key={tool.id}
-                            to={`/tools/${tool.id}`}
-                            className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                          >
+                              key={tool.id}
+                              to={`/tools/${toSlug(tool.name)}`}   // sửa từ tool.id → slug theo name
+                              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                            >
                             <div className="flex items-center gap-3">
                               <div className={`w-10 h-10 bg-gradient-to-r ${grad} rounded-lg flex items-center justify-center`}>
                                 <Icon className="w-5 h-5 text-blue" />

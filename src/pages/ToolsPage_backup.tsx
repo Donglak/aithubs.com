@@ -18,6 +18,7 @@ const arr = <T,>(v: T | T[] | undefined | null): T[] =>
 
 const norm = (v: unknown) =>
   s(v).trim().toLowerCase();
+
 // Fallback đơn giản → map 1 số tag sang industry / function khi dataset chưa có field riêng
 const TAG_MAPPING = {
   industry: new Map<string, string>([
@@ -85,7 +86,6 @@ const ToolsPage = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   // Scroll-to-top (mobile FAB)
 const [showToTop, setShowToTop] = useState(false);
-const [filtersOpen, setFiltersOpen] = useState(true);
 
 useEffect(() => {
   const onScroll = () => setShowToTop(window.scrollY > 320);
@@ -121,15 +121,13 @@ const scrollToTop = () => {
 
 
   const handleToggleFunction = (val: string) => {
+  // luôn chỉ giữ đúng 1 function
   setSelectedFunctions(prev => {
-    const next = prev.includes(val)
-      ? prev.filter(x => x !== val)   // bỏ nếu đang chọn
-      : [...prev, val];               // thêm nếu chưa có
+    const next = prev.includes(val) ? [] : [val];
     updateParamArray('function', next);
     return next;
   });
 };
-
   const handleTogglePricing = (key: 'free' | 'freemium' | 'paid') => {
     setSelectedPricing(prev => {
       const next = prev.includes(key) ? prev.filter(x => x !== key) : [...prev, key];
@@ -295,143 +293,149 @@ const scrollToTop = () => {
             />
           </div>
         </div>
-          {/* Mobile filters toggle */}
-              <div className="mt-4 flex items-center justify-between lg:hidden">
-                <p className="text-xs text-slate-400">
-                  Showing {filteredTools.length} tools
-                </p>
-                <button
-                  onClick={() => setFiltersOpen(o => !o)}
-                  className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-100
-                            border border-slate-600 hover:bg-slate-700"
-                >
-                  {filtersOpen ? 'Hide filters' : 'Show filters'}
-                </button>
-              </div>
 
         {/* Filters card */}
-        {/* Layout 2 cột: sidebar filters + list */}
-          <div className="mt-6 grid grid-cols-1 lg:grid-cols-[280px,minmax(0,1fr)] gap-6">
-            {/* Sidebar filters bên trái */}
-            <aside className={`${filtersOpen ? 'block' : 'hidden'}lg:block lg:sticky lg:top-24 self-start`}>
-              <div className="glow-mobile glass-card tool-card p-4 flex flex-col justify-between h-full transition-all">
-                {/* Tiêu đề + nút clear */}
-                <div className="flex items-center justify-between gap-2">
-                  <h2 className="text-sm font-semibold text-slate-100">
-                    Filters
-                  </h2>
-                  <button
-                    onClick={() => {
-                      setSelectedIndustries([]);
-                      setSelectedFunctions([]);
-                      setSelectedPricing([]);
-                      setSearchTerm('');
-                      setSearchParams(new URLSearchParams(), { replace: false });
-                    }}
-                    className="text-xs px-2 py-1 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700"
-                  >
-                    Clear filters
-                  </button>
-                </div>
+        <div className=" glow-mobile bg-white dark:bg-gray-800 rounded-lg shadow-soft p-6 mb-8 transition-all duration-500">
+          {/* Industries */}
+          <div>
+            <h4 className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-300">
+              Filter by <span className="text-primary-600">Industry</span>
+            </h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {allIndustries.map(([label, count]) => (
+                <label key={label} className="flex items-center gap-2 text-sm text-gray-800 dark:text-white">
+                  <input
+                    type="checkbox"
+                    checked={selectedIndustries.includes(label)}
+                    onChange={() => handleToggleIndustry(label)}
+                    className="form-checkbox text-primary-600"
+                  />
+                  <span className="btn-neon text-xs px-4 py-2 rounded-full font-semibold">
+                    {label} <span className="opacity-70">({count})</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
 
-                {/* Industry checkbox list */}
-                <div>
-                  <p className="text-lg font-semibold text-green-400">
-                    Industry
-                  </p>
-                  <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
-                    {allIndustries.map(([label, count]) => (
-                      <label
-                        key={label}
-                        className="flex items-center justify-between gap-2 text-xs text-slate-200 cursor-pointer"
-                      >
-                        <span className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedIndustries.includes(label)}
-                            onChange={() => handleToggleIndustry(label)}
-                            className="h-3.5 w-3.5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-400"
-                          />
-                          <span>{label}</span>
-                        </span>
-                        <span className="text-[10px] text-slate-500">{count}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
+          {/* Functions */}
+          <div className="mt-6">
+            <h4 className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-300">
+              Filter by <span className="text-primary-600">Functions</span>
+            </h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {allFunctions.map(([label, count]) => (
+                <label key={label} className="flex items-center gap-2 text-sm text-gray-800 dark:text-white">
+                  <input
+                    type="checkbox"
+                    checked={selectedFunctions.includes(label)}
+                    onChange={() => handleToggleFunction(label)}
+                    className="form-checkbox text-primary-600"
+                  />
+                  <span className="btn-neon text-xs px-4 py-2 rounded-full font-semibold">
+                    {label} <span className="opacity-70">({count})</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
 
-                {/* Function checkbox list */}
-                <div>
-                  <p className="text-lg font-semibold text-green-400">
-                    Functions
-                  </p>
-                  <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
-                    {allFunctions.map(([label, count]) => (
-                      <label
-                        key={label}
-                        className="flex items-center justify-between gap-2 text-xs text-slate-200 cursor-pointer"
-                      >
-                        <span className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedFunctions.includes(label)}
-                            onChange={() => handleToggleFunction(label)}
-                            className="h-3.5 w-3.5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-400"
-                          />
-                          <span>{label}</span>
-                        </span>
-                        <span className="text-[10px] text-slate-500">{count}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
+          {/* Pricing */}
+          <div className="mt-6">
+            <h4 className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-300">Pricing</h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {/* Free */}
+              <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-white">
+                <input
+                  type="checkbox"
+                  checked={selectedPricing.includes('free')}
+                  onChange={() => handleTogglePricing('free')}
+                  className="form-checkbox text-green-600"
+                />
+                <span className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded-full text-xs">
+                  Freemium
+                </span>
+              </label>
+              {/* Freemium */}
+              {/* <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-white">
+                <input
+                  type="checkbox"
+                  checked={selectedPricing.includes('freemium')}
+                  onChange={() => handleTogglePricing('freemium')}
+                  className="form-checkbox text-purple-600"
+                />
+                <span className="bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-full text-xs">
+                  Freemium
+                </span>
+              </label> */}
+              {/* Paid */}
+              <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-white">
+                <input
+                  type="checkbox"
+                  checked={selectedPricing.includes('paid')}
+                  onChange={() => handleTogglePricing('paid')}
+                  className="form-checkbox text-red-600"
+                />
+                <span className="bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 px-2 py-1 rounded-full text-xs">
+                  Paid
+                </span>
+              </label>
+            </div>
+          </div>
 
-                {/* Pricing */}
-                <div>
-                  <p className="text-lg font-semibold text-green-400">
-                    Pricing
-                  </p>
-                  <div className="space-y-1 text-xs text-slate-200">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedPricing.includes('free')}
-                        onChange={() => handleTogglePricing('free')}
-                        className="h-3.5 w-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-400"
-                      />
-                      <span>Free</span>
-                    </label>
-                    {/* Nếu dùng freemium thì mở lại */}
-                    {/* <label ...>Freemium</label> */}
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedPricing.includes('paid')}
-                        onChange={() => handleTogglePricing('paid')}
-                        className="h-3.5 w-3.5 rounded border-slate-600 text-pink-500 focus:ring-pink-400"
-                      />
-                      <span>Paid</span>
-                    </label>
-                  </div>
-                </div>
+          {/* Sort & View */}
+          <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Showing {filteredTools.length} tools
+            </div>
+            <div className="flex items-center gap-2">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+              >
+                <option value="popularity">Most Popular</option>
+                <option value="rating">Highest Rated</option>
+                <option value="name">Name A-Z</option>
+                <option value="price">Price Low-High</option>
+              </select>
+
+              <div className="ml-2 flex gap-2">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`px-3 py-2 rounded ${viewMode === 'grid' ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+                >
+                  Grid
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-3 py-2 rounded ${viewMode === 'list' ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+                >
+                  List
+                </button>
               </div>
-            </aside>
+            </div>
+          </div>
 
-            {/* Cột phải: sort + kết quả list tools */}
-            <section className="space-y-4" ref={resultRef}>
-              {/* Thanh sort / view / showing count giữ nguyên code cũ của bạn ở đây */}
-              <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Đặt toàn bộ khối Showing / Sort / View hiện tại vào đây
-          NHƯNG bỏ các class kiểu mt-6, mt-8 nếu đang có */}
-              
-              {/* ... */}
-              {/* List tools dùng visibleTools.map(...) giữ nguyên */}
-              {/* ... */}
-            
-
+          {/* Clear filters */}
+          <div className="mt-4">
+            <button
+              onClick={() => {
+                setSelectedIndustries([]);
+                setSelectedFunctions([]);
+                setSelectedPricing([]);
+                setSearchTerm('');
+                setSearchParams(new URLSearchParams(), { replace: false });
+              }}
+              className="px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 text-sm"
+            >
+              Clear filters
+            </button>
+          </div>
+        </div>
 
         {/* List */}
-        <div 
+        <div
           ref={resultRef}
           className={viewMode === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}
         >
@@ -538,7 +542,7 @@ const scrollToTop = () => {
             );
           })}
         </div>
-     </div>
+
         {/* See more */}
         {visibleCount < filteredTools.length && (
           <div className="flex justify-center mt-6">
@@ -578,14 +582,8 @@ const scrollToTop = () => {
           <ArrowUp className="w-5 h-5 mx-auto" />
         </button>
 
-
-        </section>
       </div>
-
-      </div>
-      
     </div>
-    
   );
 };
 

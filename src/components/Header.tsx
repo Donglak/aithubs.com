@@ -1,6 +1,7 @@
 import { Menu, X, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 interface HeaderProps {
   darkMode: boolean;
@@ -10,6 +11,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth()
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -92,14 +94,26 @@ const Header: React.FC<HeaderProps> = () => {
           </nav>
 
           {/* Right side buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/tools"
-              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+          {user ? (
+            <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-600 dark:text-gray-300">
+            {user.user_metadata?.full_name || user.email}
+            </span>
+            <button
+            onClick={signOut}
+            className="text-sm text-red-500 hover:underline"
             >
-              Explore Tools
+            Sign Out
+            </button>
+            </div>
+            ) : (
+            <Link
+            to="/login"
+            className="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700"
+            >
+            Sign In
             </Link>
-          </div>
+            )}
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">

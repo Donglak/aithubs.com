@@ -11,6 +11,7 @@ import BlogPostPage from './pages/BlogPostPage';
 import ContactPage from './pages/ContactPage';
 import CoursesPage from './pages/CoursesPage';
 import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
 import ToolDetailPage from './pages/ToolDetailPage';
 import ToolsPage from './pages/ToolsPage';
 
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/author/:slug" element={<AuthorPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/login" element={<LoginPage />} />
             </Routes>
           
         </main>

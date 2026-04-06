@@ -7,6 +7,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link, useSearchParams } from 'react-router-dom';
 import '../../css/style.css';
 import '../../css/style_Aitool.css';
+import ToolActionButtons from '../components/ToolActionButtons';
 import { tools } from '../data/tools';
 import { toSlug } from '../utils/slug';
 
@@ -521,18 +522,40 @@ const scrollToTop = () => {
 
 
                 {/* Actions */}
-                <div className="mt-auto pt-4 flex justify-between items-center">
-                  <Link to={`/tools/${toSlug(tool.name)}`} className="btn-neon text-xs px-4 py-2 rounded font-semibold">
-                    Details
-                  </Link>
-                  <a
-                    href={tool.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-gradient px-4 py-2 rounded-full text-sm pulseGlow"
+                <div className="mt-auto pt-4 border-t border-white/10">
+                  {/* Hàng 1: nút tương tác */}
+                  <div
+                    className="flex items-center justify-end gap-1 mb-3"
+                    onClick={e => e.preventDefault()}
                   >
-                    Try Now
-                  </a>
+                    <ToolActionButtons
+                      tool={{
+                        slug: toSlug(tool.name),
+                        name: s(tool.name),
+                        logo: s(tool.image),
+                        category: deriveIndustries(tool)[0] || deriveFunctions(tool)[0] || '',
+                      }}
+                      size="sm"
+                    />
+                  </div>
+
+                  {/* Hàng 2: Details + Try Now */}
+                  <div className="flex justify-between items-center">
+                    <Link
+                      to={`/tools/${toSlug(tool.name)}`}
+                      className="btn-neon text-xs px-4 py-2 rounded font-semibold"
+                    >
+                      Details
+                    </Link>
+                    <a
+                      href={tool.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-gradient px-4 py-2 rounded-full text-sm pulseGlow"
+                    >
+                      Try Now
+                    </a>
+                  </div>
                 </div>
               </div>
             );

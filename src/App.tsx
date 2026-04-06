@@ -10,10 +10,12 @@ import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import ContactPage from './pages/ContactPage';
 import CoursesPage from './pages/CoursesPage';
+import DashboardPage from './pages/DashboardPage';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import ToolDetailPage from './pages/ToolDetailPage';
 import ToolsPage from './pages/ToolsPage';
+
 
 export default function App() {
   // Always force dark mode
@@ -44,6 +46,7 @@ export default function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             </Routes>
           
         </main>

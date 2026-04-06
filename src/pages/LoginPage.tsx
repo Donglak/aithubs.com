@@ -19,7 +19,7 @@ export default function LoginPage() {
     try {
       if (isSignUp) {
         await signUp(email, password, fullName)
-        alert('Check your email to identify the account.!')
+        alert('welcome to our platform.!')
       } else {
         await signInWithEmail(email, password)
         navigate('/')

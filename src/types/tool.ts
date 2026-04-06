@@ -27,7 +27,6 @@ export type ToolBase = {
   price?: string;                      // 'Free', 'Free - $10', 'Contact price'
   freeTrial?: boolean;
   description?: string;
-  tags?: string[];
 };
 
 export type ToolDetail = ToolBase & {

@@ -28,8 +28,8 @@ export const CATEGORY_TEMPLATES: CategoryTemplateMap = {
   // thêm category khác nếu cần
 };
 
-// Human-friendly industry descriptions used on homepage
-export const INDUSTRY_DESCRIPTIONS: Record<string, string> = {
+// Human-friendly categories descriptions used on homepage
+export const categories_DESCRIPTIONS: Record<string, string> = {
   'e-commerce': 'Online selling platforms, dropshipping solutions, product description optimization, store management, and conversion rate optimization tools.',
   'marketing': 'Ad content creation tools, automated marketing campaign management, SEO optimization solutions, and customer behavior analytics platforms.',
   'education': 'E-learning platforms, course creation and LMS tools to build and deliver online training at scale.',

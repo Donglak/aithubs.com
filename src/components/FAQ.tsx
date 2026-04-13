@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 
 const FAQ = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -11,7 +11,7 @@ const FAQ = () => {
     },
     {
       question: 'What commission rates can I expect?',
-      answer: 'Commission rates vary by program and industry, typically ranging from 1% to 50%. Our platform shows you the exact rates for each program before you apply, so you can make informed decisions.'
+      answer: 'Commission rates vary by program and categories, typically ranging from 1% to 50%. Our platform shows you the exact rates for each program before you apply, so you can make informed decisions.'
     },
     {
       question: 'How quickly do I get paid?',

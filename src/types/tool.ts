@@ -19,7 +19,7 @@ export type ToolBase = {
   image: string;
   website: string;
   company?: string;
-  industry: string | string[];         // có thể là mảng
+  categories: string | string[];         // có thể là mảng
   functions?: string | string[];
   rating?: number;
   reviews?: number;

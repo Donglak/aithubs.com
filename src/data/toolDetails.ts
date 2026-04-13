@@ -46,7 +46,7 @@ export const TOOL_DETAILS: Partial<ToolDetail>[] = [
     name: "Looka",
     longDescription: "Looka is an AI design tool that helps businesses and entrepreneurs create professional logos and brand kits in minutes. With customizable templates, smart branding suggestions, and easy design tools, Looka makes building a unique and consistent brand simple and affordable",
     features: [
-      "AI-powered logo generator producing hundreds of custom logo options based on name, industry, styles, colors, and symbols",
+      "AI-powered logo generator producing hundreds of custom logo options based on name, categories, styles, colors, and symbols",
       "Real-time previews of logos across mockups like business cards, T-shirts, websites, and social media",
       "Brand Kit automatically applying logo, colors, and fonts to 300+ templates for social posts, business cards, presentations",
       "Easy in-browser editor to tweak fonts, layouts, icons, and colors without design skills",
@@ -173,7 +173,7 @@ export const TOOL_DETAILS: Partial<ToolDetail>[] = [
     name: "Www.aogome",
     longDescription: "Logome.ai is an AI-powered logo maker that enables startups and small businesses to design professional logos in seconds. Create unique brand identities with smart AI design tools and easy customization to build a consistent, memorable brand without expensive designers",
     features: [
-      "AI-driven logo generation based on brand name, industry, and style preferences, delivering multiple logo concepts at once",
+      "AI-driven logo generation based on brand name, categories, and style preferences, delivering multiple logo concepts at once",
       "Iterative editing workflow that allows users to refine fonts, colors, and layouts across different logo directions",
       "Brand kit generation that extends the logo into color palettes, typography pairings, and basic marketing visuals",
       "Real-time previews and social/mockup views to see logos on websites, packaging, and social posts",
@@ -836,7 +836,7 @@ export const TOOL_DETAILS: Partial<ToolDetail>[] = [
     pros: [
       "Comprehensive feature set covers invoicing, payroll, inventory, and reporting in one platform",
       "Cloud-based with mobile apps provides access from anywhere on any device",
-      "Extensive app ecosystem (750+) integrates with industry-specific tools and workflows",
+      "Extensive app ecosystem (750+) integrates with categories-specific tools and workflows",
       "Automated bank feeds and receipt matching significantly reduce manual data entry",
       "Strong customer support and ecosystem of accountants/bookkeepers familiar with the platform"
     ],
@@ -912,14 +912,14 @@ export const TOOL_DETAILS: Partial<ToolDetail>[] = [
       "Payroll processing with direct deposit and tax filing (country-specific)",
       "Real-time financial dashboards and customizable reporting",
       "Hubdoc for automated receipt capture and data extraction",
-      "Extensive app marketplace (1,000+) for industry-specific integrations"
+      "Extensive app marketplace (1,000+) for categories-specific integrations"
     ],
     pros: [
       "Clean, intuitive interface accessible to business owners without accounting backgrounds",
       "Real-time bank feeds and automation reduce manual data entry significantly",
       "Strong accountant collaboration features streamline shared bookkeeping",
       "Multi-currency and international capabilities built for global small businesses",
-      "Extensive app ecosystem provides industry-specific functionality"
+      "Extensive app ecosystem provides categories-specific functionality"
     ],
     cons: [
       "Payroll and advanced features require add-on pricing that increases costs",

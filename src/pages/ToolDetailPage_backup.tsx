@@ -43,17 +43,17 @@ const relatedTools = useMemo(() => {
   return tools
     .filter(t => t.id !== tool.id)
     .filter(t => {
-      if (Array.isArray(t.industry) && Array.isArray(tool.industry)) {
-        return t.industry.some(cat => tool.industry.includes(cat));
+      if (Array.isArray(t.categories) && Array.isArray(tool.categories)) {
+        return t.categories.some(cat => tool.categories.includes(cat));
       }
-      return t.industry === tool.industry;
+      return t.categories === tool.categories;
     })
     .sort((a, b) => {
-      const commonA = Array.isArray(tool.industry) && Array.isArray(a.industry)
-        ? a.industry.filter(cat => tool.industry.includes(cat)).length
+      const commonA = Array.isArray(tool.categories) && Array.isArray(a.categories)
+        ? a.categories.filter(cat => tool.categories.includes(cat)).length
         : 0;
-      const commonB = Array.isArray(tool.industry) && Array.isArray(b.industry)
-        ? b.industry.filter(cat => tool.industry.includes(cat)).length
+      const commonB = Array.isArray(tool.categories) && Array.isArray(b.categories)
+        ? b.categories.filter(cat => tool.categories.includes(cat)).length
         : 0;
       return commonB - commonA;
     })
@@ -61,7 +61,7 @@ const relatedTools = useMemo(() => {
 }, [tool]);
 
   
-  const industries = Array.isArray(tool.industry) ? tool.industry : [tool.industry];
+  const industries = Array.isArray(tool.categories) ? tool.categories : [tool.categories];
 // khai bao màu cho nhan giá
   const badgeTone = (name: string) => {
   const k = name.toLowerCase();

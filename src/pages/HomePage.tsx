@@ -23,8 +23,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../css/style.css';
 import NewsletterForm from '../components/NewsletterForm';
-import RadialDistribution from '../components/RadialDistribution';
-import { FUNCTIONS_DESCRIPTIONS, INDUSTRY_DESCRIPTIONS } from '../data/categoryTemplates';
+import { FUNCTIONS_DESCRIPTIONS, categories_DESCRIPTIONS } from '../data/categoryTemplates';
 import { tools } from '../data/tools';
 import { toSlug } from '../utils/slug';
 
@@ -34,9 +33,9 @@ const s = (v: unknown) => (typeof v === 'string' ? v : v == null ? '' : String(v
 const arr = <T,>(v: T | T[] | undefined | null): T[] => (v == null ? [] : Array.isArray(v) ? v : [v]);
 const norm = (v: unknown) => s(v).trim().toLowerCase();
 
-// Fallback map → derive industry & function from tags when dataset chưa có field riêng
+// Fallback map → derive categories & function from tags when dataset chưa có field riêng
 const TAG_MAPPING = {
-  industry: new Map<string, string>([
+  categories: new Map<string, string>([
     ['ecommerce', 'Ecommerce'],
     ['finance', 'Finance'],
     ['marketing', 'Marketing'],
@@ -59,12 +58,12 @@ const TAG_MAPPING = {
 };
 
 function deriveIndustries(t: any): string[] {
-  const fromField = arr(t.industry).map(s).filter(Boolean);
+  const fromField = arr(t.categories).map(s).filter(Boolean);
   if (fromField.length) return fromField;
   const tags = arr<string>(t.tags).map(norm);
   const got = new Set<string>();
   tags.forEach(tag => {
-    TAG_MAPPING.industry.forEach((label, key) => {
+    TAG_MAPPING.categories.forEach((label, key) => {
       if (tag.includes(key)) got.add(label);
     });
   });
@@ -97,7 +96,7 @@ const GRADIENT_COLOR = {
 } as const;
 
 // Icons for Industries
-const INDUSTRY_ICON: Record<string, React.ComponentType<any>> = {
+const categories_ICON: Record<string, React.ComponentType<any>> = {
   'E-commerce': ShoppingBag,
   'Finance & Fintech': BadgeDollarSign,
   'Marketing & Advertising': Megaphone,
@@ -132,9 +131,9 @@ function HeartIconFallback(props: React.SVGProps<SVGSVGElement>) {
 }
 
 // Gradient chooser (try to keep stable color feel)
-const pickGrad = (label: string, kind: 'industry' | 'function') => {
+const pickGrad = (label: string, kind: 'categories' | 'function') => {
   const key = label.toLowerCase();
-  if (kind === 'industry') {
+  if (kind === 'categories') {
     if (key.includes('design')) return GRADIENT_COLOR.pink;
     if (key.includes('marketing')) return GRADIENT_COLOR.green;
     if (key.includes('finance')) return GRADIENT_COLOR.orange;
@@ -157,7 +156,7 @@ const pickGrad = (label: string, kind: 'industry' | 'function') => {
 };
 
 // Resolve label to description keys used in categoryTemplates
-function resolveIndustryKey(label: string) {
+function resolvecategoriesKey(label: string) {
   const k = label.toLowerCase();
   if (k.includes('ecom')) return 'e-commerce';
   if (k.includes('market')) return 'marketing';
@@ -172,9 +171,9 @@ function resolveIndustryKey(label: string) {
   return k.replace(/\s+/g, '-');
 }
 
-function getIndustryDescription(label: string) {
-  const key = resolveIndustryKey(label);
-  return INDUSTRY_DESCRIPTIONS[key] || `Discover the best ${label} tools, vetted by our community.`;
+function getcategoriesDescription(label: string) {
+  const key = resolvecategoriesKey(label);
+  return categories_DESCRIPTIONS[key] || `Discover the best ${label} tools, vetted by our community.`;
 }
 
 function resolveFunctionKey(label: string) {
@@ -227,6 +226,8 @@ const HomePage: React.FC = () => {
     return { industries, functions };
   }, []);
 
+  
+
   // build a RadialDistribution for Funcsion 
   const functionDist = React.useMemo(() => {
   const counts = new Map<string, number>();
@@ -240,7 +241,7 @@ const HomePage: React.FC = () => {
 }, []);
 
   const stats = [
-    { number: `${tools.length}+`, label: 'Digital Tools' },
+    { number: `1000+`, label: 'Digital Tools' },
     { number: '50K+', label: 'Happy Users' },
     { number: '98%', label: 'Success Rate' },
     { number: '$2M+', label: 'Saved by Users' },
@@ -265,8 +266,8 @@ const HomePage: React.FC = () => {
   const handleSliceClick = (info: { label: string; value: number; index: number }) => {
   // nếu biểu đồ là theo Functions:
   navigate(`/tools?function=${encodeURIComponent(info.label)}`);
-  // nếu biểu đồ theo Industry thì đổi query param tương ứng:
-  // navigate(`/tools?industry=${encodeURIComponent(info.label)}`);
+  // nếu biểu đồ theo categories thì đổi query param tương ứng:
+  // navigate(`/tools?categories=${encodeURIComponent(info.label)}`);
 };
 
 
@@ -275,10 +276,10 @@ const HomePage: React.FC = () => {
       <style>{marqueeCSS}</style>
       {/* Meta */}
       <Helmet>
-        <title>DigitalToolsHub — Explore by Industry & Functions</title>
+        <title>DigitalToolsHub — Explore by categories & Functions</title>
         <meta
           name="description"
-          content="Find the best digital tools filtered by industry and functions. Compare pricing, features, and ratings to pick the best tool for your use case."
+          content="Find the best digital tools filtered by categories and functions. Compare pricing, features, and ratings to pick the best tool for your use case."
         />
         <link rel="canonical" href="https://aithubs.com/" />
       </Helmet>
@@ -293,7 +294,7 @@ const HomePage: React.FC = () => {
                 <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"> Digital Tools</span>
               </h1>
               <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                Browse by industry and functions to find exactly what fits your workflow. Consistent filters with our Tools page, same icons and colors, just faster discovery.
+                Browse by categories and functions to find exactly what fits your workflow. Consistent filters with our Tools page, same icons and colors, just faster discovery.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
@@ -413,20 +414,20 @@ const HomePage: React.FC = () => {
       <section className="py-20 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4 text-transparent">Browse by Industry</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4 text-transparent">Browse by categories</h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Explore tools curated for your industry. Click any card to jump into a pre‑filtered list.
+              Explore tools curated for your categories. Click any card to jump into a pre‑filtered list.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {industries.map(([label, count]) => {
-              const Icon = INDUSTRY_ICON[label] || Server;
-              const grad = pickGrad(label, 'industry');
+              const Icon = categories_ICON[label] || Server;
+              const grad = pickGrad(label, 'categories');
               return (
                 <Link
                   key={label}
-                  to={`/tools?industry=${encodeURIComponent(label)}`}
+                  to={`/tools?categories=${encodeURIComponent(label)}`}
                   className="glow-mobile glow-rotate card card--hover p-6 block group rounded-xl bg-white dark:bg-gray-900/60 shadow-soft hover:shadow-medium transition-all hover:-translate-y-1"
                 >
                   <div className={`w-12 h-12 bg-gradient-to-r ${grad} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
@@ -434,10 +435,10 @@ const HomePage: React.FC = () => {
                   </div>
                   <h3 className="text-lg font-bold text-green-300 mb-2">{label}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 leading-relaxed">
-                    {getIndustryDescription(label)}
+                    {getcategoriesDescription(label)}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-primary-600 dark:text-primary-400">{count} tools</span>
+                    <span className="text-sm font-medium text-primary-600 dark:text-primary-400"> click here</span>
                     <ArrowRight className="w-5 h-5 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
@@ -474,7 +475,7 @@ const HomePage: React.FC = () => {
                     {getFunctionDescription(label)}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-primary-600 dark:text-primary-400">{count} tools</span>
+                    <span className="text-sm font-medium text-primary-600 dark:text-primary-400">click here</span>
                     <ArrowRight className="w-5 h-5 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
@@ -482,51 +483,7 @@ const HomePage: React.FC = () => {
             })}
           </div>
         </div>
-      </section>
-      {/*section in the RadialDitribution*/}
-      <section className="py-16 bg-gray-900">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 items-center">
-    <div>
-      <h2 className="text-3xl lg:text-4xl font-bold text-white mb-3">Tool distribution</h2>
-      <p className="text-gray-400 mb-6">
-        Explore the right digital tools designed to power the functions you need
-      </p>
-      <ul className="space-y-2 text-gray-300 text-sm">
-        {functionDist.map((d, i) => (
-          <li key={i} className="flex items-center gap-2">
-            <span className="inline-block w-3 h-3 rounded-full"
-                  style={{ background: ['#f43f5e','#f59e0b','#10b981','#22c55e','#3b82f6','#a855f7'][i%6] }} />
-            <span className="font-medium">{d.label}</span>
-            <span className="ml-auto text-gray-400">{d.value}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-
-    <div className="flex flex-col items-center">
-  <RadialDistribution
-    data={functionDist}
-    size={330}                 // 280–340 phù hợp mobile, bạn có thể tinh chỉnh
-    thickness={72}
-    gapDeg={2}
-    centerImageUrl="https://easy-peasy.ai/cdn-cgi/image/quality=80,format=auto,width=700/https://media.easy-peasy.ai/27feb2bb-aeb4-4a83-9fb6-8f3f2a15885e/3fb516e4-bad7-4755-89c5-b6030d22888d.png"
-    onSliceClick={handleSliceClick}
-    showChips={false}           // NEW
-    coachmarkOnce={true}       // NEW
-  />
-
-  {/* hướng dẫn: mobile và desktop khác nhau để dễ hiểu */}
-  <p className="mt-4 px-3 py-1.5 rounded-full bg-amber-100 text-amber-900 font-semibold text-sm sm:hidden">
-    Tap slices or chips to filter
-  </p>
-  <p className="mt-4 px-3 py-1.5 rounded-full bg-amber-400/15 text-amber-300 font-semibold text-sm hidden sm:block">
-    Hover or click slices to filter
-  </p>
-</div>
-    
-</div>
-</section>
-      
+      </section>      
 
       {/* Testimonials (kept) */}
       <section className="py-20 bg-white dark:bg-gray-900">

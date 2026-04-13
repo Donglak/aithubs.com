@@ -19,9 +19,9 @@ const arr = <T,>(v: T | T[] | undefined | null): T[] =>
 
 const norm = (v: unknown) =>
   s(v).trim().toLowerCase();
-// Fallback đơn giản → map 1 số tag sang industry / function khi dataset chưa có field riêng
+// Fallback đơn giản → map 1 số tag sang categories / function khi dataset chưa có field riêng
 const TAG_MAPPING = {
-  industry: new Map<string, string>([
+  categories: new Map<string, string>([
     ['ecommerce', 'E‑commerce'],
     ['finance', 'Finance'],
     ['marketing', 'Marketing'],
@@ -45,14 +45,14 @@ const TAG_MAPPING = {
 };
 
 function deriveIndustries(t: any): string[] {
-  const fromField = arr(t.industry).map(s).filter(Boolean);
+  const fromField = arr(t.categories).map(s).filter(Boolean);
   if (fromField.length) return fromField;
 
   // fallback từ tags
   const tags = arr<string>(t.tags).map(norm);
   const got = new Set<string>();
   tags.forEach(tag => {
-    TAG_MAPPING.industry.forEach((label, key) => {
+    TAG_MAPPING.categories.forEach((label, key) => {
       if (tag.includes(key)) got.add(label);
     });
   });
@@ -87,6 +87,9 @@ const ToolsPage = () => {
   // Scroll-to-top (mobile FAB)
 const [showToTop, setShowToTop] = useState(false);
 const [filtersOpen, setFiltersOpen] = useState(true);
+const [showSuggestions, setShowSuggestions] = useState(false);
+const [highlightedIndex, setHighlightedIndex] = useState(-1);
+const searchRef = useRef<HTMLDivElement>(null);
 
 useEffect(() => {
   const onScroll = () => setShowToTop(window.scrollY > 320);
@@ -104,18 +107,18 @@ const scrollToTop = () => {
   // ====== URL params (để share link lọc) ======
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const updateParamArray = (key: 'industry' | 'function' | 'pricing', arrVal: string[]) => {
+  const updateParamArray = (key: 'categories' | 'function' | 'pricing', arrVal: string[]) => {
     const next = new URLSearchParams(searchParams);
     next.delete(key);
     if (arrVal.length) next.set(key, arrVal.join(','));
     setSearchParams(next, { replace: false });
   };
 
-  const handleToggleIndustry = (val: string) => {
-  // luôn chỉ giữ đúng 1 industry
+  const handleTogglecategories = (val: string) => {
+  // luôn chỉ giữ đúng 1 categories
   setSelectedIndustries(prev => {
     const next = prev.includes(val) ? [] : [val];
-    updateParamArray('industry', next);
+    updateParamArray('categories', next);
     return next;
   });
 };
@@ -141,7 +144,7 @@ const scrollToTop = () => {
 
   // Đọc params từ URL lần đầu / khi URL đổi
   useEffect(() => {
-    const inds = (searchParams.get('industry') ?? '')
+    const inds = (searchParams.get('categories') ?? '')
       .split(',')
       .map(s => s.trim())
       .filter(Boolean);
@@ -188,16 +191,15 @@ const scrollToTop = () => {
       // search
       const name = s(tool.name);
       const desc = s(tool.description);
-      const tags = arr<string>(tool.tags).map(s);
+      
 
       const matchesSearch =
         name.toLowerCase().includes(q) ||
-        desc.toLowerCase().includes(q) ||
-        tags.some(tag => tag.toLowerCase().includes(q));
+        desc.toLowerCase().includes(q);
 
-      // industry
+      // categories
       const inds = deriveIndustries(tool); // string[]
-      const matchesIndustry =
+      const matchescategories =
         selectedIndustries.length === 0 ||
         inds.some(i => selectedIndustries.includes(i));
 
@@ -215,12 +217,12 @@ const scrollToTop = () => {
         selectedPricing.length === 0 ||
         selectedPricing.some(p => {
           if (p === 'free') return isFree && !hasDash;
-          if (p === 'free') return isFree && hasDash;
+          if (p === 'freemium') return isFree && hasDash;
           if (p === 'paid') return !isFree;
           return false;
         });
 
-      return matchesSearch && matchesIndustry && matchesFunction && matchesPricing;
+      return matchesSearch && matchescategories && matchesFunction && matchesPricing;
     });
 
     // sort
@@ -247,19 +249,44 @@ const scrollToTop = () => {
   }, [searchTerm, selectedIndustries, selectedFunctions, selectedPricing, sortBy]);
 
   // Infinite scroll
-  useEffect(() => {
-    if (!sentinelRef.current) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount(cur => Math.min(cur + PAGE_SIZE, filteredTools.length));
-        }
-      },
-      { rootMargin: '200px' }
-    );
-    io.observe(sentinelRef.current);
-    return () => io.disconnect();
-  }, [filteredTools.length]);
+        useEffect(() => {
+          if (!sentinelRef.current) return;
+          const io = new IntersectionObserver(
+            (entries) => {
+              if (entries[0].isIntersecting) {
+                setVisibleCount(cur => Math.min(cur + PAGE_SIZE, filteredTools.length));
+              }
+            },
+            { rootMargin: '200px' }
+          );
+          io.observe(sentinelRef.current);
+          return () => io.disconnect();
+        }, [filteredTools.length]);
+        useEffect(() => {
+            const handleClickOutside = (e: MouseEvent) => {
+              if (
+                searchRef.current &&
+                !searchRef.current.contains(e.target as Node)
+              ) {
+                setShowSuggestions(false);
+                setHighlightedIndex(-1);
+              }
+            };
+            document.addEventListener('mousedown', handleClickOutside);
+            return () =>
+              document.removeEventListener('mousedown', handleClickOutside);
+          }, []);
+
+        const suggestions = useMemo(() => {
+        if (!searchTerm.trim()) return [];
+        const q = searchTerm.toLowerCase();
+        return tools
+          .filter(t =>
+            s(t.name).toLowerCase().includes(q) ||
+            s(t.description).toLowerCase().includes(q)
+          )
+          .slice(0, 8);
+      }, [searchTerm]);
 
   const visibleTools = useMemo(
     () => filteredTools.slice(0, visibleCount),
@@ -272,7 +299,7 @@ const scrollToTop = () => {
         <title>Explore the Best Digital Tools | DigitalToolsHub</title>
         <meta
           name="description"
-          content="Filter AI & digital tools by industry and functions. Compare pricing, features, and ratings to pick the best tool for your use case."
+          content="Filter AI & digital tools by categories and functions. Compare pricing, features, and ratings to pick the best tool for your use case."
         />
         <link rel="canonical" href="https://aithubs.com/tools" />
       </Helmet>
@@ -280,27 +307,173 @@ const scrollToTop = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero */}
         <h1 className="mt-3 text-3xl sm:text-5xl leading-tight font-hero font-extrabold tracking-tight text-white">
-          <span className="bg-gradient-to-r from-sky-400 via-fuchsia-400 to-emerald-400 bg-clip-text text-transparent"> Find The Best Tools — Filtered by Industry & Functions</span>
+          <span className="bg-gradient-to-r from-sky-400 via-fuchsia-400 to-emerald-400 bg-clip-text text-transparent"> Find The Best Tools — Filtered by categories & Functions</span>
         </h1>
 
         {/* Search */}
-        <div className="max-w-xl w-full mx-auto mb-26 mt-5">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search tools by name, description or tags…"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-          </div>
+        {/* Search với autocomplete */}
+<div className="w-full mx-auto mb-4 mt-5" ref={searchRef}>
+  <div className="relative">
+
+    <Search className="absolute left-3 top-1/2 -translate-y-1/2
+                       text-gray-400 w-5 h-5 z-10 pointer-events-none" />
+
+    <input
+      type="text"
+      placeholder="Search tools by name, description or tags..."
+      value={searchTerm}
+      onChange={e => {
+        setSearchTerm(e.target.value);
+        setShowSuggestions(true);
+        setHighlightedIndex(-1);
+      }}
+      onFocus={() => {
+        if (searchTerm.trim()) setShowSuggestions(true);
+      }}
+      onKeyDown={e => {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          setHighlightedIndex(i => Math.min(i + 1, suggestions.length - 1));
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          setHighlightedIndex(i => Math.max(i - 1, -1));
+        } else if (e.key === 'Enter') {
+          if (highlightedIndex >= 0 && suggestions[highlightedIndex]) {
+            setSearchTerm(s(suggestions[highlightedIndex].name));
+            setShowSuggestions(false);
+            setHighlightedIndex(-1);
+          } else {
+            setShowSuggestions(false);
+          }
+        } else if (e.key === 'Escape') {
+          setShowSuggestions(false);
+          setHighlightedIndex(-1);
+        }
+      }}
+      className="w-full pl-10 pr-10 py-3
+                 border border-gray-300 dark:border-gray-600
+                 rounded-xl focus:ring-2 focus:ring-primary-500
+                 focus:border-transparent bg-white dark:bg-gray-700
+                 text-gray-900 dark:text-white shadow-sm text-sm"
+    />
+
+    {/* Nút xoá */}
+    {searchTerm && (
+      <button
+        type="button"
+        onClick={() => {
+          setSearchTerm('');
+          setShowSuggestions(false);
+          setHighlightedIndex(-1);
+        }}
+        className="absolute right-3 top-1/2 -translate-y-1/2
+                   text-gray-400 hover:text-gray-600
+                   dark:hover:text-gray-200 transition-colors text-base"
+      >
+        ✕
+      </button>
+    )}
+
+    {/* Dropdown gợi ý */}
+    {showSuggestions && suggestions.length > 0 && (
+      <div className="absolute z-50 left-0 right-0 top-full mt-1
+                      bg-white dark:bg-gray-800
+                      border border-gray-200 dark:border-gray-600
+                      rounded-xl shadow-2xl overflow-hidden">
+
+        {suggestions.map((tool, idx) => {
+          const inds = deriveIndustries(tool);
+          const funcs = deriveFunctions(tool);
+          const isActive = idx === highlightedIndex;
+          const escaped = searchTerm.replace(
+            /[.*+?^${}()|[\]\\]/g, '\\$&'
+          );
+          const parts = s(tool.name).split(
+            new RegExp(`(${escaped})`, 'gi')
+          );
+
+          return (
+            <button
+              key={s(tool.name)}
+              type="button"
+              onMouseDown={e => {
+                e.preventDefault();
+                setSearchTerm(s(tool.name));
+                setShowSuggestions(false);
+                setHighlightedIndex(-1);
+              }}
+              onMouseEnter={() => setHighlightedIndex(idx)}
+              className={`w-full flex items-center gap-3 px-4 py-2.5
+                text-left transition-colors
+                border-b border-gray-100 dark:border-gray-700/50 last:border-0
+                ${isActive
+                  ? 'bg-gray-100 dark:bg-gray-700'
+                  : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                }`}
+            >
+              <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900
+                               dark:text-white truncate">
+                  {parts.map((part, i) =>
+                    part.toLowerCase() === searchTerm.toLowerCase()
+                      ? (
+                        <mark key={i}
+                          className="bg-yellow-200 dark:bg-yellow-500/40
+                                     text-gray-900 dark:text-white
+                                     rounded px-0.5">
+                          {part}
+                        </mark>
+                      )
+                      : <span key={i}>{part}</span>
+                  )}
+                </p>
+                {(inds[0] || funcs[0]) && (
+                  <p className="text-xs text-gray-400 truncate mt-0.5">
+                    {[inds[0], funcs[0]].filter(Boolean).join(' · ')}
+                  </p>
+                )}
+              </div>
+
+              {tool.image && (
+                <img
+                  src={tool.image}
+                  alt={s(tool.name)}
+                  loading="lazy"
+                  className="w-7 h-7 rounded object-cover flex-shrink-0"
+                />
+              )}
+            </button>
+          );
+        })}
+
+        {/* Hint phím tắt ở footer dropdown */}
+        <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800/80
+                        border-t border-gray-100 dark:border-gray-700">
+          <p className="text-[11px] text-gray-400 flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded
+                            bg-gray-200 dark:bg-gray-700
+                            text-[10px] font-mono">↑↓</kbd>
+            move &nbsp;·&nbsp;
+            <kbd className="px-1.5 py-0.5 rounded
+                            bg-gray-200 dark:bg-gray-700
+                            text-[10px] font-mono">Enter</kbd>
+            sellect &nbsp;·&nbsp;
+            <kbd className="px-1.5 py-0.5 rounded
+                            bg-gray-200 dark:bg-gray-700
+                            text-[10px] font-mono">Esc</kbd>
+            close
+          </p>
         </div>
+
+      </div>
+    )}
+
+  </div>
+</div>
           {/* Mobile filters toggle */}
               <div className="mt-4 flex items-center justify-between lg:hidden">
-                <p className="text-xs text-slate-400">
-                  Showing {filteredTools.length} tools
-                </p>
                 <button
                   onClick={() => setFiltersOpen(o => !o)}
                   className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-100
@@ -335,10 +508,10 @@ const scrollToTop = () => {
                   </button>
                 </div>
 
-                {/* Industry checkbox list */}
+                {/* categories checkbox list */}
                 <div>
                   <p className="text-lg font-semibold text-green-400">
-                    Industry
+                    categories
                   </p>
                   <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
                     {allIndustries.map(([label, count]) => (
@@ -350,12 +523,12 @@ const scrollToTop = () => {
                           <input
                             type="checkbox"
                             checked={selectedIndustries.includes(label)}
-                            onChange={() => handleToggleIndustry(label)}
+                            onChange={() => handleTogglecategories(label)}
                             className="h-3.5 w-3.5 rounded border-slate-600 text-indigo-500 focus:ring-indigo-400"
                           />
                           <span>{label}</span>
                         </span>
-                        <span className="text-[10px] text-slate-500">{count}</span>
+                        <span className="text-[10px] text-slate-500">{}</span>
                       </label>
                     ))}
                   </div>
@@ -381,7 +554,7 @@ const scrollToTop = () => {
                           />
                           <span>{label}</span>
                         </span>
-                        <span className="text-[10px] text-slate-500">{count}</span>
+                        <span className="text-[10px] text-slate-500">{}</span>
                       </label>
                     ))}
                   </div>
@@ -473,14 +646,14 @@ const scrollToTop = () => {
                 {/* Industries & Functions chips */}
                 {/* Industries & Functions chips (click to filter) */}
 <div className="flex flex-wrap gap-2 mt-3">
-  {/* Industry tags */}
+  {/* categories tags */}
   {inds.slice(0, 3).map((i, idx) => {
     const isActive = selectedIndustries.includes(i);
     return (
       <button
         key={`ind-${tool.name}-${idx}`}
         type="button"
-        onClick={() => handleToggleIndustry(i)}
+        onClick={() => handleTogglecategories(i)}
         className={
           `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
            border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1

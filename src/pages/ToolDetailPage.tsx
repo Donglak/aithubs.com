@@ -17,8 +17,11 @@ const ToolDetailPage = () => {
   const { slug } = useParams();
   const [activeTab, setActiveTab] = useState<'overview' | 'pricing' | 'video'>('overview');
 
-  const toolBase = useMemo(() => tools.find(t => toSlug(t.name) === (slug ?? '')), [slug]);
-  
+  const normalizedSlug = useMemo(() => toSlug(slug ?? ''), [slug]);
+  const toolBase = useMemo(
+    () => tools.find(t => toSlug(t.name) === normalizedSlug),
+    [normalizedSlug]
+  );
 
   if (!toolBase) {
     return (
@@ -34,26 +37,28 @@ const ToolDetailPage = () => {
     );
   }
   const tool = useMemo(
-  () => buildToolDetails(toolBase as any),
-  [toolBase]
-);
+    () => buildToolDetails(toolBase as any),
+    [toolBase]
+  );
 
-const relatedTools = useMemo(() => {
-  if (!tool) return [];
-  return tools
+  const toolSlug = useMemo(() => toSlug(tool?.name || ''), [tool]);
+
+  const relatedTools = useMemo(() => {
+    if (!tool) return [];
+    return tools
     .filter(t => t.id !== tool.id)
     .filter(t => {
-      if (Array.isArray(t.industry) && Array.isArray(tool.industry)) {
-        return t.industry.some(cat => tool.industry.includes(cat));
+      if (Array.isArray(t.categories) && Array.isArray(tool.categories)) {
+        return t.categories.some(cat => tool.categories.includes(cat));
       }
-      return t.industry === tool.industry;
+      return t.categories === tool.categories;
     })
     .sort((a, b) => {
-      const commonA = Array.isArray(tool.industry) && Array.isArray(a.industry)
-        ? a.industry.filter(cat => tool.industry.includes(cat)).length
+      const commonA = Array.isArray(tool.categories) && Array.isArray(a.categories)
+        ? a.categories.filter(cat => tool.categories.includes(cat)).length
         : 0;
-      const commonB = Array.isArray(tool.industry) && Array.isArray(b.industry)
-        ? b.industry.filter(cat => tool.industry.includes(cat)).length
+      const commonB = Array.isArray(tool.categories) && Array.isArray(b.categories)
+        ? b.categories.filter(cat => tool.categories.includes(cat)).length
         : 0;
       return commonB - commonA;
     })
@@ -61,7 +66,7 @@ const relatedTools = useMemo(() => {
 }, [tool]);
 
   
-  const industries = Array.isArray(tool.industry) ? tool.industry : [tool.industry];
+  const industries = Array.isArray(tool.categories) ? tool.categories : [tool.categories];
 // khai bao màu cho nhan giá
   const badgeTone = (name: string) => {
   const k = name.toLowerCase();
@@ -78,7 +83,7 @@ const relatedTools = useMemo(() => {
       <Helmet>
         <title>{tool.seo?.title ?? `${tool.name} - ${industries.join(', ')}`}</title>
         <meta name="description" content={tool.seo?.description ?? tool.description} />
-        <link rel="canonical" href={tool.seo?.canonical ?? `https://aithubs.com/tools/${tool.name}`} />
+        <link rel="canonical" href={tool.seo?.canonical ?? `https://aithubs.com/tools/${toolSlug}`} />
         <meta property="og:title" content={`${tool.name} | DigitalToolsHub`} />
         <meta property="og:description" content={tool.seo?.description ?? tool.description} />
         <meta property="og:image" content={tool.image} />
@@ -354,8 +359,8 @@ const relatedTools = useMemo(() => {
         <div className="space-y-4">
           {relatedTools.map((relatedTool) => (
             <Link
-              key={relatedTool.id}
-              to={`/tools/${relatedTool.id}`}
+              key={relatedTool.name}
+              to={`/tools/${toSlug(relatedTool.name)}`}
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <img

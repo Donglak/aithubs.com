@@ -487,7 +487,12 @@ const scrollToTop = () => {
         {/* Layout 2 cột: sidebar filters + list */}
           <div className="mt-6 grid grid-cols-1 lg:grid-cols-[280px,minmax(0,1fr)] gap-6">
             {/* Sidebar filters bên trái */}
-            <aside className={`${filtersOpen ? 'block' : 'hidden'}lg:block lg:sticky lg:top-24 self-start`}>
+            <aside
+                  className={`
+                    ${filtersOpen ? 'block' : 'hidden'}
+                    lg:block lg:sticky lg:top-24 self-start
+                  `}
+            >
               <div className="glow-mobile glass-card tool-card p-4 flex flex-col justify-between h-full transition-all">
                 {/* Tiêu đề + nút clear */}
                 <div className="flex items-center justify-between gap-2">

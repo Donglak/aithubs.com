@@ -1,0 +1,71 @@
+* [33ma3b30f9[m[33m ([m[1;31morigin/digitalhubs[m[33m)[m Reorganize AI Tools into Subcategories and Add Automation Category
+* [33md3d0d9a[m Add SaaS and Design Tool Categories
+* [33m982631f[m Updated robots.txt
+* [33m569a23c[m Updated sitemap.xml
+* [33mca30cd1[m Update tools.ts
+* [33maf2e484[m Update tools.ts
+* [33mf3ee952[m Update tools.ts
+* [33m085cdd4[m Update tools.ts
+* [33mb68a79c[m Update tools.ts
+* [33m977202c[m Update tools.ts
+* [33m6316dee[m Update tools.ts
+* [33m5e1928b[m Update tools.ts
+* [33ma0190ac[m Update tools.ts
+* [33m8c95fe2[m Update tools.ts
+* [33m9df79bc[m Added tools.ts
+* [33m7e00a84[m Added tools_copy.ts
+* [33m42d2a5a[m Added tools copy.ts
+* [33m9c3a461[m uprobot
+* [33m50c2116[m sitemap
+* [33m87640a9[m up robots
+* [33m9b25d3e[m up sitemap
+* [33mf6dc4c3[m Update index.html
+* [33m090cd56[m verified
+* [33m161de68[m upfile xac minh
+* [33ma0fe7cc[m Update index.html
+* [33m5d53774[m Update index.html
+* [33m1b50f6c[m dua file
+* [33m6afe509[m day  file
+* [33mf1880c4[m Update googleSheets.ts
+* [33m38aeb7b[m Update googleSheets.ts
+* [33m67e1f32[m Deleted .env
+* [33mdeb93f0[m Create .env
+* [33m4afdf26[m Updated tools.ts
+* [33m011179d[m Update codebase with external changes
+* [33mc4b5836[m Create .env
+* [33m1aa67c3[m Update AI Tools List with Excel Data
+* [33m72fbc2c[m Deleted .env
+* [33m6319f71[m Create .env
+* [33me319809[m Update codebase with external changes
+* [33me8ddc9f[m .env
+* [33mc9962d1[m Deleted .env.example
+* [33m56bf30d[m Updated README_GOOGLE_SHEETS_SETUP.md
+* [33m50d5bcd[m Convert Vietnamese content to English
+* [33m2deb29b[m Updated google-apps-script.js
+* [33mc28fde5[m Deleted .env.example
+* [33md6ac91e[m Added README_GOOGLE_SHEETS_SETUP.md
+* [33mfdd2fea[m Cải thiện tích hợp Google Sheets cho newsletter subscription
+* [33m3e0a7be[m Update codebase with external changes
+* [33m7216141[m Rename .env.example to .env
+* [33mf97372e[m Updated google-apps-script.js
+* [33m683c012[m Integrate Newsletter Form with Google Sheets
+* [33m91d56b5[m Updated .env.example
+* [33m79f2e26[m Setup Google Sheets Integration for Newsletter Subscriptions
+* [33m1cc6706[m Updated .env.example
+* [33m21a74d7[m Fix newsletter subscription error
+[31m|[m * [33mccbe2b6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Deleted .env
+[31m|[m * [33m1f7f9b9[m Create .env
+[31m|[m * [33mdc73d99[m Deleted .env
+[31m|[m * [33m941ca0a[m Update googleSheets.ts
+[31m|[m * [33m1fa8c2d[m Update .env
+[31m|[m * [33med05dc3[m Rename .env.example to .env
+[31m|[m * [33m3e9d346[m Update .env.example
+[31m|[m * [33m4712ff9[m Update google-apps-script.js
+[31m|[m[31m/[m  
+* [33m54e9dd2[m Deleted .env copy.example
+* [33mdf98c5d[m Added .env copy.example
+* [33m7748863[m Updated googleSheets.ts
+* [33m65f6d6b[m Fix Google Sheets environment variable access
+* [33mfeb944e[m Newsletter Popup with Google Sheets Integration
+* [33ma3f0db1[m Updated package-lock.json
+* [33m3ee08ad[m Start repository

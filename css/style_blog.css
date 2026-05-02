@@ -1,0 +1,124 @@
+:root {
+    --primary: #6e48aa;
+    --secondary: #9d50bb;
+    --dark: #0f0f1a;
+    --darker: #07070f;
+    --neon: #00f2ff;
+  }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--darker);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.glass-card {
+    background: rgba(15, 15, 26, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 240, 255, 0.15);
+    border-color: rgba(0, 240, 255, 0.3);
+}
+
+.gradient-text {
+    background: linear-gradient(90deg, #7c1eff, #00cbf7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 200% auto;
+}
+
+.category-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-ai {
+    background: rgba(0, 240, 255, 0.15);
+    color: var(--primary);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.badge-marketing {
+    background: rgba(255, 0, 240, 0.15);
+    color: var(--secondary);
+    border: 1px solid rgba(255, 0, 240, 0.3);
+}
+
+.badge-mmo {
+    background: rgba(255, 200, 0, 0.15);
+    color: #ffc800;
+    border: 1px solid rgba(255, 200, 0, 0.3);
+}
+
+.search-bar {
+    background: rgba(20, 20, 45, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.search-bar:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.2);
+}
+
+.tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    font-size: 12px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+}
+
+.nav-link {
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.active-filter {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary) !important;
+    color: white !important;
+}
+
+@media (max-width: 768px) {
+    .featured-card {
+        flex-direction: column;
+    }
+    
+    .featured-image {
+        width: 100%;
+        height: 200px;
+    }
+}

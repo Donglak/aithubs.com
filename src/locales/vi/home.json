@@ -1,0 +1,45 @@
+{
+  "sections": {
+    "discovery": {
+      "description": "Khám phá nhanh công cụ theo danh mục và chức năng phù hợp với nhu cầu của bạn",
+      "categoryDescriptions": {
+        "marketingAdvertising": "Công cụ cho marketing, quảng cáo và tăng trưởng.",
+        "financeFintechAccounting": "Công cụ cho tài chính, fintech và kế toán.",
+        "ecommerce": "Công cụ cho bán hàng và vận hành online.",
+        "productivityWorkflow": "Công cụ tăng năng suất và tối ưu quy trình.",
+        "creativeDesign": "Công cụ cho thiết kế và sáng tạo nội dung.",
+        "softwareDevtools": "Công cụ cho lập trình và phát triển sản phẩm.",
+        "hrRecruiting": "Công cụ cho tuyển dụng và quản lý nhân sự.",
+        "educationEdtech": "Công cụ cho học tập, đào tạo và EdTech.",
+        "travel": "Công cụ cho du lịch, đặt chỗ và lập kế hoạch hành trình.",
+        "default": "Khám phá các công cụ theo danh mục này."
+      }
+    },
+    "industries": {
+      "description": "Khám phá các công cụ được chọn lọc theo từng ngành nghề."
+    },
+    "functions": {
+      "description": "Tìm công cụ theo đúng chức năng bạn cần để làm việc nhanh và hiệu quả hơn.",
+      "functionDescriptions": {
+        "automationWorkflow": "Công cụ tự động hóa và tối ưu quy trình.",
+        "analyticsReporting": "Công cụ phân tích dữ liệu và báo cáo.",
+        "contentManagement": "Công cụ quản lý và tổ chức nội dung.",
+        "leadGenCrmSalesFunnel": "Công cụ hỗ trợ lead, CRM và bán hàng.",
+        "designCreativeTools": "Công cụ cho thiết kế và sáng tạo.",
+        "seoAdsOptimization": "Công cụ tối ưu SEO và quảng cáo.",
+        "chatbotAgent": "Công cụ chatbot và AI agent.",
+        "aiTextGeneration": "Công cụ tạo nội dung văn bản bằng AI.",
+        "aiImageVoiceVideoGeneration": "Công cụ tạo ảnh, giọng nói và video bằng AI.",
+        "aiImageVideoGeneration": "Công cụ tạo ảnh và video bằng AI.",
+        "default": "Khám phá công cụ theo chức năng bạn cần."
+      }
+    },
+    "testimonials": {
+      "title": "Cộng đồng của chúng tôi đang tạo ra kết quả ấn tượng"
+    },
+    "newsletter": {
+      "description": "Nhận cập nhật mới nhất về công cụ số, ưu đãi nổi bật và nội dung chuyên sâu mỗi tuần.",
+      "caption": "Tham gia cùng hơn 50.000 chuyên gia. Hủy đăng ký bất cứ lúc nào."
+    }
+  }
+}

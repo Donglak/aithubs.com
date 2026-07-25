@@ -1,0 +1,19 @@
+{
+  "buttons": {
+    "send": "Gửi",
+    "close": "Đóng",
+    "clear": "Xóa",
+    "learnMore": "Xem thêm",
+    "getStarted": "Bắt đầu"
+  },
+  "status": {
+    "loading": "Đang tải...",
+    "thinking": "Đang suy nghĩ...",
+    "error": "Đã xảy ra lỗi."
+  },
+  "language": {
+    "english": "Tiếng Anh",
+    "vietnamese": "Tiếng Việt",
+    "switchLabel": "Ngôn ngữ"
+  }
+}

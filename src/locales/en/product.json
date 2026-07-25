@@ -1,0 +1,63 @@
+{
+  "getThisProduct": "Get This Product",
+  "contactPrice": "Contact price",
+
+  "notFoundTitle": "Product Not Found",
+  "notFoundDescription": "This product does not exist or is not yet published.",
+  "browseProducts": "Browse Products",
+  "back": "Back",
+  "storefrontSuffix": "Storefront",
+  "price": {
+    "free": "Free",
+    "contact": "Contact for Price"
+  },
+  "descriptionTitle": "Description",
+  "galleryTitle": "Gallery",
+  "viewDemo": "View Demo",
+  "leadFormTitle": "Interested in this product?",
+  "leadFormSuccess": "Your inquiry has been sent! The vendor will contact you shortly.",
+  "sendInquiry": "Send Inquiry",
+  "vendorTitle": "Vendor",
+  "website": "Website",
+  "contact": "Contact",
+  "leadForm": {
+    "nameLabel": "Your name",
+    "emailLabel": "Your email",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Tell the vendor what you need",
+    "sending": "Sending..."
+  },
+  "tool": {
+    "backToTools": "Back to tools",
+    "notFoundTitle": "Tool not found",
+    "notFoundDescription": "This tool does not exist or is not available yet.",
+    "sectionsAriaLabel": "Tool details sections",
+    "featured": "Featured",
+    "tabs": {
+      "overview": "Overview",
+      "pricing": "Pricing",
+      "video": "Video Reviews"
+    },
+    "overviewTitle": "Overview",
+    "pricingTitle": "Pricing",
+    "keyFeatures": "Key Features",
+    "pros": "Pros",
+    "cons": "Cons",
+    "rating": "Rating",
+    "users": "Users",
+    "bestFor": "Best for",
+    "officialWebsitePrompt": "Ready to see full pricing, plans, and discounts on the official site?",
+    "viewFullPricing": "View full pricing on website",
+    "quickActions": "Quick actions",
+    "visitWebsite": "Visit website",
+    "watchReviews": "Watch reviews",
+    "summary": "Summary",
+    "category": "Category",
+    "popular": "Popular",
+    "noPricingData": "Detailed pricing data is not available yet.",
+    "discoverymoreonweb": "Discover more on the official website",
+    "clickthe": "Click the",
+    "buttonbelow": " button below to explore all featured",
+    "pricingdetailadd": "Pricing details will be added soon"
+  }
+}

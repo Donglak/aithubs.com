@@ -1,0 +1,31 @@
+{
+  "title": "AIThubs Support",
+  "subtitle": {
+    "supporter": "supporter",
+    "connecting": "connecting...",
+    "replying": "replying..."
+  },
+  "welcome": {
+    "title": "Hello!",
+    "description": "Hi! I'm AIThubs Support. Feel free to ask me about tools, courses, ebooks, or anything else you need help with."
+  },
+  "placeholder": "Type a message... (Enter to send, Shift+Enter for new line)",
+  "clearHistory": "Clear chat history",
+  "disclaimer": "AIThubs Support helps you find tools, courses, and ebooks. AI may make mistakes.",
+  "notification": "new message from AIThubs Support",
+  "closechat": "close chat",
+  "suggestions": {
+    "writingTool": "Best AI content writing tool?",
+    "mlCourse": "Machine learning course for beginners",
+    "marketingEbook": "Free marketing ebook",
+    "notionVsObsidian": "Notion vs Obsidian comparison"
+  },
+  "errors": {
+    "serviceBusy": "The AI service is busy. Please try again in a moment.",
+    "network": "Network error. Please check your connection and try again.",
+    "invalidResponse": "The chat service returned an invalid response.",
+    "stopped": "Response stopped.",
+    "unknown": "Chatbot error. Please try again later.",
+    "noResponse": "No response generated."
+  }
+}

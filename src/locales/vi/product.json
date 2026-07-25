@@ -1,0 +1,63 @@
+{
+  "getThisProduct": "Xem sản phẩm này",
+  "contactPrice": "Liên hệ giá",
+  "notFoundTitle": "Không tìm thấy sản phẩm",
+  "notFoundDescription": "Sản phẩm này không tồn tại hoặc chưa được xuất bản.",
+  "browseProducts": "Xem sản phẩm khác",
+  "back": "Quay lại",
+  "storefrontSuffix": "Cửa hàng",
+  "price": {
+    "free": "Miễn phí",
+    "contact": "Liên hệ để biết giá"
+  },
+  "descriptionTitle": "Mô tả",
+  "galleryTitle": "Thư viện ảnh",
+  "viewDemo": "Xem demo",
+  "leadFormTitle": "Bạn quan tâm đến sản phẩm này?",
+  "leadFormSuccess": "Yêu cầu của bạn đã được gửi! Nhà bán sẽ sớm liên hệ với bạn.",
+  "sendInquiry": "Gửi yêu cầu",
+  "vendorTitle": "Nhà bán",
+  "website": "Website",
+  "contact": "Liên hệ",
+  "leadForm": {
+    "nameLabel": "Tên của bạn",
+    "emailLabel": "Email của bạn",
+    "messageLabel": "Tin nhắn",
+    "messagePlaceholder": "Hãy cho nhà bán biết nhu cầu của bạn",
+    "sending": "Đang gửi..."
+  },
+
+  "tool": {
+    "backToTools": "Quay lại danh sách công cụ",
+    "notFoundTitle": "Không tìm thấy công cụ",
+    "notFoundDescription": "Công cụ này không tồn tại hoặc hiện chưa có sẵn.",
+    "sectionsAriaLabel": "Các phần chi tiết công cụ",
+    "featured": "Nổi bật",
+    "tabs": {
+      "overview": "Tổng quan",
+      "pricing": "Bảng giá",
+      "video": "Video đánh giá"
+    },
+    "overviewTitle": "Tổng quan",
+    "pricingTitle": "Bảng giá",
+    "keyFeatures": "Tính năng chính",
+    "pros": "Ưu điểm",
+    "cons": "Nhược điểm",
+    "rating": "Đánh giá",
+    "users": "Người dùng",
+    "bestFor": "Phù hợp nhất cho",
+    "officialWebsitePrompt": "Bạn muốn xem đầy đủ bảng giá, các gói và ưu đãi trên website chính thức?",
+    "viewFullPricing": "Xem bảng giá đầy đủ trên website",
+    "quickActions": "Thao tác nhanh",
+    "visitWebsite": "Truy cập website",
+    "watchReviews": "Xem đánh giá video",
+    "summary": "Tóm tắt",
+    "category": "Danh mục",
+    "popular": "Phổ biến",
+    "noPricingData": "Hiện chưa có dữ liệu bảng giá chi tiết.",
+    "discoverymoreonweb": " Khám phá thêm trên trang web chính thức ",
+    "clickthe": "hãy click vào",
+    "buttonbelow": " để tìm hiểu thêm về công cụ này",
+    "pricingdetailadd": "Giá chi tiết chúng tôi sẽ thêm vào sớm"
+  }
+}

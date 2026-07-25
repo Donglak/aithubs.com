@@ -1,0 +1,31 @@
+{
+  "title": "Hỗ trợ AIThubs",
+  "subtitle": {
+    "supporter": "trợ lý",
+    "connecting": "đang kết nối...",
+    "replying": "đang trả lời..."
+  },
+  "welcome": {
+    "title": "Xin chào!",
+    "description": "Chào bạn! Tôi là trợ lý AIThubs. Bạn có thể hỏi về công cụ, khóa học, ebook, hoặc bất kỳ điều gì bạn cần hỗ trợ."
+  },
+  "placeholder": "Nhập tin nhắn... (Enter để gửi, Shift+Enter để xuống dòng)",
+  "clearHistory": "Xóa lịch sử chat",
+  "disclaimer": "AIThubs Support giúp bạn tìm công cụ, khóa học và ebook. AI có thể đưa ra thông tin chưa chính xác.",
+  "notification": "có tin nhắn mới từ AIThubs Support",
+  "closechat": "đóng cửa sổ chat",
+  "suggestions": {
+    "writingTool": "Công cụ AI viết nội dung tốt nhất?",
+    "mlCourse": "Khóa học machine learning cho người mới",
+    "marketingEbook": "Ebook marketing miễn phí",
+    "notionVsObsidian": "So sánh Notion và Obsidian"
+  },
+  "errors": {
+    "serviceBusy": "Dịch vụ AI đang bận. Vui lòng thử lại sau ít giây.",
+    "network": "Lỗi mạng. Vui lòng kiểm tra kết nối và thử lại.",
+    "invalidResponse": "Dịch vụ chat trả về dữ liệu không hợp lệ.",
+    "stopped": "Đã dừng phản hồi.",
+    "unknown": "Lỗi chatbot. Vui lòng thử lại sau.",
+    "noResponse": "Không có phản hồi."
+  }
+}

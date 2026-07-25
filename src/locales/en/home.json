@@ -1,0 +1,45 @@
+{
+  "sections": {
+    "discovery": {
+      "description": "Quickly explore tools by category and function based on your needs.",
+      "categoryDescriptions": {
+        "marketingAdvertising": "Tools for marketing, advertising, and growth.",
+        "financeFintechAccounting": "Tools for finance, fintech, and accounting.",
+        "ecommerce": "Tools for selling and running online stores.",
+        "productivityWorkflow": "Tools for productivity and workflow optimization.",
+        "creativeDesign": "Tools for design and creative work.",
+        "softwareDevtools": "Tools for coding and product development.",
+        "hrRecruiting": "Tools for hiring and people operations.",
+        "educationEdtech": "Tools for learning, training, and EdTech.",
+        "travel": "Tools for travel, booking, and trip planning.",
+        "default": "Explore tools in this category."
+      }
+    },
+    "industries": {
+      "description": "Explore curated tools tailored to different industries."
+    },
+    "functions": {
+      "description": "Find tools by the exact function you need to work faster and smarter.",
+      "functionDescriptions": {
+        "automationWorkflow": "Tools for automation and workflow optimization.",
+        "analyticsReporting": "Tools for analytics and reporting.",
+        "contentManagement": "Tools for managing and organizing content.",
+        "leadGenCrmSalesFunnel": "Tools for lead generation, CRM, and sales.",
+        "designCreativeTools": "Tools for design and creative work.",
+        "seoAdsOptimization": "Tools for SEO and ad optimization.",
+        "chatbotAgent": "Tools for chatbots and AI agents.",
+        "aiTextGeneration": "Tools for AI text generation.",
+        "aiImageVoiceVideoGeneration": "Tools for AI image, voice, and video generation.",
+        "aiImageVideoGeneration": "Tools for AI image and video generation.",
+        "default": "Explore tools by function."
+      }
+    },
+    "testimonials": {
+      "title": "See the results our community is achieving"
+    },
+    "newsletter": {
+      "description": "Get weekly updates on digital tools, standout deals, and expert insights.",
+      "caption": "Join 50,000+ professionals. Unsubscribe anytime."
+    }
+  }
+}

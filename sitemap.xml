@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
@@ -49,3 +50,11 @@
   <!-- Dynamic blog posts would be added here via build script -->
   <!-- Dynamic tool pages would be added here via build script -->
 </urlset>
+=======
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://digitaltoolshub.app/</loc>
+    <priority>1.00</priority>
+  </url>
+</urlset>
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

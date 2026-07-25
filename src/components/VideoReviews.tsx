@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 type VideoItem = {
   title: string;
   url: string; // link YouTube (watch?v=..., youtu.be/..., shorts/...)
+=======
+
+type VideoItem = {
+  title: string;
+  url: string;          // link YouTube (watch?v=..., youtu.be/..., shorts/...)
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   channel?: string;
   publishedAt?: string;
 };
@@ -39,8 +46,13 @@ export default function VideoReviews({
   fallbackScreenshots?: string[];
 }) {
   const vids = (items || [])
+<<<<<<< HEAD
     .map((v) => ({ ...v, id: getYouTubeId(v.url) }))
     .filter((v) => !!v.id) as (VideoItem & { id: string })[];
+=======
+    .map(v => ({ ...v, id: getYouTubeId(v.url) }))
+    .filter(v => !!v.id) as (VideoItem & { id: string })[];
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
   if (vids.length === 0) {
     // fallback: hiển thị ảnh cũ nếu chưa có video
@@ -64,7 +76,11 @@ export default function VideoReviews({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6">
+<<<<<<< HEAD
       {vids.map((v) => (
+=======
+      {vids.map(v => (
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
         <article key={v.id} className="space-y-2">
           <div className="w-full aspect-video rounded-xl overflow-hidden">
             <iframe

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import {
   Mail,
@@ -26,12 +27,31 @@ const ContactPage = () => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+=======
+import React, { useState } from 'react';
+import { Mail, Phone, MapPin, Send, MessageCircle, Users, Briefcase } from 'lucide-react';
+
+const ContactPage = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    category: 'general',
+    message: ''
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
     });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
+<<<<<<< HEAD
     console.log("Form submitted:", formData);
     // Reset form
     setFormData({
@@ -40,12 +60,23 @@ const ContactPage = () => {
       subject: "",
       category: "general",
       message: "",
+=======
+    console.log('Form submitted:', formData);
+    // Reset form
+    setFormData({
+      name: '',
+      email: '',
+      subject: '',
+      category: 'general',
+      message: ''
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
     });
   };
 
   const contactMethods = [
     {
       icon: Mail,
+<<<<<<< HEAD
       title: "Email Us",
       description: "Send us an email and we'll respond within 24 hours",
       contact: "hello@digitaltoolshub.com",
@@ -74,10 +105,41 @@ const ContactPage = () => {
     { value: "press", label: "Press & Media" },
     { value: "support", label: "Technical Support" },
     { value: "feedback", label: "Feedback" },
+=======
+      title: 'Email Us',
+      description: 'Send us an email and we\'ll respond within 24 hours',
+      contact: 'hello@digitaltoolshub.com',
+      action: 'mailto:hello@digitaltoolshub.com'
+    },
+    {
+      icon: MessageCircle,
+      title: 'Live Chat',
+      description: 'Chat with our team during business hours',
+      contact: 'Available 9 AM - 6 PM EST',
+      action: '#'
+    },
+    {
+      icon: Phone,
+      title: 'Call Us',
+      description: 'Speak directly with our support team',
+      contact: '+1 (555) 123-4567',
+      action: 'tel:+15551234567'
+    }
+  ];
+
+  const categories = [
+    { value: 'general', label: 'General Inquiry' },
+    { value: 'tool-suggestion', label: 'Tool Suggestion' },
+    { value: 'partnership', label: 'Partnership' },
+    { value: 'press', label: 'Press & Media' },
+    { value: 'support', label: 'Technical Support' },
+    { value: 'feedback', label: 'Feedback' }
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   ];
 
   const faqs = [
     {
+<<<<<<< HEAD
       question: "How do you select tools for review?",
       answer:
         "We have a rigorous evaluation process that includes hands-on testing, user feedback analysis, and comparison with similar tools in the market.",
@@ -97,6 +159,23 @@ const ContactPage = () => {
       answer:
         "Absolutely! If there's a specific tool you'd like us to review, let us know and we'll add it to our review queue.",
     },
+=======
+      question: 'How do you select tools for review?',
+      answer: 'We have a rigorous evaluation process that includes hands-on testing, user feedback analysis, and comparison with similar tools in the market.'
+    },
+    {
+      question: 'Do you accept tool submissions?',
+      answer: 'Yes! We welcome tool submissions from developers and companies. Please use the contact form with the "Tool Suggestion" category.'
+    },
+    {
+      question: 'How can I partner with DigitalToolsHub?',
+      answer: 'We offer various partnership opportunities including affiliate programs, sponsored content, and strategic partnerships. Contact us to discuss options.'
+    },
+    {
+      question: 'Can I request a custom tool review?',
+      answer: 'Absolutely! If there\'s a specific tool you\'d like us to review, let us know and we\'ll add it to our review queue.'
+    }
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   ];
 
   return (
@@ -107,9 +186,14 @@ const ContactPage = () => {
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
             Get in Touch
           </h1>
+<<<<<<< HEAD
           <p className="text-xl text-gray-900 dark:text-gray-300 leading-relaxed">
             Have a question, suggestion, or want to partner with us? We'd love
             to hear from you.
+=======
+          <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+            Have a question, suggestion, or want to partner with us? We'd love to hear from you.
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
           </p>
         </div>
       </section>
@@ -122,6 +206,7 @@ const ContactPage = () => {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Send us a Message
               </h2>
+<<<<<<< HEAD
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -130,6 +215,13 @@ const ContactPage = () => {
                       htmlFor="name"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
+=======
+              
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                       Full Name *
                     </label>
                     <input
@@ -139,6 +231,7 @@ const ContactPage = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
+<<<<<<< HEAD
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-900 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder="Your full name"
                     />
@@ -149,6 +242,15 @@ const ContactPage = () => {
                       htmlFor="email"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
+=======
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                       Email Address *
                     </label>
                     <input
@@ -158,7 +260,11 @@ const ContactPage = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
+<<<<<<< HEAD
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-900 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+=======
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                       placeholder="your@email.com"
                     />
                   </div>
@@ -166,10 +272,14 @@ const ContactPage = () => {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
+<<<<<<< HEAD
                     <label
                       htmlFor="category"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
+=======
+                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                       Category
                     </label>
                     <select
@@ -177,21 +287,33 @@ const ContactPage = () => {
                       name="category"
                       value={formData.category}
                       onChange={handleChange}
+<<<<<<< HEAD
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-900 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
                       {categories.map((category) => (
+=======
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                      {categories.map(category => (
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                         <option key={category.value} value={category.value}>
                           {category.label}
                         </option>
                       ))}
                     </select>
                   </div>
+<<<<<<< HEAD
 
                   <div>
                     <label
                       htmlFor="subject"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
+=======
+                  
+                  <div>
+                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                       Subject *
                     </label>
                     <input
@@ -201,17 +323,25 @@ const ContactPage = () => {
                       value={formData.subject}
                       onChange={handleChange}
                       required
+<<<<<<< HEAD
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-900 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+=======
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                       placeholder="Brief subject line"
                     />
                   </div>
                 </div>
 
                 <div>
+<<<<<<< HEAD
                   <label
                     htmlFor="message"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                   >
+=======
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                     Message *
                   </label>
                   <textarea
@@ -221,7 +351,11 @@ const ContactPage = () => {
                     onChange={handleChange}
                     required
                     rows={6}
+<<<<<<< HEAD
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-900 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+=======
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                     placeholder="Tell us more about your inquiry..."
                   />
                 </div>
@@ -244,7 +378,11 @@ const ContactPage = () => {
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
                 Other Ways to Reach Us
               </h3>
+<<<<<<< HEAD
 
+=======
+              
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               <div className="space-y-6">
                 {contactMethods.map((method, index) => (
                   <a
@@ -259,7 +397,11 @@ const ContactPage = () => {
                       <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
                         {method.title}
                       </h4>
+<<<<<<< HEAD
                       <p className="text-sm text-gray-900 dark:text-gray-300 mb-2">
+=======
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                         {method.description}
                       </p>
                       <p className="text-primary-600 dark:text-primary-400 font-medium">
@@ -282,11 +424,17 @@ const ContactPage = () => {
                   <p className="text-gray-900 dark:text-white font-medium">
                     DigitalToolsHub HQ
                   </p>
+<<<<<<< HEAD
                   <p className="text-gray-900 dark:text-gray-300">
                     123 Innovation Drive
                     <br />
                     San Francisco, CA 94105
                     <br />
+=======
+                  <p className="text-gray-600 dark:text-gray-300">
+                    123 Innovation Drive<br />
+                    San Francisco, CA 94105<br />
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                     United States
                   </p>
                 </div>
@@ -298,14 +446,22 @@ const ContactPage = () => {
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
                 Quick Answers
               </h3>
+<<<<<<< HEAD
 
+=======
+              
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               <div className="space-y-4">
                 {faqs.map((faq, index) => (
                   <div key={index}>
                     <h4 className="font-medium text-gray-900 dark:text-white mb-2">
                       {faq.question}
                     </h4>
+<<<<<<< HEAD
                     <p className="text-sm text-gray-900 dark:text-gray-300">
+=======
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                       {faq.answer}
                     </p>
                   </div>
@@ -327,9 +483,14 @@ const ContactPage = () => {
               Interested in Partnership?
             </h2>
             <p className="text-white/90 mb-6 text-lg">
+<<<<<<< HEAD
               We're always looking for innovative tools and strategic partners
               to collaborate with. Let's explore how we can work together to
               help more people discover amazing digital tools.
+=======
+              We're always looking for innovative tools and strategic partners to collaborate with. 
+              Let's explore how we can work together to help more people discover amazing digital tools.
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             </p>
             <button className="bg-white text-primary-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-colors">
               Explore Partnerships
@@ -341,4 +502,8 @@ const ContactPage = () => {
   );
 };
 
+<<<<<<< HEAD
 export default ContactPage;
+=======
+export default ContactPage;
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

@@ -6,6 +6,7 @@ export default defineConfig({
   base: "/",
   plugins: [react()],
   optimizeDeps: {
+<<<<<<< HEAD
     exclude: ['lucide-react', 'src/data/tools.ts', 'src/data/toolDetails.ts', 'src/data/categoryTemplates.ts'],
   },
   build: {
@@ -66,3 +67,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 500,
   },
 });
+=======
+    exclude: ['lucide-react'],
+  },
+});
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

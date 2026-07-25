@@ -616,7 +616,11 @@ export const tools: Tool[] = [
   {
     id: 35,
     name: `Syndar`,
+<<<<<<< HEAD
     categories: [`Finance & Fintech / Accounting`, `E-commerce`],
+=======
+    categories: [`Finance & Fintech / Accounting`, `E-Commerce`],
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
     functions: [`Automation / Workflow`, `Analytics & Reporting`],
     description: `Synder is an accounting automation platform that connects e-commerce and payment systems to your books in real time. Simplify reconciliation, automate transaction sync, and generate powerful financial reports to keep your business finances accurate, tax-ready, and stress-free`,
     price: `20$/mo`,
@@ -693,7 +697,11 @@ export const tools: Tool[] = [
   {
     id: 39,
     name: `Travel-Code`,
+<<<<<<< HEAD
     categories: [`Finance & Fintech / Accounting`],
+=======
+    categories: [`Finance & Fintech / Accounting`, `Travel`],
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
     functions: [
       `Automation / Workflow`,
       `Analytics & Reporting`,

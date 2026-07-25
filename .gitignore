@@ -23,6 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 .env
+<<<<<<< HEAD
 
 # Local Netlify folder
 .netlify
+=======
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

@@ -25,7 +25,11 @@ const Header: React.FC<HeaderProps> = () => {
               <Zap className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900 dark:text-white">
+<<<<<<< HEAD
               AIThubs
+=======
+              DThub
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             </span>
           </Link>
 
@@ -96,7 +100,11 @@ const Header: React.FC<HeaderProps> = () => {
           {/* Right side buttons */}
           {user ? (
             <div className="flex items-center gap-3">
+<<<<<<< HEAD
               <span className="text-sm text-gray-900 dark:text-gray-300">
+=======
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                 {user.user_metadata?.full_name || user.email}
               </span>
               <button

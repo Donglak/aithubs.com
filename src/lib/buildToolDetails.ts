@@ -1,6 +1,10 @@
 import { ToolDetail } from '../types/tool';
 import { CATEGORY_TEMPLATES } from '../data/categoryTemplates';
+<<<<<<< HEAD
 import { loadToolDetails } from './loadToolDetails';
+=======
+import { TOOL_DETAILS } from '../data/toolDetails';
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
 const DEFAULTS: Partial<ToolDetail> = {
   features: ["Email support"],
@@ -9,6 +13,7 @@ const DEFAULTS: Partial<ToolDetail> = {
   screenshots: ["/images/placeholders/default-1.jpg"]
 };
 
+<<<<<<< HEAD
 let toolDetailsPromise: Promise<Partial<ToolDetail>[]> | null = null;
 
 async function getToolDetails(): Promise<Partial<ToolDetail>[]> {
@@ -79,11 +84,19 @@ export function buildToolDetails(toolBase: ToolDetail): ToolDetail {
   }
 
   const override = toolDetailsArray.find(t => t.id === toolBase.id) || {};
+=======
+export function buildToolDetails(toolBase: ToolDetail): ToolDetail {
+  const override = TOOL_DETAILS.find(t => t.id === toolBase.id) || {};
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
   const categories = Array.isArray(toolBase.categories)
     ? toolBase.categories
     : [toolBase.categories];
 
+<<<<<<< HEAD
+=======
+  // merge nhiều template nếu tool có nhiều category
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   const template = categories.reduce<Partial<ToolDetail>>((acc, cat) => {
     const t = CATEGORY_TEMPLATES[cat] || {};
     return {
@@ -95,12 +108,20 @@ export function buildToolDetails(toolBase: ToolDetail): ToolDetail {
     };
   }, {});
 
+<<<<<<< HEAD
+=======
+  // hợp nhất theo ưu tiên: DEFAULTS < template < toolBase < override
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   const merged: ToolDetail = {
     ...(DEFAULTS as ToolDetail),
     ...(template as ToolDetail),
     ...toolBase,
     ...(override as ToolDetail),
 
+<<<<<<< HEAD
+=======
+    // đảm bảo các mảng có giá trị sau merge
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
     features: override.features || toolBase.features || template.features || DEFAULTS.features!,
     pros: override.pros || toolBase.pros || template.pros || DEFAULTS.pros!,
     cons: override.cons || toolBase.cons || template.cons || DEFAULTS.cons!,
@@ -108,4 +129,8 @@ export function buildToolDetails(toolBase: ToolDetail): ToolDetail {
   };
 
   return merged;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

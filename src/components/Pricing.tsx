@@ -1,9 +1,15 @@
+<<<<<<< HEAD
 import React from "react";
 import { Check } from "lucide-react";
+=======
+import React from 'react';
+import { Check } from 'lucide-react';
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
 const Pricing = () => {
   const plans = [
     {
+<<<<<<< HEAD
       name: "Free",
       price: "$0",
       period: "/month",
@@ -49,6 +55,53 @@ const Pricing = () => {
       cta: "Contact Sales",
       popular: false,
     },
+=======
+      name: 'Free',
+      price: '$0',
+      period: '/month',
+      description: 'Perfect for getting started',
+      features: [
+        'Up to 5 affiliate programs',
+        'Basic analytics',
+        'Link management',
+        'Email support'
+      ],
+      cta: 'Get Started',
+      popular: false
+    },
+    {
+      name: 'Pro',
+      price: '$29',
+      period: '/month',
+      description: 'Best for growing businesses',
+      features: [
+        'Unlimited affiliate programs',
+        'Advanced analytics & reporting',
+        'Auto-optimization tools',
+        'Priority support',
+        'Custom domains',
+        'API access'
+      ],
+      cta: 'Start Pro Trial',
+      popular: true
+    },
+    {
+      name: 'Enterprise',
+      price: '$99',
+      period: '/month',
+      description: 'For large-scale operations',
+      features: [
+        'Everything in Pro',
+        'White-label solution',
+        'Dedicated account manager',
+        'Custom integrations',
+        'Advanced security',
+        'SLA guarantee'
+      ],
+      cta: 'Contact Sales',
+      popular: false
+    }
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   ];
 
   return (
@@ -68,7 +121,11 @@ const Pricing = () => {
             <div
               key={index}
               className={`bg-white rounded-2xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 relative ${
+<<<<<<< HEAD
                 plan.popular ? "ring-2 ring-primary transform scale-105" : ""
+=======
+                plan.popular ? 'ring-2 ring-primary transform scale-105' : ''
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               }`}
             >
               {plan.popular && (
@@ -80,6 +137,7 @@ const Pricing = () => {
               )}
 
               <div className="text-center mb-8">
+<<<<<<< HEAD
                 <h3 className="text-2xl font-bold text-dark-blue mb-2">
                   {plan.name}
                 </h3>
@@ -88,6 +146,12 @@ const Pricing = () => {
                   <span className="text-4xl font-bold text-dark-blue">
                     {plan.price}
                   </span>
+=======
+                <h3 className="text-2xl font-bold text-dark-blue mb-2">{plan.name}</h3>
+                <p className="text-gray-text mb-4">{plan.description}</p>
+                <div className="flex items-baseline justify-center">
+                  <span className="text-4xl font-bold text-dark-blue">{plan.price}</span>
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                   <span className="text-gray-text ml-1">{plan.period}</span>
                 </div>
               </div>
@@ -104,8 +168,13 @@ const Pricing = () => {
               <button
                 className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
                   plan.popular
+<<<<<<< HEAD
                     ? "bg-primary hover:bg-primary-hover text-white"
                     : "border-2 border-primary text-primary hover:bg-primary hover:text-white"
+=======
+                    ? 'bg-primary hover:bg-primary-hover text-white'
+                    : 'border-2 border-primary text-primary hover:bg-primary hover:text-white'
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                 }`}
               >
                 {plan.cta}
@@ -118,4 +187,8 @@ const Pricing = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Pricing;
+=======
+export default Pricing;
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

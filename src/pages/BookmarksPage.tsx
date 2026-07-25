@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Bookmark, BookmarkCheck, Trash2, Search } from "lucide-react";
@@ -30,6 +31,36 @@ const BookmarksPage = () => {
   const clearAllBookmarks = () => {
     if (window.confirm("Are you sure you want to clear all bookmarks?")) {
       localStorage.setItem("bookmarkedTools", JSON.stringify([]));
+=======
+import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Bookmark, BookmarkCheck, Trash2, Search } from 'lucide-react';
+import { tools } from '../data/tools';
+import { toSlug } from '../utils/slug';
+import { Link } from 'react-router-dom';
+import BookmarkTools from '../components/BookmarkTools';
+
+const BookmarksPage = () => {
+  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    // Load bookmarks from localStorage
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedTools') || '[]');
+    setBookmarkedIds(bookmarks);
+  }, []);
+
+  const bookmarkedTools = tools.filter(tool => bookmarkedIds.includes(tool.id));
+
+  const filteredTools = bookmarkedTools.filter(tool =>
+    tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tool.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const clearAllBookmarks = () => {
+    if (window.confirm('Are you sure you want to clear all bookmarks?')) {
+      localStorage.setItem('bookmarkedTools', JSON.stringify([]));
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
       setBookmarkedIds([]);
     }
   };
@@ -38,10 +69,14 @@ const BookmarksPage = () => {
     <div className="pt-16 min-h-screen bg-gray-50 dark:bg-gray-900">
       <Helmet>
         <title>My Bookmarks | DigitalToolsHub</title>
+<<<<<<< HEAD
         <meta
           name="description"
           content="View your bookmarked digital tools and favorites."
         />
+=======
+        <meta name="description" content="View your bookmarked digital tools and favorites." />
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
       </Helmet>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -56,9 +91,14 @@ const BookmarksPage = () => {
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                   My Bookmarks
                 </h1>
+<<<<<<< HEAD
                 <p className="text-gray-900 dark:text-gray-400">
                   {bookmarkedTools.length}{" "}
                   {bookmarkedTools.length === 1 ? "tool" : "tools"} saved
+=======
+                <p className="text-gray-600 dark:text-gray-400">
+                  {bookmarkedTools.length} {bookmarkedTools.length === 1 ? 'tool' : 'tools'} saved
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                 </p>
               </div>
             </div>
@@ -97,9 +137,14 @@ const BookmarksPage = () => {
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
               No bookmarks yet
             </h3>
+<<<<<<< HEAD
             <p className="text-gray-900 dark:text-gray-400 mb-6">
               Start bookmarking your favorite tools to access them quickly
               later.
+=======
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Start bookmarking your favorite tools to access them quickly later.
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             </p>
             <Link
               to="/tools"
@@ -117,12 +162,21 @@ const BookmarksPage = () => {
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
               No results found
             </h3>
+<<<<<<< HEAD
             <p className="text-gray-900 dark:text-gray-400 mb-6">
               Try adjusting your search terms
             </p>
             <button
               onClick={() => setSearchQuery("")}
               className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-900 transition-colors"
+=======
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Try adjusting your search terms
+            </p>
+            <button
+              onClick={() => setSearchQuery('')}
+              className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             >
               Clear Search
             </button>
@@ -130,7 +184,11 @@ const BookmarksPage = () => {
         ) : (
           /* Tools Grid */
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+<<<<<<< HEAD
             {filteredTools.map((tool) => (
+=======
+            {filteredTools.map(tool => (
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               <div
                 key={tool.id}
                 className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-200 dark:hover:border-primary-700"
@@ -148,16 +206,27 @@ const BookmarksPage = () => {
                       </h3>
                       <div className="flex items-center gap-1 mt-1">
                         <span className="text-yellow-400">★</span>
+<<<<<<< HEAD
                         <span className="text-sm text-gray-900 dark:text-gray-400">
+=======
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                           {tool.rating}
                         </span>
                       </div>
                     </div>
                   </div>
+<<<<<<< HEAD
                   {/* <BookmarkTools tool={tool} size="sm" /> */}
                 </div>
 
                 <p className="text-sm text-gray-900 dark:text-gray-400 mb-4 line-clamp-2">
+=======
+                  <BookmarkTools tool={tool} size="sm" />
+                </div>
+
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                   {tool.description}
                 </p>
 
@@ -181,4 +250,8 @@ const BookmarksPage = () => {
   );
 };
 
+<<<<<<< HEAD
 export default BookmarksPage;
+=======
+export default BookmarksPage;
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

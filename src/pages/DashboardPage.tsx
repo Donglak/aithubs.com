@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Bookmark, ExternalLink, Heart, Loader2, Star } from "lucide-react";
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
@@ -45,10 +46,36 @@ export default function DashboardPage() {
   ];
 
   const currentData = tabs.find((t) => t.key === activeTab)?.data || [];
+=======
+import { Bookmark, ExternalLink, Heart, Loader2, Star } from 'lucide-react'
+import { useState } from 'react'
+import { Link, Navigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import { useUserLibrary } from '../hooks/useToolInteractions'
+
+type Tab = 'saved' | 'bookmarked' | 'liked'
+
+export default function DashboardPage() {
+  const { user, loading: authLoading } = useAuth()
+  const { bookmarked, liked, saved, loading } = useUserLibrary()
+  const [activeTab, setActiveTab] = useState<Tab>('saved')
+
+  // Chưa đăng nhập → redirect login
+  if (!authLoading && !user) return <Navigate to="/login" replace />
+
+  const tabs: { key: Tab; label: string; icon: any; data: any[]; color: string }[] = [
+    { key: 'saved',       label: 'Saved',      icon: Star,     data: saved,      color: 'text-yellow-500' },
+    { key: 'bookmarked',  label: 'Bookmarked', icon: Bookmark, data: bookmarked, color: 'text-blue-500'   },
+    { key: 'liked',       label: 'Liked',      icon: Heart,    data: liked,      color: 'text-red-500'    },
+  ]
+
+  const currentData = tabs.find(t => t.key === activeTab)?.data || []
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-12">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+<<<<<<< HEAD
         {/* Header profile */}
         <div className="flex items-center gap-4 mb-8">
           <img
@@ -56,22 +83,36 @@ export default function DashboardPage() {
               user?.user_metadata?.avatar_url ||
               `https://ui-avatars.com/api/?name=${user?.email}`
             }
+=======
+
+        {/* Header profile */}
+        <div className="flex items-center gap-4 mb-8">
+          <img
+            src={user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email}`}
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             alt="avatar"
             referrerPolicy="no-referrer"
             className="w-16 h-16 rounded-full object-cover border-2 border-white shadow"
           />
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+<<<<<<< HEAD
               {user?.user_metadata?.full_name || "My Dashboard"}
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm">
               {user?.email}
             </p>
+=======
+              {user?.user_metadata?.full_name || 'My Dashboard'}
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{user?.email}</p>
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
           </div>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-8">
+<<<<<<< HEAD
           {tabs.map((tab) => (
             <div
               key={tab.key}
@@ -84,24 +125,41 @@ export default function DashboardPage() {
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 {tab.label}
               </div>
+=======
+          {tabs.map(tab => (
+            <div key={tab.key} className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow-sm border border-gray-100 dark:border-gray-700">
+              <tab.icon className={`w-6 h-6 ${tab.color} mx-auto mb-1`} />
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">{tab.data.length}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">{tab.label}</div>
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             </div>
           ))}
         </div>
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6 bg-white dark:bg-gray-800 p-1 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 w-fit">
+<<<<<<< HEAD
           {tabs.map((tab) => (
+=======
+          {tabs.map(tab => (
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 activeTab === tab.key
+<<<<<<< HEAD
                   ? "bg-primary-600 text-white shadow"
                   : "text-gray-900 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+=======
+                  ? 'bg-primary-600 text-white shadow'
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               }`}
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}
+<<<<<<< HEAD
               <span
                 className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
                   activeTab === tab.key
@@ -109,6 +167,13 @@ export default function DashboardPage() {
                     : "bg-gray-100 dark:bg-gray-700 text-gray-500"
                 }`}
               >
+=======
+              <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
+                activeTab === tab.key
+                  ? 'bg-white/20 text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-500'
+              }`}>
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                 {tab.data.length}
               </span>
             </button>
@@ -123,12 +188,19 @@ export default function DashboardPage() {
         ) : currentData.length === 0 ? (
           <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
             {(() => {
+<<<<<<< HEAD
               const tab = tabs.find((t) => t.key === activeTab)!;
               return (
                 <>
                   <tab.icon
                     className={`w-12 h-12 ${tab.color} mx-auto mb-4 opacity-30`}
                   />
+=======
+              const tab = tabs.find(t => t.key === activeTab)!
+              return (
+                <>
+                  <tab.icon className={`w-12 h-12 ${tab.color} mx-auto mb-4 opacity-30`} />
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                   <p className="text-gray-500 dark:text-gray-400 mb-4">
                     No tools available in the "{tab.label}" section
                   </p>
@@ -139,12 +211,20 @@ export default function DashboardPage() {
                     explore tools
                   </Link>
                 </>
+<<<<<<< HEAD
               );
+=======
+              )
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             })()}
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<<<<<<< HEAD
             {currentData.map((item) => (
+=======
+            {currentData.map(item => (
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               <Link
                 key={item.tool_slug}
                 to={`/tools/${item.tool_slug}`}
@@ -153,11 +233,15 @@ export default function DashboardPage() {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     {item.tool_logo ? (
+<<<<<<< HEAD
                       <img
                         src={item.tool_logo}
                         alt={item.tool_name}
                         className="w-10 h-10 rounded-lg object-cover"
                       />
+=======
+                      <img src={item.tool_logo} alt={item.tool_name} className="w-10 h-10 rounded-lg object-cover" />
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                     ) : (
                       <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold text-lg">
                         {item.tool_name[0]}
@@ -167,9 +251,13 @@ export default function DashboardPage() {
                       <h3 className="font-semibold text-gray-900 dark:text-white text-sm group-hover:text-primary-600 transition-colors">
                         {item.tool_name}
                       </h3>
+<<<<<<< HEAD
                       <span className="text-xs text-gray-400">
                         {item.tool_category || "AI Tool"}
                       </span>
+=======
+                      <span className="text-xs text-gray-400">{item.tool_category || 'AI Tool'}</span>
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                     </div>
                   </div>
                   <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-primary-500 transition-colors flex-shrink-0" />
@@ -199,5 +287,10 @@ export default function DashboardPage() {
         )}
       </div>
     </div>
+<<<<<<< HEAD
   );
 }
+=======
+  )
+}
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

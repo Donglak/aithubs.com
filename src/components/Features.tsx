@@ -1,10 +1,16 @@
+<<<<<<< HEAD
 import React from "react";
 import { Search, BarChart3, Link, Shield, Zap, Globe } from "lucide-react";
+=======
+import React from 'react';
+import { Search, BarChart3, Link, Shield, Zap, Globe } from 'lucide-react';
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
 const Features = () => {
   const features = [
     {
       icon: Search,
+<<<<<<< HEAD
       title: "Program Discovery",
       description:
         "Find the best affiliate programs for your niche with our comprehensive database.",
@@ -39,6 +45,36 @@ const Features = () => {
       description:
         "Access to international affiliate programs and global marketing opportunities.",
     },
+=======
+      title: 'Program Discovery',
+      description: 'Find the best affiliate programs for your niche with our comprehensive database.'
+    },
+    {
+      icon: BarChart3,
+      title: 'Performance Analytics',
+      description: 'Track clicks, conversions, and earnings with detailed real-time analytics.'
+    },
+    {
+      icon: Link,
+      title: 'Link Management',
+      description: 'Create, organize, and optimize your affiliate links in one central dashboard.'
+    },
+    {
+      icon: Shield,
+      title: 'Fraud Protection',
+      description: 'Advanced security measures to protect your commissions and reputation.'
+    },
+    {
+      icon: Zap,
+      title: 'Auto Optimization',
+      description: 'AI-powered recommendations to maximize your affiliate marketing performance.'
+    },
+    {
+      icon: Globe,
+      title: 'Global Networks',
+      description: 'Access to international affiliate programs and global marketing opportunities.'
+    }
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   ];
 
   return (
@@ -49,8 +85,12 @@ const Features = () => {
             Everything You Need to Succeed
           </h2>
           <p className="text-lg text-gray-text max-w-2xl mx-auto">
+<<<<<<< HEAD
             Powerful tools and features designed to help you maximize your
             affiliate marketing potential
+=======
+            Powerful tools and features designed to help you maximize your affiliate marketing potential
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
           </p>
         </div>
 
@@ -77,4 +117,8 @@ const Features = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Features;
+=======
+export default Features;
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

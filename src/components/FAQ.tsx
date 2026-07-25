@@ -1,11 +1,17 @@
+<<<<<<< HEAD
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+=======
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
 const FAQ = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = [
     {
+<<<<<<< HEAD
       question: "How do I join affiliate programs through Affitor?",
       answer:
         "Simply browse our program directory, click on programs that interest you, and apply directly through our platform. We'll track your application status and notify you when you're approved.",
@@ -45,6 +51,39 @@ const FAQ = () => {
       answer:
         "We offer email support for all users, with priority support for Pro subscribers. Enterprise customers get dedicated account management and phone support.",
     },
+=======
+      question: 'How do I join affiliate programs through Affitor?',
+      answer: 'Simply browse our program directory, click on programs that interest you, and apply directly through our platform. We\'ll track your application status and notify you when you\'re approved.'
+    },
+    {
+      question: 'What commission rates can I expect?',
+      answer: 'Commission rates vary by program and categories, typically ranging from 1% to 50%. Our platform shows you the exact rates for each program before you apply, so you can make informed decisions.'
+    },
+    {
+      question: 'How quickly do I get paid?',
+      answer: 'Payment schedules depend on individual affiliate programs. Most programs pay monthly, with some offering weekly or bi-weekly payments. We display payment terms clearly for each program.'
+    },
+    {
+      question: 'Is there a minimum payout threshold?',
+      answer: 'Minimum payout thresholds vary by program. We aggregate your earnings across programs where possible to help you reach payout thresholds faster.'
+    },
+    {
+      question: 'Can I track performance across all my programs?',
+      answer: 'Yes! Our unified dashboard shows performance metrics across all your affiliate programs in one place, including clicks, conversions, and earnings.'
+    },
+    {
+      question: 'Do you provide marketing materials?',
+      answer: 'Many of our partner programs provide banners, product images, and promotional content. We organize these materials in your dashboard for easy access.'
+    },
+    {
+      question: 'Is Affitor suitable for beginners?',
+      answer: 'Absolutely! We provide educational resources, best practices guides, and step-by-step tutorials to help beginners get started with affiliate marketing.'
+    },
+    {
+      question: 'What kind of support do you offer?',
+      answer: 'We offer email support for all users, with priority support for Pro subscribers. Enterprise customers get dedicated account management and phone support.'
+    }
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   ];
 
   const toggleFAQ = (index: number) => {
@@ -82,10 +121,19 @@ const FAQ = () => {
                   <ChevronDown className="w-5 h-5 text-gray-text flex-shrink-0" />
                 )}
               </button>
+<<<<<<< HEAD
 
               {openIndex === index && (
                 <div className="px-6 pb-4">
                   <p className="text-gray-text leading-relaxed">{faq.answer}</p>
+=======
+              
+              {openIndex === index && (
+                <div className="px-6 pb-4">
+                  <p className="text-gray-text leading-relaxed">
+                    {faq.answer}
+                  </p>
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                 </div>
               )}
             </div>
@@ -96,4 +144,8 @@ const FAQ = () => {
   );
 };
 
+<<<<<<< HEAD
 export default FAQ;
+=======
+export default FAQ;
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

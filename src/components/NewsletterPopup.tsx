@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   CheckCircle2,
   ChevronLeft,
@@ -8,6 +9,11 @@ import {
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { appendSurveyToSheet } from "../services/googleSheets";
+=======
+import { CheckCircle2, ChevronLeft, ChevronRight, Gift, Mail, X } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { appendSurveyToSheet } from '../services/googleSheets';
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
 type Answer = {
   role?: string;
@@ -28,6 +34,7 @@ type Props = {
   submitUrl?: string;
 };
 
+<<<<<<< HEAD
 const ROLES = [
   "Student",
   "Marketer",
@@ -46,6 +53,19 @@ const GOALS = [
 ];
 
 const BUDGETS = ["$0", "$1 – $49", "$50 – $199", "$200+"];
+=======
+const ROLES = ['Student', 'Marketer', 'Developer', 'Founder', 'Creator', 'Other'];
+
+const GOALS = [
+  'Discover new tools',
+  'Save cost / find deals',
+  'Automate workflows',
+  'Learn AI quickly',
+  'Compare alternatives',
+];
+
+const BUDGETS = ['$0', '$1 – $49', '$50 – $199', '$200+'];
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
 const TOTAL_STEPS = 5;
 
@@ -53,7 +73,11 @@ export default function NewsletterPopup({
   isOpen,
   onClose,
   onSubmitted,
+<<<<<<< HEAD
 }: Props) {
+=======
+  }: Props) {
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -92,6 +116,7 @@ export default function NewsletterPopup({
   };
 
   const handleToggleGoal = (goal: string) => {
+<<<<<<< HEAD
     setAnswers((prev) => {
       const isOn = prev.goals.includes(goal);
       return {
@@ -99,17 +124,30 @@ export default function NewsletterPopup({
         goals: isOn
           ? prev.goals.filter((g) => g !== goal)
           : [...prev.goals, goal],
+=======
+    setAnswers(prev => {
+      const isOn = prev.goals.includes(goal);
+      return {
+        ...prev,
+        goals: isOn ? prev.goals.filter(g => g !== goal) : [...prev.goals, goal],
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
       };
     });
   };
 
+<<<<<<< HEAD
   const next = () => canNext && setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const prev = () => setStep((s) => Math.max(s - 1, 1));
+=======
+  const next = () => canNext && setStep(s => Math.min(s + 1, TOTAL_STEPS));
+  const prev = () => setStep(s => Math.max(s - 1, 1));
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
   const skipSurvey = () => setStep(5); // nhảy thẳng tới email
 
   // NewsletterPopup.tsx
 
+<<<<<<< HEAD
   // ...
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,11 +177,50 @@ export default function NewsletterPopup({
       setSubmitting(false);
     }
   };
+=======
+// ...
+const onSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!canNext || submitting) return;
+
+  setSubmitting(true);
+  try {
+    const payload = {
+      ...answers,
+      ua: navigator.userAgent,
+      path: location.pathname,
+    };
+
+    // 1) Lưu local
+    localStorage.setItem('dth_survey_done', '1');
+    localStorage.setItem('dth_survey_answers', JSON.stringify(payload));
+
+    // 2) Gửi lên Google Sheets
+    await appendSurveyToSheet(payload);
+
+    setDone(true);
+    onSubmitted?.(payload);
+  } catch (err) {
+    console.error('Submit survey failed:', err);
+    // TODO: show toast hoặc message cho user
+  } finally {
+    setSubmitting(false);
+  }
+};
+
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
       {/* Backdrop */}
+<<<<<<< HEAD
       <div className="absolute inset-0 bg-black/60" onClick={closeAndReset} />
+=======
+      <div
+        className="absolute inset-0 bg-black/60"
+        onClick={closeAndReset}
+      />
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
       {/* Modal */}
       <div className="relative w-[92%] max-w-[560px] rounded-2xl overflow-hidden shadow-2xl animate-fadeInUp">
         {/* Header gradient */}
@@ -177,9 +254,13 @@ export default function NewsletterPopup({
             <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary-500 transition-all"
+<<<<<<< HEAD
                 style={{
                   width: `${(Math.min(step, TOTAL_STEPS) / TOTAL_STEPS) * 100}%`,
                 }}
+=======
+                style={{ width: `${(Math.min(step, TOTAL_STEPS) / TOTAL_STEPS) * 100}%` }}
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               />
             </div>
             <div className="text-xs text-gray-300">
@@ -196,6 +277,7 @@ export default function NewsletterPopup({
                     What best describes your role?
                   </div>
                   <div className="grid grid-cols-2 gap-3">
+<<<<<<< HEAD
                     {ROLES.map((role) => (
                       <button
                         type="button"
@@ -207,6 +289,17 @@ export default function NewsletterPopup({
                           answers.role === role
                             ? "border-primary-500 bg-primary-500/10 text-primary-300"
                             : "border-gray-700 bg-gray-800 hover:bg-gray-700"
+=======
+                    {ROLES.map(role => (
+                      <button
+                        type="button"
+                        key={role}
+                        onClick={() => setAnswers(prev => ({ ...prev, role }))}
+                        className={`px-3 py-2 rounded-lg border ${
+                          answers.role === role
+                            ? 'border-primary-500 bg-primary-500/10 text-primary-300'
+                            : 'border-gray-700 bg-gray-800 hover:bg-gray-700'
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                         } text-sm text-left`}
                       >
                         {role}
@@ -220,6 +313,7 @@ export default function NewsletterPopup({
               {step === 2 && (
                 <div>
                   <div className="text-lg font-semibold mb-3">
+<<<<<<< HEAD
                     What are you looking to achieve?{" "}
                     <span className="text-gray-400 text-sm">
                       (select one or more)
@@ -227,6 +321,12 @@ export default function NewsletterPopup({
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {GOALS.map((goal) => {
+=======
+                    What are you looking to achieve? <span className="text-gray-400 text-sm">(select one or more)</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {GOALS.map(goal => {
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                       const active = answers.goals.includes(goal);
                       return (
                         <button
@@ -235,12 +335,20 @@ export default function NewsletterPopup({
                           onClick={() => handleToggleGoal(goal)}
                           className={`px-3 py-1.5 rounded-full text-xs border ${
                             active
+<<<<<<< HEAD
                               ? "border-primary-500 bg-primary-500/10 text-primary-300"
                               : "border-gray-700 bg-gray-800 hover:bg-gray-700"
                           }`}
                         >
                           {active ? "✓ " : ""}
                           {goal}
+=======
+                              ? 'border-primary-500 bg-primary-500/10 text-primary-300'
+                              : 'border-gray-700 bg-gray-800 hover:bg-gray-700'
+                          }`}
+                        >
+                          {active ? '✓ ' : ''}{goal}
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                         </button>
                       );
                     })}
@@ -255,6 +363,7 @@ export default function NewsletterPopup({
                     What is your monthly budget for tools?
                   </div>
                   <div className="grid grid-cols-2 gap-3">
+<<<<<<< HEAD
                     {BUDGETS.map((b) => (
                       <button
                         type="button"
@@ -266,6 +375,17 @@ export default function NewsletterPopup({
                           answers.budget === b
                             ? "border-primary-500 bg-primary-500/10 text-primary-300"
                             : "border-gray-700 bg-gray-800 hover:bg-gray-700"
+=======
+                    {BUDGETS.map(b => (
+                      <button
+                        type="button"
+                        key={b}
+                        onClick={() => setAnswers(prev => ({ ...prev, budget: b }))}
+                        className={`px-3 py-2 rounded-lg border text-left ${
+                          answers.budget === b
+                            ? 'border-primary-500 bg-primary-500/10 text-primary-300'
+                            : 'border-gray-700 bg-gray-800 hover:bg-gray-700'
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                         } text-sm`}
                       >
                         {b}
@@ -279,6 +399,7 @@ export default function NewsletterPopup({
               {step === 4 && (
                 <div>
                   <div className="text-lg font-semibold mb-3">
+<<<<<<< HEAD
                     Your biggest challenge right now?{" "}
                     <span className="text-gray-400 text-sm">(optional)</span>
                   </div>
@@ -286,6 +407,14 @@ export default function NewsletterPopup({
                     value={answers.pain ?? ""}
                     onChange={(e) =>
                       setAnswers((prev) => ({ ...prev, pain: e.target.value }))
+=======
+                    Your biggest challenge right now? <span className="text-gray-400 text-sm">(optional)</span>
+                  </div>
+                  <textarea
+                    value={answers.pain ?? ''}
+                    onChange={(e) =>
+                      setAnswers(prev => ({ ...prev, pain: e.target.value }))
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                     }
                     placeholder="Tell us briefly so we can tailor recommendations…"
                     className="w-full rounded-lg bg-gray-800 border border-gray-700 focus:border-primary-500 focus:ring-0 text-sm px-3 py-2"
@@ -304,12 +433,18 @@ export default function NewsletterPopup({
                     <input
                       type="text"
                       placeholder="Your full name (optional)"
+<<<<<<< HEAD
                       value={answers.name ?? ""}
                       onChange={(e) =>
                         setAnswers((prev) => ({
                           ...prev,
                           name: e.target.value,
                         }))
+=======
+                      value={answers.name ?? ''}
+                      onChange={(e) =>
+                        setAnswers(prev => ({ ...prev, name: e.target.value }))
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                       }
                       className="w-full rounded-lg bg-gray-800 border border-gray-700 focus:border-primary-500 focus:ring-0 text-sm px-3 py-2"
                     />
@@ -319,12 +454,18 @@ export default function NewsletterPopup({
                         type="email"
                         required
                         placeholder="your@email.com"
+<<<<<<< HEAD
                         value={answers.email ?? ""}
                         onChange={(e) =>
                           setAnswers((prev) => ({
                             ...prev,
                             email: e.target.value,
                           }))
+=======
+                        value={answers.email ?? ''}
+                        onChange={(e) =>
+                          setAnswers(prev => ({ ...prev, email: e.target.value }))
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                         }
                         className="w-full rounded-lg bg-gray-800 border border-gray-700 focus:border-primary-500 focus:ring-0 text-sm pl-9 pr-3 py-2"
                       />
@@ -335,6 +476,7 @@ export default function NewsletterPopup({
                         type="checkbox"
                         checked={!!answers.consent}
                         onChange={(e) =>
+<<<<<<< HEAD
                           setAnswers((prev) => ({
                             ...prev,
                             consent: e.target.checked,
@@ -344,6 +486,13 @@ export default function NewsletterPopup({
                       />
                       I agree to receive occasional emails and accept the
                       Privacy Policy.
+=======
+                          setAnswers(prev => ({ ...prev, consent: e.target.checked }))
+                        }
+                        className="rounded border-gray-600 text-primary-500 focus:ring-0 bg-gray-800"
+                      />
+                      I agree to receive occasional emails and accept the Privacy Policy.
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                     </label>
                   </div>
                 </div>
@@ -382,8 +531,13 @@ export default function NewsletterPopup({
                       onClick={next}
                       className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold ${
                         canNext
+<<<<<<< HEAD
                           ? "bg-primary-600 hover:bg-primary-700 text-white"
                           : "bg-gray-700 text-gray-400 cursor-not-allowed"
+=======
+                          ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                          : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                       }`}
                     >
                       Next
@@ -395,11 +549,19 @@ export default function NewsletterPopup({
                       disabled={!canNext || submitting}
                       className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold ${
                         canNext && !submitting
+<<<<<<< HEAD
                           ? "bg-primary-600 hover:bg-primary-700 text-white"
                           : "bg-gray-700 text-gray-400 cursor-not-allowed"
                       }`}
                     >
                       {submitting ? "Submitting…" : "Get Free Updates"}
+=======
+                          ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                          : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      {submitting ? 'Submitting…' : 'Get Free Updates'}
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                     </button>
                   )}
                 </div>
@@ -410,9 +572,13 @@ export default function NewsletterPopup({
               <div className="mx-auto w-14 h-14 rounded-full bg-green-600/20 flex items-center justify-center mb-4">
                 <CheckCircle2 className="w-8 h-8 text-green-400" />
               </div>
+<<<<<<< HEAD
               <div className="text-lg font-semibold">
                 Thanks! You’re all set.
               </div>
+=======
+              <div className="text-lg font-semibold">Thanks! You’re all set.</div>
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               <p className="text-sm text-gray-400 mt-1">
                 We’ll send curated tips and exclusive deals to your inbox.
               </p>

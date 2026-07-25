@@ -1,11 +1,17 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+=======
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
 const Testimonials = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   const testimonials = [
     {
+<<<<<<< HEAD
       name: "Sarah Johnson",
       role: "Content Creator",
       image:
@@ -32,6 +38,28 @@ const Testimonials = () => {
         "Finding quality affiliate programs used to take hours. Now it takes minutes with Affitor.",
       rating: 5,
     },
+=======
+      name: 'Sarah Johnson',
+      role: 'Content Creator',
+      image: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+      quote: 'Affitor transformed my affiliate marketing game. I increased my revenue by 300% in just 3 months!',
+      rating: 5
+    },
+    {
+      name: 'Mike Chen',
+      role: 'Digital Marketer',
+      image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+      quote: 'The analytics dashboard is incredible. I can finally see which programs are actually profitable.',
+      rating: 5
+    },
+    {
+      name: 'Emily Rodriguez',
+      role: 'Blogger',
+      image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+      quote: 'Finding quality affiliate programs used to take hours. Now it takes minutes with Affitor.',
+      rating: 5
+    }
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   ];
 
   const nextTestimonial = () => {
@@ -39,9 +67,13 @@ const Testimonials = () => {
   };
 
   const prevTestimonial = () => {
+<<<<<<< HEAD
     setCurrentTestimonial(
       (prev) => (prev - 1 + testimonials.length) % testimonials.length,
     );
+=======
+    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   };
 
   return (
@@ -65,6 +97,7 @@ const Testimonials = () => {
                 className="w-full h-full rounded-full object-cover"
               />
             </div>
+<<<<<<< HEAD
 
             <div className="flex justify-center mb-4">
               {[...Array(testimonials[currentTestimonial].rating)].map(
@@ -75,6 +108,13 @@ const Testimonials = () => {
                   />
                 ),
               )}
+=======
+            
+            <div className="flex justify-center mb-4">
+              {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+              ))}
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             </div>
 
             <blockquote className="text-xl lg:text-2xl text-dark-blue font-medium mb-6 leading-relaxed">
@@ -98,7 +138,11 @@ const Testimonials = () => {
           >
             <ChevronLeft className="w-6 h-6 text-dark-blue" />
           </button>
+<<<<<<< HEAD
 
+=======
+          
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
           <button
             onClick={nextTestimonial}
             className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors"
@@ -113,7 +157,11 @@ const Testimonials = () => {
                 key={index}
                 onClick={() => setCurrentTestimonial(index)}
                 className={`w-3 h-3 rounded-full transition-colors ${
+<<<<<<< HEAD
                   index === currentTestimonial ? "bg-primary" : "bg-gray-300"
+=======
+                  index === currentTestimonial ? 'bg-primary' : 'bg-gray-300'
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                 }`}
               />
             ))}
@@ -124,4 +172,8 @@ const Testimonials = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Testimonials;
+=======
+export default Testimonials;
+>>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

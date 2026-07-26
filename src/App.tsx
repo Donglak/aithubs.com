@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Suspense, lazy } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
@@ -24,6 +23,11 @@ const EbooksPage = lazy(() => import("./pages/EbooksPage"));
 const BecomeVendorPage = lazy(() => import("./pages/BecomeVendorPage"));
 const VendorStorefrontPage = lazy(() => import("./pages/VendorStorefrontPage"));
 const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
+
+// Payment pages
+const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
+const PaymentSuccessPage = lazy(() => import("./pages/PaymentSuccessPage"));
+const PaymentCancelPage = lazy(() => import("./pages/PaymentCancelPage"));
 
 // Vendor workspace (lazy)
 const VendorLayout = lazy(() => import("./components/vendor/VendorLayout"));
@@ -89,6 +93,11 @@ export default function App() {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/ebooks" element={<EbooksPage />} />
 
+                {/* Payment routes */}
+                <Route path="/checkout/:type" element={<CheckoutPage />} />
+                <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                <Route path="/payment/cancel" element={<PaymentCancelPage />} />
+
                 {/* Vendor public pages */}
                 <Route path="/become-vendor" element={<BecomeVendorPage />} />
                 <Route
@@ -137,65 +146,5 @@ export default function App() {
         </div>
       </Router>
     </ThemeProvider>
-=======
-import { useEffect } from 'react';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import Footer from './components/Footer';
-import Header from './components/Header';
-import PopupManager from './components/PopupManager';
-import ScrollToTop from './components/ScrollToTop';
-import AboutPage from './pages/AboutPage';
-import AuthorPage from './pages/AuthorPage';
-import BlogPage from './pages/BlogPage';
-import BlogPostPage from './pages/BlogPostPage';
-import BookmarksPage from './pages/BookmarksPage';
-import ContactPage from './pages/ContactPage';
-import CoursesPage from './pages/CoursesPage';
-import DashboardPage from './pages/DashboardPage';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import ToolDetailPage from './pages/ToolDetailPage';
-import ToolsPage from './pages/ToolsPage';
-
-
-export default function App() {
-  // Always force dark mode
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-    localStorage.setItem('theme', 'dark');
-  }, []);
-
-  const darkMode = true;
-  const toggleDarkMode = () => {}; // disabled
-
-  return (
-    <Router>
-      {/* Only dark styling */}
-      <div className="min-h-screen bg-gray-900 text-gray-100 transition-colors duration-300">
-        <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <main>
-          <ScrollToTop />
-          
-            <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/tools" element={<ToolsPage />} />
-            <Route path="/tools/:slug" element={<ToolDetailPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/courses" element={<CoursesPage />} />
-            <Route path="/blog/:slug" element={<BlogPostPage />} />
-            <Route path="/author/:slug" element={<AuthorPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/bookmarks" element={<BookmarksPage />} />
-            </Routes>
-          
-        </main>
-        <Footer />
-        <PopupManager />
-      </div>
-    </Router>
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   );
 }

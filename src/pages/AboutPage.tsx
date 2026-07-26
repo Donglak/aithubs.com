@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React from "react";
 import {
   Target,
@@ -16,22 +15,10 @@ const AboutPage = () => {
     { number: "50K+", label: "Happy Users" },
     { number: "98%", label: "Success Rate" },
     { number: "$2M+", label: "Saved by Users" },
-=======
-import React from 'react';
-import { Target, Users, Award, TrendingUp, Mail, Linkedin, Twitter } from 'lucide-react';
-
-const AboutPage = () => {
-  const stats = [
-    { number: '450+', label: 'Tools Reviewed' },
-    { number: '50K+', label: 'Happy Users' },
-    { number: '98%', label: 'Success Rate' },
-    { number: '$2M+', label: 'Saved by Users' }
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   ];
 
   const team = [
     {
-<<<<<<< HEAD
       name: "Sarah Johnson",
       role: "Founder & CEO",
       bio: "Former marketing director with 10+ years experience in digital tools and automation.",
@@ -67,46 +54,11 @@ const AboutPage = () => {
         email: "emily@digitaltoolshub.com",
       },
     },
-=======
-      name: 'Sarah Johnson',
-      role: 'Founder & CEO',
-      bio: 'Former marketing director with 10+ years experience in digital tools and automation.',
-      image: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
-      social: {
-        linkedin: '#',
-        twitter: '#',
-        email: 'sarah@digitaltoolshub.com'
-      }
-    },
-    {
-      name: 'Mike Chen',
-      role: 'Head of Research',
-      bio: 'Tech enthusiast and former software engineer specializing in AI and automation tools.',
-      image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
-      social: {
-        linkedin: '#',
-        twitter: '#',
-        email: 'mike@digitaltoolshub.com'
-      }
-    },
-    {
-      name: 'Emily Rodriguez',
-      role: 'Content Director',
-      bio: 'Content strategist and affiliate marketing expert with a passion for helping others succeed online.',
-      image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
-      social: {
-        linkedin: '#',
-        twitter: '#',
-        email: 'emily@digitaltoolshub.com'
-      }
-    }
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   ];
 
   const values = [
     {
       icon: Target,
-<<<<<<< HEAD
       title: "Transparency",
       description:
         "We provide honest, unbiased reviews and clearly disclose all affiliate relationships.",
@@ -129,26 +81,6 @@ const AboutPage = () => {
       description:
         "We stay ahead of digital trends to bring you the latest and most effective tools.",
     },
-=======
-      title: 'Transparency',
-      description: 'We provide honest, unbiased reviews and clearly disclose all affiliate relationships.'
-    },
-    {
-      icon: Users,
-      title: 'Community First',
-      description: 'Our users\' success is our priority. We build tools and content that truly help people achieve their goals.'
-    },
-    {
-      icon: Award,
-      title: 'Quality Standards',
-      description: 'We rigorously test and evaluate every tool before recommending it to our community.'
-    },
-    {
-      icon: TrendingUp,
-      title: 'Continuous Innovation',
-      description: 'We stay ahead of digital trends to bring you the latest and most effective tools.'
-    }
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   ];
 
   return (
@@ -159,16 +91,10 @@ const AboutPage = () => {
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
             About DigitalToolsHub
           </h1>
-<<<<<<< HEAD
           <p className="text-xl text-gray-900 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
             We're on a mission to help entrepreneurs, creators, and businesses
             discover the best digital tools to boost productivity, increase
             revenue, and achieve their goals faster.
-=======
-          <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
-            We're on a mission to help entrepreneurs, creators, and businesses discover the best digital tools 
-            to boost productivity, increase revenue, and achieve their goals faster.
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
           </p>
         </div>
       </section>
@@ -182,11 +108,7 @@ const AboutPage = () => {
                 <div className="text-3xl lg:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
                   {stat.number}
                 </div>
-<<<<<<< HEAD
                 <div className="text-gray-900 dark:text-gray-400 font-medium">
-=======
-                <div className="text-gray-600 dark:text-gray-400 font-medium">
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                   {stat.label}
                 </div>
               </div>
@@ -203,7 +125,6 @@ const AboutPage = () => {
               Our Story
             </h2>
           </div>
-<<<<<<< HEAD
 
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-gray-900 dark:text-gray-300 leading-relaxed mb-6">
@@ -235,31 +156,6 @@ const AboutPage = () => {
               countless hours. But we're just getting started - our mission is
               to become the most trusted resource for digital tool
               recommendations worldwide.
-=======
-          
-          <div className="prose prose-lg dark:prose-invert max-w-none">
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-              DigitalToolsHub was born from a simple frustration: the overwhelming number of digital tools available 
-              today makes it nearly impossible to know which ones actually work and which ones are worth your investment.
-            </p>
-            
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-              As entrepreneurs and digital marketers ourselves, we spent countless hours and thousands of dollars 
-              testing tools that promised the world but delivered little. We realized there had to be a better way 
-              to help people navigate the digital tools landscape.
-            </p>
-            
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-              That's when we decided to create DigitalToolsHub - a platform where real experts test, review, and 
-              recommend only the tools that truly make a difference. Every tool in our directory has been personally 
-              tested by our team, and every review is based on real-world usage and results.
-            </p>
-            
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-              Today, we're proud to have helped over 50,000 users discover tools that have collectively saved them 
-              millions of dollars and countless hours. But we're just getting started - our mission is to become 
-              the most trusted resource for digital tool recommendations worldwide.
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             </p>
           </div>
         </div>
@@ -272,11 +168,7 @@ const AboutPage = () => {
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Our Values
             </h2>
-<<<<<<< HEAD
             <p className="text-xl text-gray-900 dark:text-gray-300">
-=======
-            <p className="text-xl text-gray-600 dark:text-gray-300">
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               The principles that guide everything we do
             </p>
           </div>
@@ -290,11 +182,7 @@ const AboutPage = () => {
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                   {value.title}
                 </h3>
-<<<<<<< HEAD
                 <p className="text-gray-900 dark:text-gray-300 leading-relaxed">
-=======
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                   {value.description}
                 </p>
               </div>
@@ -310,25 +198,17 @@ const AboutPage = () => {
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Meet Our Team
             </h2>
-<<<<<<< HEAD
             <p className="text-xl text-gray-900 dark:text-gray-300">
-=======
-            <p className="text-xl text-gray-600 dark:text-gray-300">
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               The experts behind DigitalToolsHub
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {team.map((member, index) => (
-<<<<<<< HEAD
               <div
                 key={index}
                 className="bg-white dark:bg-gray-900 rounded-lg shadow-soft p-8 text-center"
               >
-=======
-              <div key={index} className="bg-white dark:bg-gray-900 rounded-lg shadow-soft p-8 text-center">
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                 <img
                   src={member.image}
                   alt={member.name}
@@ -340,17 +220,10 @@ const AboutPage = () => {
                 <p className="text-primary-600 dark:text-primary-400 font-medium mb-4">
                   {member.role}
                 </p>
-<<<<<<< HEAD
                 <p className="text-gray-900 dark:text-gray-300 leading-relaxed mb-6">
                   {member.bio}
                 </p>
 
-=======
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-                  {member.bio}
-                </p>
-                
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                 {/* Social Links */}
                 <div className="flex justify-center gap-4">
                   <a
@@ -385,12 +258,8 @@ const AboutPage = () => {
             Ready to Discover Your Next Favorite Tool?
           </h2>
           <p className="text-xl text-white/90 mb-8">
-<<<<<<< HEAD
             Join thousands of entrepreneurs and creators who trust
             DigitalToolsHub for their tool recommendations.
-=======
-            Join thousands of entrepreneurs and creators who trust DigitalToolsHub for their tool recommendations.
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
@@ -412,8 +281,4 @@ const AboutPage = () => {
   );
 };
 
-<<<<<<< HEAD
 export default AboutPage;
-=======
-export default AboutPage;
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

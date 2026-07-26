@@ -2,7 +2,6 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
-<<<<<<< HEAD
   Store,
   X,
   Zap,
@@ -11,32 +10,15 @@ import {
   Heart,
   Sun,
   Moon,
-=======
-  X,
-  Zap,
-  Search,
-  Bookmark,
-  Heart,
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-<<<<<<< HEAD
 import { useTheme } from "../contexts/ThemeContext";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
-=======
-
-interface HeaderProps {
-  darkMode: boolean;
-  toggleDarkMode: () => void;
-}
-
-const Header: React.FC<HeaderProps> = () => {
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -72,12 +54,8 @@ const Header: React.FC<HeaderProps> = () => {
     { to: "/tools", label: "Tools" },
     { to: "/blog", label: "Blog" },
     { to: "/courses", label: "Course" },
-<<<<<<< HEAD
     { to: "/ebooks", label: "Ebooks" },
     { to: "/become-vendor", label: "Sell" },
-=======
-    { to: "/bookmarks", label: "Bookmarks" },
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
     { to: "/about", label: "About" },
     { to: "/contact", label: "Contact" },
   ];
@@ -141,7 +119,6 @@ const Header: React.FC<HeaderProps> = () => {
               />
             </div>
           </div>
-<<<<<<< HEAD
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
           </div>
@@ -164,8 +141,6 @@ const Header: React.FC<HeaderProps> = () => {
               )}
             </button>
           </div>
-=======
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
           {/* Right side — User area */}
           <div className="hidden md:flex items-center gap-3">
@@ -223,7 +198,6 @@ const Header: React.FC<HeaderProps> = () => {
                       <LayoutDashboard className="w-4 h-4" />
                       My Dashboard
                     </Link>
-<<<<<<< HEAD
                     <Link
                       to="/vendor"
                       onClick={() => setIsUserMenuOpen(false)}
@@ -232,8 +206,6 @@ const Header: React.FC<HeaderProps> = () => {
                       <Store className="w-4 h-4" />
                       Vendor Dashboard
                     </Link>
-=======
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
                     {/* Sign out */}
                     <button
@@ -270,7 +242,6 @@ const Header: React.FC<HeaderProps> = () => {
               <Search size={20} />
             </button>
 
-<<<<<<< HEAD
             {/* Theme Toggle Mobile */}
             <button
               onClick={toggleTheme}
@@ -288,8 +259,6 @@ const Header: React.FC<HeaderProps> = () => {
               )}
             </button>
 
-=======
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             {/* Avatar nhỏ trên mobile khi đã login */}
             {user && (
               <Link to="/dashboard">
@@ -352,7 +321,6 @@ const Header: React.FC<HeaderProps> = () => {
                 </Link>
               ))}
 
-<<<<<<< HEAD
               {/* Theme Toggle in Mobile Menu */}
               <button
                 onClick={() => {
@@ -369,8 +337,6 @@ const Header: React.FC<HeaderProps> = () => {
                 <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
               </button>
 
-=======
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               <div className="border-t border-gray-100 dark:border-gray-700 pt-2 mt-2 space-y-1">
                 {user ? (
                   <>
@@ -401,7 +367,6 @@ const Header: React.FC<HeaderProps> = () => {
                       <LayoutDashboard className="w-4 h-4" />
                       My Dashboard
                     </Link>
-<<<<<<< HEAD
                     <Link
                       to="/vendor"
                       onClick={() => setIsMenuOpen(false)}
@@ -410,8 +375,6 @@ const Header: React.FC<HeaderProps> = () => {
                       <Store className="w-4 h-4" />
                       Vendor Dashboard
                     </Link>
-=======
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
                     {/* Sign out mobile */}
                     <button

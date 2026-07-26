@@ -22,10 +22,6 @@ import {
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
-<<<<<<< HEAD
-=======
-import "../../css/style.css";
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 import NewsletterForm from "../components/NewsletterForm";
 import {
   FUNCTIONS_DESCRIPTIONS,
@@ -33,68 +29,8 @@ import {
 } from "../data/categoryTemplates";
 import { tools } from "../data/tools";
 import { toSlug } from "../utils/slug";
-<<<<<<< HEAD
 import { useTranslation } from "react-i18next";
 import { deriveIndustries, deriveFunctions, s } from "../utils/filterUtils";
-=======
-
-// --------- Helpers (kept aligned with ToolsPage) ---------
-const s = (v: unknown) =>
-  typeof v === "string" ? v : v == null ? "" : String(v);
-const arr = <T,>(v: T | T[] | undefined | null): T[] =>
-  v == null ? [] : Array.isArray(v) ? v : [v];
-const norm = (v: unknown) => s(v).trim().toLowerCase();
-
-// Fallback map → derive categories & function from tags when dataset chưa có field riêng
-const TAG_MAPPING = {
-  categories: new Map<string, string>([
-    ["ecommerce", "Ecommerce"],
-    ["finance", "Finance"],
-    ["marketing", "Marketing"],
-    ["education", "Education"],
-    ["health", "Health"],
-    ["design", "Design"],
-    ["productivity", "Productivity"],
-  ]),
-  function: new Map<string, string>([
-    ["copywriting", "Copywriting"],
-    ["image", "Image Generation"],
-    ["audio", "Audio Tools"],
-    ["video", "Video Tools"],
-    ["code", "Code Assistant"],
-    ["chat", "Chatbot"],
-    ["seo", "SEO"],
-    ["automation", "Automation"],
-    ["analytics", "Analytics"],
-  ]),
-};
-
-function deriveIndustries(t: any): string[] {
-  const fromField = arr(t.categories).map(s).filter(Boolean);
-  if (fromField.length) return fromField;
-  const tags = arr<string>(t.tags).map(norm);
-  const got = new Set<string>();
-  tags.forEach((tag) => {
-    TAG_MAPPING.categories.forEach((label, key) => {
-      if (tag.includes(key)) got.add(label);
-    });
-  });
-  return Array.from(got);
-}
-
-function deriveFunctions(t: any): string[] {
-  const fromField = arr(t.functions).map(s).filter(Boolean);
-  if (fromField.length) return fromField;
-  const tags = arr<string>(t.tags).map(norm);
-  const got = new Set<string>();
-  tags.forEach((tag) => {
-    TAG_MAPPING.function.forEach((label, key) => {
-      if (tag.includes(key)) got.add(label);
-    });
-  });
-  return Array.from(got);
-}
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
 // --------- Visual system (keep colors & icons consistent) ---------
 const GRADIENT_COLOR = {
@@ -191,7 +127,6 @@ function resolvecategoriesKey(label: string) {
   return k.replace(/\s+/g, "-");
 }
 
-<<<<<<< HEAD
 const getCategoryDescription = (label: string) => {
   const { t } = useTranslation("home");
   const keyMap: Record<string, string> = {
@@ -214,15 +149,6 @@ const getCategoryDescription = (label: string) => {
 
   return t(keyMap[label] || "sections.discovery.categoryDescriptions.default");
 };
-=======
-function getcategoriesDescription(label: string) {
-  const key = resolvecategoriesKey(label);
-  return (
-    categories_DESCRIPTIONS[key] ||
-    `Discover the best ${label} tools, vetted by our community.`
-  );
-}
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
 function resolveFunctionKey(label: string) {
   const k = label.toLowerCase();
@@ -239,7 +165,6 @@ function resolveFunctionKey(label: string) {
   return k.replace(/\s+/g, "-");
 }
 
-<<<<<<< HEAD
 const getFunctionDescription = (label: string) => {
   const { t } = useTranslation("home");
   console.log("Function label =", label);
@@ -269,17 +194,6 @@ const getFunctionDescription = (label: string) => {
 const HomePage: React.FC = () => {
   // Trending block kept from original but neutral to categories
   const { t } = useTranslation("home");
-=======
-function getFunctionDescription(label: string) {
-  const key = resolveFunctionKey(label);
-  return (
-    FUNCTIONS_DESCRIPTIONS[key] || `The top tools for ${label.toLowerCase()}.`
-  );
-}
-
-const HomePage: React.FC = () => {
-  // Trending block kept from original but neutral to categories
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   const trendingTools = React.useMemo(
     () =>
       tools
@@ -294,10 +208,6 @@ const HomePage: React.FC = () => {
   const marqueeCSS = `
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 `;
-<<<<<<< HEAD
-=======
-
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   // Build facets from dataset using same derivation as ToolsPage
   const { industries, functions } = React.useMemo(() => {
     const ind = new Map<string, number>();
@@ -401,7 +311,6 @@ const HomePage: React.FC = () => {
           content="Find the best digital tools filtered by categories and functions. Compare pricing, features, and ratings to pick the best tool for your use case."
         />
         <link rel="canonical" href="https://aithubs.com/" />
-<<<<<<< HEAD
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -429,8 +338,6 @@ const HomePage: React.FC = () => {
             },
           })}
         </script>
-=======
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
       </Helmet>
 
       {/* Hero */}
@@ -455,15 +362,8 @@ const HomePage: React.FC = () => {
                   Digital Tools
                 </span>
               </h1>
-<<<<<<< HEAD
               <p className="text-xl text-gray-900 dark:text-gray-300 mb-8 leading-relaxed">
                 {t("sections.discovery.description")}.
-=======
-              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                Browse by categories and functions to find exactly what fits
-                your workflow. Consistent filters with our Tools page, same
-                icons and colors, just faster discovery.
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
@@ -483,11 +383,7 @@ const HomePage: React.FC = () => {
               </div>
 
               {/* Trust indicators */}
-<<<<<<< HEAD
               <div className="mt-10 flex items-center gap-6 text-sm text-gray-900 dark:text-gray-400">
-=======
-              <div className="mt-10 flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span>Verified Tools</span>
@@ -633,11 +529,7 @@ const HomePage: React.FC = () => {
                     {stat.number}
                   </div>
                 </div>
-<<<<<<< HEAD
                 <div className="text-gray-900 dark:text-gray-400 font-medium">
-=======
-                <div className="text-gray-600 dark:text-gray-400 font-medium">
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                   {stat.label}
                 </div>
               </div>
@@ -653,14 +545,8 @@ const HomePage: React.FC = () => {
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Browse by Categories
             </h2>
-<<<<<<< HEAD
             <p className="text-lg text-gray-900 dark:text-gray-300 max-w-3xl mx-auto">
               {t("sections.industries.description")}.
-=======
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Explore tools curated for your industry. Click any card to jump
-              into a pre‑filtered list.
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             </p>
           </div>
 
@@ -682,13 +568,8 @@ const HomePage: React.FC = () => {
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                     {label}
                   </h3>
-<<<<<<< HEAD
                   <p className="text-sm text-gray-900 dark:text-gray-300 mb-4 leading-relaxed line-clamp-2">
                     {getCategoryDescription(label)}
-=======
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed line-clamp-2">
-                    {getcategoriesDescription(label)}
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-2 py-1 rounded-full">
@@ -709,14 +590,8 @@ const HomePage: React.FC = () => {
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Browse by Functions
             </h2>
-<<<<<<< HEAD
             <p className="text-lg text-gray-900 dark:text-gray-300 max-w-3xl mx-auto">
               {t("sections.functions.description")}.
-=======
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Zero in on what you need the tool to do: write, design, automate,
-              analyze, and more.
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             </p>
           </div>
 
@@ -738,11 +613,7 @@ const HomePage: React.FC = () => {
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                     {label}
                   </h3>
-<<<<<<< HEAD
                   <p className="text-sm text-gray-900 dark:text-gray-300 mb-4 leading-relaxed line-clamp-2">
-=======
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed line-clamp-2">
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
                     {getFunctionDescription(label)}
                   </p>
                   <div className="flex items-center justify-between">
@@ -760,22 +631,13 @@ const HomePage: React.FC = () => {
 
       {/* Testimonials */}
       <section className="py-20 bg-white dark:bg-gray-900">
-<<<<<<< HEAD
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-=======
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Success Stories
             </h2>
-<<<<<<< HEAD
             <p className="text-xl text-gray-900 dark:text-gray-300">
               {t("sections.testimonials.title")}
-=======
-            <p className="text-xl text-gray-600 dark:text-gray-300">
-              See how our community is achieving amazing results
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             </p>
           </div>
 
@@ -885,20 +747,11 @@ const HomePage: React.FC = () => {
               Stay Ahead of the Curve
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-<<<<<<< HEAD
               {t("sections.newsletter.description")}.
             </p>
             <NewsletterForm />
             <p className="text-sm text-white/70 mt-4">
               {t("sections.newsletter.caption")}.
-=======
-              Get weekly updates on the latest digital tools, exclusive deals,
-              and expert insights delivered straight to your inbox.
-            </p>
-            <NewsletterForm />
-            <p className="text-sm text-white/70 mt-4">
-              Join 50,000+ professionals. Unsubscribe anytime.
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             </p>
           </div>
         </div>

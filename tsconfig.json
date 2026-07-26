@@ -13,17 +13,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-<<<<<<< HEAD
     "paths": {
       "@/*": ["./src/*"]
     }
-=======
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "ignoreDeprecations": "6.0"
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
   },
   "include": ["src"],
   "exclude": ["node_modules"]

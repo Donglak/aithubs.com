@@ -1,22 +1,15 @@
-<<<<<<< HEAD
 import { AlertCircle, CheckCircle, Mail } from "lucide-react";
 import React, { useState } from "react";
 import {
   submitNewsletterToSheet,
   validateEmail,
 } from "../services/googleSheets";
-=======
-import { AlertCircle, CheckCircle, Mail } from 'lucide-react';
-import React, { useState } from 'react';
-import { submitNewsletterToSheet, validateEmail } from '../services/googleSheets';
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
 
 interface NewsletterFormProps {
   className?: string;
   source?: string;
 }
 
-<<<<<<< HEAD
 const NewsletterForm: React.FC<NewsletterFormProps> = ({
   className = "",
   source = "newsletter_form",
@@ -35,35 +28,11 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
     // Validate email
     if (!email.trim()) {
       setError("Please enter your email address");
-=======
-const NewsletterForm: React.FC<NewsletterFormProps> = ({ 
-  className = '', 
-  source = 'newsletter_form' 
-}) => {
-  const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Reset states
-    setError('');
-    
-    // Validate email
-    if (!email.trim()) {
-      setError('Please enter your email address');
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
       return;
     }
 
     if (!validateEmail(email.trim())) {
-<<<<<<< HEAD
       setError("Please enter a valid email address");
-=======
-      setError('Please enter a valid email address');
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
       return;
     }
 
@@ -72,35 +41,22 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
     try {
       // Submit to Google Sheets
       await submitNewsletterToSheet({
-<<<<<<< HEAD
         name: "", // No name field in this form
         email: email.trim(),
         timestamp: new Date().toISOString(),
         source: source,
-=======
-        name: '', // No name field in this form
-        email: email.trim(),
-        timestamp: new Date().toISOString(),
-        source: source
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
       });
 
       // Show success state
       setIsSuccess(true);
-<<<<<<< HEAD
       setEmail("");
 
-=======
-      setEmail('');
-      
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
       // Reset success state after 5 seconds
       setTimeout(() => {
         setIsSuccess(false);
       }, 5000);
 
       // Track successful subscription (optional analytics)
-<<<<<<< HEAD
       if (
         typeof window !== "undefined" &&
         typeof (window as any).gtag === "function"
@@ -113,18 +69,6 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
     } catch (error) {
       console.error("Newsletter subscription failed:", error);
       setError("An error occurred while subscribing. Please try again later.");
-=======
-      if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
-      (window as any).gtag('event', 'newsletter_subscribe', {
-        event_category: 'engagement',
-        event_label: source,
-        });
-}
-
-    } catch (error) {
-      console.error('Newsletter subscription failed:', error);
-      setError('An error occurred while subscribing. Please try again later.');
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
     } finally {
       setIsSubmitting(false);
     }
@@ -132,7 +76,6 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
 
   if (isSuccess) {
     return (
-<<<<<<< HEAD
       <div
         className={`flex items-center justify-center gap-3 text-white bg-green-500/20 backdrop-blur-sm rounded-lg p-4 ${className}`}
       >
@@ -142,13 +85,6 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
           <div className="text-sm text-white/80">
             We'll send you the most valuable insights to your email.
           </div>
-=======
-      <div className={`flex items-center justify-center gap-3 text-white bg-green-500/20 backdrop-blur-sm rounded-lg p-4 ${className}`}>
-        <CheckCircle className="w-6 h-6 text-green-400" />
-        <div className="text-center">
-          <div className="font-semibold">Thank you for subscribing!</div>
-          <div className="text-sm text-white/80">We'll send you the most valuable insights to your email.</div>
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
         </div>
       </div>
     );
@@ -163,11 +99,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
-<<<<<<< HEAD
               setError(""); // Clear error when user types
-=======
-              setError(''); // Clear error when user types
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
             }}
             placeholder="Enter your email"
             className="w-full px-6 py-4 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
@@ -199,11 +131,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
           )}
         </button>
       </div>
-<<<<<<< HEAD
 
-=======
-      
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e
       <p className="text-white/70 text-sm text-center">
         Join 50,000+ subscribers. No spam, unsubscribe anytime.
       </p>
@@ -211,8 +139,4 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
   );
 };
 
-<<<<<<< HEAD
 export default NewsletterForm;
-=======
-export default NewsletterForm;
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

@@ -104,7 +104,32 @@ class GeminiClient {
 
 export const geminiClient = new GeminiClient();
 
-export function createSystemPrompt(context?: string): GeminiMessage {
+interface SystemPromptOptions {
+  context?: string;
+  language?: string;
+}
+
+function getLanguageInstructions(language?: string): string {
+  if (language === "vi") {
+    return `
+Language Instructions:
+- Hãy trả lời bằng TIẾNG VIỆT
+- Giọng văn thân thiện, chuyên nghiệp
+- Sử dụng từ ngữ tự nhiên, dễ hiểu cho người Việt
+- Sử dụng gạch đầu dòng (dash - ) cho danh sách, KHÔNG dùng dấu sao (*)`;
+  }
+
+  // Default to English
+  return `
+Language Instructions:
+- ALWAYS respond in ENGLISH by default
+- ONLY respond in VIETNAMESE when the user explicitly asks in Vietnamese
+- Keep responses professional, friendly, and natural
+- Use bullet points (dash - ) for lists, NOT asterisks (*)`;
+}
+
+export function createSystemPrompt(options: SystemPromptOptions = {}): GeminiMessage {
+  const { context, language } = options;
   const basePrompt = `You are an AI assistant for DigitalToolsHub (AIThub), a platform that helps users discover and compare digital tools, AI tools, courses, and ebooks.
 
 Your role:
@@ -116,9 +141,10 @@ Your role:
 
 Guidelines:
 - Keep responses concise
-- Use bullet points for lists
+- Use bullet points (dash - ) for lists, NOT asterisks (*)
 - Mention specific tools when relevant
-- Always be polite and professional`;
+- Always be polite and professional
+${getLanguageInstructions(language)}`;
 
   return {
     role: "user",

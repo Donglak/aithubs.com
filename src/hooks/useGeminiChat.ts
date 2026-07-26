@@ -125,11 +125,13 @@ export function useGeminiChat(options: UseGeminiChatOptions = {}) {
 
         const systemMsg =
           systemPrompt ||
-          createSystemPrompt(
-            "Current page: " +
+          createSystemPrompt({
+            context:
+              "Current page: " +
               window.location.pathname +
               ". User may be browsing tools, courses, ebooks, or blog.",
-          ).parts[0].text;
+            language: i18n.language,
+          }).parts[0].text;
 
         const geminiMessages = formatMessagesForGemini(history, systemMsg);
 
@@ -142,9 +144,17 @@ export function useGeminiChat(options: UseGeminiChatOptions = {}) {
           },
         );
 
+        // Post-process: completely remove asterisks - replace bullets and markdown
+        const processedResponse = fullResponse
+          .replace(/^\s*\*\s+/gm, "- ")        // Bullet points at start of line
+          .replace(/\n\s*\*\s+/g, "\n- ")      // Bullet points after newline
+          .replace(/\*\*(.*?)\*\*/g, "$1")      // Bold **text** -> text
+          .replace(/\*(.*?)\*/g, "$1")          // Italic *text* -> text
+          .replace(/\*/g, "");                  // Remove any remaining standalone *
+
         updateMessage(
           assistantMessageId,
-          fullResponse || i18n.t("chatbot:errors.noResponse"),
+          processedResponse || i18n.t("chatbot:errors.noResponse"),
           false,
         );
       } catch (err) {

@@ -1,8 +1,4 @@
 User-agent: *
 Allow: /
 
-<<<<<<< HEAD
 Sitemap: https://aithubs.com/sitemap.xml
-=======
-Sitemap: https://digitaltoolshub.app/sitemap.xml
->>>>>>> 1028320ebd4ce7e531a9a122d0d922f201a2053e

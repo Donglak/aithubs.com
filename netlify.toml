@@ -1,7 +1,6 @@
 [build]
   command = "npm run build"
   publish = "dist"
-
   functions = "netlify/functions"
 
 [build.environment]
@@ -14,3 +13,13 @@
   command = "npm run dev"
   targetPort = 5173
   port = 8888
+
+[[redirects]]
+  from = "/api/chat"
+  to = "/.netlify/functions/chat"
+  status = 200
+
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200

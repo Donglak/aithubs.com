@@ -18,12 +18,3 @@
   from = "/api/chat"
   to = "/.netlify/functions/chat"
   status = 200
-
-[[redirects]]
-  from = "/api/health"
-  to = "/.netlify/functions/health"
-<<<<<<< HEAD
-  status = 200
-=======
-  status = 200
->>>>>>> 508c6a783c5a972486c8b88d299d516976c9f27c

@@ -26,7 +26,7 @@ class GeminiClient {
   private apiUrl: string;
 
   constructor() {
-    this.apiUrl = import.meta.env.VITE_CHAT_API_URL || "/api/chat";
+    this.apiUrl = import.meta.env.VITE_CHAT_API_URL || "/.netlify/functions/chat";
   }
 
   isConfigured(): boolean {

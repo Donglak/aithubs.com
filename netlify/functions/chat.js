@@ -1,8 +1,8 @@
-// netlify/functions/chat.js
-exports.handler = async function (event) {
+export async function handler(event) {
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
@@ -10,9 +10,8 @@ exports.handler = async function (event) {
   if (!process.env.GEMINI_API_KEY) {
     return {
       statusCode: 500,
-      body: JSON.stringify({
-        error: "Missing GEMINI_API_KEY in environment variables",
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Missing GEMINI_API_KEY in environment variables" }),
     };
   }
 
@@ -39,7 +38,7 @@ exports.handler = async function (event) {
             { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
           ],
         }),
-      },
+      }
     );
 
     const data = await response.json();
@@ -47,6 +46,7 @@ exports.handler = async function (event) {
     if (!response.ok) {
       return {
         statusCode: response.status,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           error: data?.error?.message || "Gemini API request failed",
           raw: data,
@@ -55,18 +55,34 @@ exports.handler = async function (event) {
     }
 
     const text =
-      data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "";
+      data?.candidates?.[0]?.content?.parts
+        ?.map((p) => p?.text || "")
+        .join("")
+        .trim() || "";
+
+    if (!text) {
+      return {
+        statusCode: 502,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: "Gemini returned no text content",
+          raw: data,
+        }),
+      };
+    }
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ text, raw: data }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
     };
   } catch (error) {
     return {
       statusCode: 500,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         error: error instanceof Error ? error.message : "Unknown error",
       }),
     };
   }
-};
+}

@@ -94,9 +94,13 @@ class GeminiClient {
       );
     }
 
-    if (!(data as GeminiResponse)?.text) {
-      throw new Error("No response generated");
-    }
+   if (
+  !(data as GeminiResponse)?.text ||
+  typeof (data as GeminiResponse).text !== "string" ||
+  !(data as GeminiResponse).text.trim()
+) {
+  throw new Error("The chat service returned an invalid response.");
+}
 
     return (data as GeminiResponse).text;
   }

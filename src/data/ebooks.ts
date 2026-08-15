@@ -74,8 +74,8 @@ export const ebooks: Ebook[] = [
       "Master digital marketing strategies including SEO, social media marketing, and content creation for maximum ROI.",
     coverImage:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=600&fit=crop",
-    price: 9.99,
-    priceType: "basic",
+    price: 0,
+    priceType: "free",
     googleDriveLink: "https://drive.google.com/file/d/19iCE3rmh1sPD3q0LIopmPRLrSplJRbsb/view?usp=drive_link",
     category: "Marketing",
     pages: 200,
@@ -115,8 +115,8 @@ export const ebooks: Ebook[] = [
       "From HTML basics to advanced React and Node.js. Build modern web applications from scratch.",
     coverImage:
       "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=600&fit=crop",
-    price: 19.99,
-    priceType: "premium",
+    price: 0,
+    priceType: "free",
     googleDriveLink: "https://drive.google.com/file/d/1wU025b3DDB40p1TkL6zO03kpNUWqMJr6/view?usp=drive_link",
     category: "Programming",
     pages: 350,
@@ -133,8 +133,8 @@ export const ebooks: Ebook[] = [
       "Essential strategies for launching and scaling your startup. Learn from real-world case studies and expert insights.",
     coverImage:
       "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&h=600&fit=crop",
-    price: 29.99,
-    priceType: "vip",
+    price: 0,
+    priceType: "free",
     googleDriveLink: "https://drive.google.com/file/d/19iCE3rmh1sPD3q0LIopmPRLrSplJRbsb/view?usp=drive_link",
     category: "Business",
     pages: 280,
@@ -169,8 +169,8 @@ export const ebooks: Ebook[] = [
       "Learn data science concepts and Python programming for data analysis, visualization, and machine learning.",
     coverImage:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=600&fit=crop",
-    price: 14.99,
-    priceType: "basic",
+    price: 0,
+    priceType: "free",
     googleDriveLink: "https://drive.google.com/file/d/example6/view",
     category: "Data Science",
     pages: 300,

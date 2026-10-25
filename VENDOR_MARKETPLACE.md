@@ -53,8 +53,8 @@ Giá/giới hạn nằm trong bảng `vendor_plans` — sửa ở đó **và** t
 
 ## Cấu hình (làm tay)
 
-1. **Database**: chạy migration `20240101000004_secure_payments.sql`, `20240101000005_vendor_marketplace.sql`
-   và `20240101000006_vendor_trial_analytics.sql` (theo đúng thứ tự).
+1. **Database**: chạy `supabase/check_migrations.sql` trong SQL Editor để xem file nào còn thiếu, rồi chạy
+   lần lượt các file "CẦN CHẠY" trong `supabase/migrations/` theo đúng thứ tự bảng kết quả.
 2. **PayPal plans** cho 3 gói × 2 kỳ (6 plan, USD, không dùng thử). Có thể tạo bằng
    `node scripts/create-paypal-plans.js` (script in sẵn câu SQL), hoặc tạo tay rồi chạy:
    ```sql

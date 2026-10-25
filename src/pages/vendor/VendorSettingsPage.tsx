@@ -1,4 +1,4 @@
-import { AlertTriangle, Bell, User, Loader2 } from "lucide-react";
+import { AlertTriangle, Bell, User } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function VendorSettingsPage() {

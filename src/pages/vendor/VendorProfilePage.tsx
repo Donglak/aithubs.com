@@ -102,7 +102,6 @@ export default function VendorProfilePage() {
   const inputClass =
     "w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white text-sm placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all";
 
-  const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5";
 
   const sectionClass =
     "bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6";

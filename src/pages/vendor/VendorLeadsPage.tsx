@@ -1,11 +1,13 @@
 import { Loader2, Mail, MessageSquare, Download, X, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useVendorContext } from "../../contexts/VendorContext";
 import { vendorDb } from "../../lib/supabase";
 import type { VendorLead } from "../../types/vendor";
 
 export default function VendorLeadsPage() {
-  const { vendor } = useVendorContext();
+  const { vendor, plan, listingActive } = useVendorContext();
+  const leadsEnabled = listingActive && !!plan?.leads_enabled;
   const [leads, setLeads] = useState<VendorLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState<VendorLead | null>(null);
@@ -69,6 +71,17 @@ export default function VendorLeadsPage() {
           </button>
         )}
       </div>
+
+      {!leadsEnabled && (
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/20">
+          <p className="text-sm text-primary-800 dark:text-primary-300">
+            The lead capture form is available on the Pro and Enterprise plans. Buyers can't send you inquiries on your current plan.
+          </p>
+          <Link to="/vendor/subscription" className="shrink-0 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg">
+            Upgrade
+          </Link>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-20">

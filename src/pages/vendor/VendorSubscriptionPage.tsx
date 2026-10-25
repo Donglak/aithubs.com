@@ -1,234 +1,266 @@
-import { CreditCard, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, CreditCard, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useVendorContext } from "../../contexts/VendorContext";
-import type { VendorPlan } from "../../types/vendor";
+import { IntervalToggle, VendorPlanCards } from "../../components/vendor/VendorPlanCards";
+import { useVendorPlans, yearlySavings } from "../../hooks/useVendorPlans";
+import {
+  cancelVendorSubscription,
+  confirmVendorSubscription,
+  startVendorSubscription,
+} from "../../lib/vendorBilling";
+import type { BillingInterval, VendorPlan } from "../../types/vendor";
 
-const PLACEHOLDER_PLANS: VendorPlan[] = [
-  {
-    id: "1",
-    name: "Free",
-    slug: "free",
-    description: "List up to 1 product. Basic visibility.",
-    price_monthly: 0,
-    price_yearly: 0,
-    max_listings: 1,
-    max_team_members: 1,
-    analytics_enabled: false,
-    leads_enabled: false,
-    featured_listing: false,
-    stripe_price_id_monthly: null,
-    stripe_price_id_yearly: null,
-    is_active: true,
-    sort_order: 1,
-    created_at: "",
-  },
-  {
-    id: "2",
-    name: "Starter",
-    slug: "starter",
-    description: "List up to 5 products with analytics.",
-    price_monthly: 9.99,
-    price_yearly: 99.99,
-    max_listings: 5,
-    max_team_members: 1,
-    analytics_enabled: true,
-    leads_enabled: false,
-    featured_listing: false,
-    stripe_price_id_monthly: null,
-    stripe_price_id_yearly: null,
-    is_active: true,
-    sort_order: 2,
-    created_at: "",
-  },
-  {
-    id: "3",
-    name: "Pro",
-    slug: "pro",
-    description: "List up to 25 products with analytics and leads.",
-    price_monthly: 29.99,
-    price_yearly: 299.99,
-    max_listings: 25,
-    max_team_members: 3,
-    analytics_enabled: true,
-    leads_enabled: true,
-    featured_listing: false,
-    stripe_price_id_monthly: null,
-    stripe_price_id_yearly: null,
-    is_active: true,
-    sort_order: 3,
-    created_at: "",
-  },
-  {
-    id: "4",
-    name: "Enterprise",
-    slug: "enterprise",
-    description: "Unlimited listings, priority support, team members.",
-    price_monthly: 99.99,
-    price_yearly: 999.99,
-    max_listings: 999,
-    max_team_members: 10,
-    analytics_enabled: true,
-    leads_enabled: true,
-    featured_listing: true,
-    stripe_price_id_monthly: null,
-    stripe_price_id_yearly: null,
-    is_active: true,
-    sort_order: 4,
-    created_at: "",
-  },
-];
+// PayPal có thể mất vài giây để chuyển subscription sang ACTIVE sau khi redirect về
+const CONFIRM_ATTEMPTS = 5;
+const CONFIRM_DELAY_MS = 2500;
+
+type Notice = { type: "success" | "error" | "info"; text: string } | null;
+
+const STATUS_STYLES: Record<string, string> = {
+  active: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  trialing: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+  past_due: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+  canceled: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+};
 
 export default function VendorSubscriptionPage() {
-  const { subscription, plan, loading, vendor } = useVendorContext();
+  const { subscription, plan, listingActive, usedListings, loading, refresh } = useVendorContext();
+  const { plans, loading: plansLoading } = useVendorPlans();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [interval, setBillingInterval] = useState<BillingInterval>("month");
+  const [busySlug, setBusySlug] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
+  const [canceling, setCanceling] = useState(false);
+  const [notice, setNotice] = useState<Notice>(null);
 
-  if (loading) {
+  // Quay về từ PayPal
+  useEffect(() => {
+    const result = searchParams.get("paypal");
+    const subscriptionId = searchParams.get("subscription_id");
+    if (!result) return;
+    setSearchParams({}, { replace: true });
+
+    if (result === "cancel") {
+      setNotice({ type: "info", text: "Checkout was cancelled. You have not been charged." });
+      return;
+    }
+    if (!subscriptionId) return;
+
+    let cancelled = false;
+    setConfirming(true);
+    (async () => {
+      try {
+        for (let i = 0; i < CONFIRM_ATTEMPTS && !cancelled; i++) {
+          const res = await confirmVendorSubscription(subscriptionId);
+          if (res.status === "active") {
+            await refresh();
+            if (!cancelled) setNotice({ type: "success", text: "Your subscription is active. You can now list products." });
+            return;
+          }
+          if (res.status !== "pending") break;
+          await new Promise((r) => setTimeout(r, CONFIRM_DELAY_MS));
+        }
+        if (!cancelled) {
+          setNotice({ type: "info", text: "PayPal is still processing your subscription. This page will update once it's confirmed." });
+        }
+      } catch (err) {
+        if (!cancelled) setNotice({ type: "error", text: err instanceof Error ? err.message : "Could not confirm subscription" });
+      } finally {
+        if (!cancelled) setConfirming(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // Chỉ chạy khi URL có tham số trả về từ PayPal
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (subscription?.billing_interval) setBillingInterval(subscription.billing_interval);
+  }, [subscription?.billing_interval]);
+
+  const isTrial = subscription?.gateway === "trial";
+  const hasPaidPlan = listingActive && !isTrial;
+
+  const handleSelect = async (p: VendorPlan) => {
+    if (hasPaidPlan && !window.confirm(
+      `Switch to ${p.name} (${interval === "month" ? "monthly" : "yearly"})? Your current PayPal subscription will be cancelled once the new one is active.`,
+    )) return;
+
+    setBusySlug(p.slug);
+    setNotice(null);
+    try {
+      await startVendorSubscription(p.slug, interval);
+    } catch (err) {
+      setNotice({ type: "error", text: err instanceof Error ? err.message : "Could not start checkout" });
+      setBusySlug(null);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (!window.confirm("Cancel your subscription? Your listings stay visible until the end of the current billing period.")) return;
+    setCanceling(true);
+    setNotice(null);
+    try {
+      const res = await cancelVendorSubscription();
+      await refresh();
+      setNotice({
+        type: "info",
+        text: res.activeUntil
+          ? `Subscription cancelled. Your listings stay visible until ${new Date(res.activeUntil).toLocaleDateString()}.`
+          : "Subscription cancelled.",
+      });
+    } catch (err) {
+      setNotice({ type: "error", text: err instanceof Error ? err.message : "Could not cancel subscription" });
+    } finally {
+      setCanceling(false);
+    }
+  };
+
+  if (loading || plansLoading) {
     return (
-      <div className="flex items-center justify-center py-20 bg-white dark:bg-gray-900">
+      <div className="flex items-center justify-center py-20">
         <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
       </div>
     );
   }
 
-  const statusColor = (status: string) => {
-    const lightColors: Record<string, string> = {
-      active: "bg-green-100 text-green-800 border border-green-200",
-      trialing: "bg-blue-100 text-blue-800 border border-blue-200",
-      past_due: "bg-yellow-100 text-yellow-800 border border-yellow-200",
-      canceled: "bg-red-100 text-red-800 border border-red-200",
-      incomplete: "bg-gray-100 text-gray-800 border border-gray-200",
-    };
-    return lightColors[status] || "bg-gray-100 text-gray-800 border border-gray-200";
-  };
+  const status = subscription?.status;
+  const periodEnd = subscription?.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : null;
+  const maxSavings = Math.max(0, ...plans.map(yearlySavings));
 
   return (
-    <div className="bg-white dark:bg-gray-900 min-h-screen">
+    <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Subscription</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-          Manage your vendor plan and billing
+          An active plan is required to list products on the marketplace.
         </p>
       </div>
 
-      {/* Current Plan */}
+      {(notice || confirming) && (
+        <div
+          className={`mb-6 flex items-start gap-2 p-4 rounded-xl text-sm ${
+            confirming || notice?.type === "info"
+              ? "bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300"
+              : notice?.type === "success"
+                ? "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300"
+                : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400"
+          }`}
+          role="status"
+        >
+          {confirming ? (
+            <Loader2 className="w-4 h-4 mt-0.5 animate-spin" />
+          ) : notice?.type === "success" ? (
+            <CheckCircle2 className="w-4 h-4 mt-0.5" />
+          ) : (
+            <AlertCircle className="w-4 h-4 mt-0.5" />
+          )}
+          <span>{confirming ? "Confirming your subscription with PayPal..." : notice?.text}</span>
+        </div>
+      )}
+
+      {/* Current plan */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Current Plan</h2>
-        {plan ? (
-          <div className="flex items-start justify-between">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Current plan</h2>
+        {isTrial && subscription ? (
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Free Trial</h3>
+              <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${listingActive ? STATUS_STYLES.trialing : STATUS_STYLES.canceled}`}>
+                {listingActive ? "active" : "ended"}
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {listingActive && periodEnd
+                ? `Up to ${plan?.max_listings ?? 3} listings until ${periodEnd}. No payment needed during the trial.`
+                : "Your trial has ended and your products are hidden. Subscribe to publish them again — approved products go live instantly."}
+            </p>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mt-3">
+              Listings used: <strong>{usedListings}</strong> / {plan?.max_listings ?? 3}
+            </p>
+          </div>
+        ) : plan && subscription && status !== "canceled" ? (
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
-                <span
-                  className={`text-xs px-2.5 py-1 rounded-full font-medium border ${statusColor(subscription?.status || "active")}`}
-                >
-                  {subscription?.status || "active"}
+                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_STYLES[status ?? ""] ?? "bg-gray-100 text-gray-800"}`}>
+                  {subscription.cancel_at_period_end ? "cancels at period end" : status?.replace("_", " ")}
                 </span>
               </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">{plan.description}</p>
-              {subscription?.current_period_end && (
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Current period ends:{" "}
-                  {new Date(subscription.current_period_end).toLocaleDateString()}
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                ${subscription.billing_interval === "year" ? plan.price_yearly : plan.price_monthly}
+                /{subscription.billing_interval === "year" ? "year" : "month"} via PayPal
+              </p>
+              {periodEnd && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  {subscription.cancel_at_period_end ? "Listings visible until" : "Renews on"} {periodEnd}
                 </p>
               )}
-              <div className="flex items-center gap-2 mt-3">
-                {plan.analytics_enabled && (
-                  <span className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400">
-                    <CheckCircle2 className="w-3 h-3" /> Analytics
-                  </span>
-                )}
-                {plan.leads_enabled && (
-                  <span className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400">
-                    <CheckCircle2 className="w-3 h-3" /> Lead Capture
-                  </span>
-                )}
-                {!plan.analytics_enabled && (
-                  <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                    <AlertCircle className="w-3 h-3" /> No Analytics
-                  </span>
-                )}
-              </div>
+              {status === "past_due" && (
+                <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-2">
+                  PayPal couldn't collect your last payment, so your listings are hidden. Update your payment method in PayPal.
+                </p>
+              )}
+              <p className="text-sm text-gray-700 dark:text-gray-300 mt-3">
+                Listings used: <strong>{usedListings}</strong> / {plan.max_listings >= 999 ? "unlimited" : plan.max_listings}
+              </p>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                ${plan.price_monthly}
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">/month</div>
+            <div className="flex flex-col sm:flex-row md:flex-col gap-2 md:w-48">
+              <a
+                href="https://www.paypal.com/myaccount/autopay/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Manage on PayPal
+              </a>
+              {!subscription.cancel_at_period_end && (
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  disabled={canceling}
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-60"
+                >
+                  {canceling && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Cancel subscription
+                </button>
+              )}
             </div>
           </div>
         ) : (
           <div className="text-center py-6">
-            <CreditCard className="w-10 h-10 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
-            <p className="text-gray-600 dark:text-gray-400">You are on the Free plan.</p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
-              Upgrade to unlock more features.
-            </p>
+            <CreditCard className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+            <p className="text-gray-700 dark:text-gray-300">You don't have an active plan.</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Choose a plan below to publish your products.</p>
           </div>
         )}
       </div>
 
-      {/* Plan Comparison */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Compare Plans</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700">
-          {PLACEHOLDER_PLANS.map((p) => {
-            const isCurrent = plan?.id === p.id;
-            return (
-              <div
-                key={p.id}
-                className={`p-6 ${isCurrent ? "bg-primary-50 dark:bg-primary-900/10" : ""}`}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">{p.name}</h3>
-                  {isCurrent && (
-                    <span className="text-xs bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 px-2 py-0.5 rounded-full">
-                      Current
-                    </span>
-                  )}
-                </div>
-                <div className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  {p.price_monthly === 0 ? "Free" : `$${p.price_monthly}`}
-                  {p.price_monthly > 0 && (
-                    <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                      /mo
-                    </span>
-                  )}
-                </div>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    {p.max_listings >= 999 ? "Unlimited" : p.max_listings}{" "}
-                    listings
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    {p.analytics_enabled ? (
-                      <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    ) : (
-                      <AlertCircle className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                    )}
-                    Analytics
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    {p.leads_enabled ? (
-                      <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    ) : (
-                      <AlertCircle className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                    )}
-                    Lead Capture
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <CheckCircle2
-                      className={`w-4 h-4 ${p.max_team_members > 1 ? "text-green-600 dark:text-green-400" : "text-gray-400 dark:text-gray-500"}`}
-                    />
-                    {p.max_team_members} team{" "}
-                    {p.max_team_members > 1 ? "members" : "member"}
-                  </li>
-                </ul>
-              </div>
-            );
-          })}
-        </div>
+      {/* Plans */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          {hasPaidPlan ? "Change plan" : "Choose a plan"}
+        </h2>
+        <IntervalToggle value={interval} onChange={setBillingInterval} maxSavings={maxSavings} />
       </div>
+
+      <VendorPlanCards
+        plans={plans}
+        interval={interval}
+        currentPlanId={hasPaidPlan && !subscription?.cancel_at_period_end ? subscription?.plan_id : null}
+        currentInterval={subscription?.billing_interval}
+        busySlug={busySlug}
+        ctaLabel={(_, isCurrent) => (isCurrent ? "Current plan" : hasPaidPlan ? "Switch to this plan" : "Subscribe with PayPal")}
+        onSelect={handleSelect}
+      />
+
+      <p className="mt-6 text-xs text-gray-500 dark:text-gray-400 text-center">
+        Billed through PayPal. You can pay with a PayPal account or a debit/credit card. Cancel anytime.
+      </p>
     </div>
   );
 }

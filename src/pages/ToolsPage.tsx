@@ -7,17 +7,15 @@ import {
   X,
   ChevronDown,
   Star,
-  TrendingUp,
-  Clock,
-  DollarSign,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../../css/style_Aitool.css";
 import ToolActionButtons from "../components/ToolActionButtons";
 import { tools } from "../data/tools";
 import { toSlug } from "../utils/slug";
+import { arr, type SortOption } from "../utils/filterUtils";
 import { useToolsFilters } from "../hooks/useToolsFilters";
 
 const PAGE_SIZE = 30;
@@ -126,7 +124,9 @@ const ToolsPage = () => {
     const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     try {
       navigator.vibrate?.(10);
-    } catch {}
+    } catch {
+      // vibrate không được hỗ trợ trên một số trình duyệt
+    }
     window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
   };
 
@@ -456,7 +456,7 @@ const ToolsPage = () => {
                   <button onClick={() => setViewMode("grid")} className={`p-2 rounded-md transition-colors ${viewMode === "grid" ? "bg-white dark:bg-gray-900 text-primary-600 dark:text-primary-400 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`} title="Grid view"><Grid3x3 size={18} /></button>
                 </div>
                 <div className="relative">
-                  <select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)} className="appearance-none bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm px-4 py-2 pr-8 rounded-lg border-0 focus:ring-2 focus:ring-primary-500 cursor-pointer">
+                  <select value={sortBy} onChange={(e) => setSortBy(e.target.value as SortOption)} className="appearance-none bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm px-4 py-2 pr-8 rounded-lg border-0 focus:ring-2 focus:ring-primary-500 cursor-pointer">
                     <option value="popularity">Most Popular</option>
                     <option value="rating">Highest Rated</option>
                     <option value="name">Name A-Z</option>
@@ -470,10 +470,9 @@ const ToolsPage = () => {
             {/* Tool list */}
             <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
               {visibleTools.map((tool) => {
-                const inds = tool.categories || [];
-                const funcs = tool.functions || [];
+                const inds = arr(tool.categories);
+                const funcs = arr(tool.functions);
                 const isFree = tool.price.toLowerCase().includes("free");
-                const isPaid = !isFree;
                 const isFreemium = isFree && tool.price.includes("-");
 
                 return (

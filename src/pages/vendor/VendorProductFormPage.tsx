@@ -1,6 +1,6 @@
 import { Loader2, Save, Send } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useVendorContext } from "../../contexts/VendorContext";
 import { vendorDb } from "../../lib/supabase";
 import {
@@ -13,7 +13,7 @@ import {
 export default function VendorProductFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { vendor } = useVendorContext();
+  const { vendor, listingActive, refresh } = useVendorContext();
   const isEdit = !!id;
 
   const [form, setForm] = useState<ProductFormData>(defaultProductForm);
@@ -21,6 +21,7 @@ export default function VendorProductFormPage() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(isEdit);
   const [tagInput, setTagInput] = useState("");
+  const [review, setReview] = useState<{ status: string; rejection_reason: string | null } | null>(null);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -47,6 +48,7 @@ export default function VendorProductFormPage() {
       .then(({ data }) => {
         if (data) {
           const p = data as any;
+          setReview({ status: p.status, rejection_reason: p.rejection_reason });
           setForm({
             title: p.title || "",
             slug: p.slug || "",
@@ -117,9 +119,15 @@ export default function VendorProductFormPage() {
 
   const handleSave = async (status: "draft" | "submitted") => {
     if (!vendor) return;
-    setSaving(true);
     setMessage(null);
 
+    // Marketplace dạng listing: khách mua qua link của vendor
+    if (status === "submitted" && form.price_model !== "contact" && !/^https:\/\//i.test(form.external_sales_link)) {
+      setMessage({ type: "error", text: "Add a purchase link (starting with https://) before submitting for review." });
+      return;
+    }
+
+    setSaving(true);
     const slug = form.slug || autoSlug(form.title);
 
     const payload = {
@@ -141,6 +149,7 @@ export default function VendorProductFormPage() {
     };
 
     try {
+      let productId = id;
       if (isEdit) {
         const { error } = await vendorDb
           .from("digital_products")
@@ -149,21 +158,38 @@ export default function VendorProductFormPage() {
           .eq("vendor_id", vendor.id);
         if (error) throw error;
       } else {
-        const { error } = await vendorDb
+        const { data, error } = await vendorDb
           .from("digital_products")
-          .insert(payload);
+          .insert(payload)
+          .select("id")
+          .single();
         if (error) throw error;
+        productId = data.id;
       }
 
+      // Gallery: thay toàn bộ ảnh bằng danh sách hiện tại (trước đây media không được lưu)
+      const media = form.media
+        .filter((m) => m.url.trim())
+        .map((m, i) => ({ product_id: productId, url: m.url.trim(), type: m.type, alt_text: m.alt_text || null, sort_order: i }));
+      const { error: delError } = await vendorDb.from("digital_product_media").delete().eq("product_id", productId);
+      if (delError) throw delError;
+      if (media.length) {
+        const { error: mediaError } = await vendorDb.from("digital_product_media").insert(media);
+        if (mediaError) throw mediaError;
+      }
+
+      await refresh();
       setMessage({
         type: "success",
-        text: status === "draft" ? "Draft saved." : "Submitted for review.",
+        text: status === "draft" ? "Draft saved." : "Submitted for review. We'll publish it once approved.",
       });
       setTimeout(() => navigate("/vendor/products"), 1000);
-    } catch (err: any) {
+    } catch (err) {
+      const e = err as { message?: string; code?: string };
       setMessage({
         type: "error",
-        text: err?.message || "Failed to save product.",
+        // Lỗi từ trigger DB (giới hạn gói...) đã có thông điệp rõ ràng
+        text: e?.code === "23505" ? "You already have a product with this URL slug." : e?.message || "Failed to save product.",
       });
     } finally {
       setSaving(false);
@@ -180,7 +206,6 @@ export default function VendorProductFormPage() {
 
   const inputClass =
     "w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white text-sm placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all";
-  const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5";
 
   const sectionClass =
     "bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6";
@@ -201,6 +226,24 @@ export default function VendorProductFormPage() {
             : "Create a new digital product listing"}
         </p>
       </div>
+
+      {!listingActive && (
+        <div className="mb-6 px-4 py-3 rounded-lg text-sm bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+          You can save drafts now. <Link to="/vendor/subscription" className="underline font-medium">Choose a plan</Link> to submit products for review.
+        </div>
+      )}
+
+      {review?.status === "rejected" && (
+        <div className="mb-6 px-4 py-3 rounded-lg text-sm bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800">
+          <strong>Not approved:</strong> {review.rejection_reason || "Please review the listing and submit again."}
+        </div>
+      )}
+
+      {review?.status === "approved" && (
+        <div className="mb-6 px-4 py-3 rounded-lg text-sm bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+          This product is live. Saving changes will send it back for review.
+        </div>
+      )}
 
       {message && (
         <div
@@ -472,7 +515,8 @@ export default function VendorProductFormPage() {
           </button>
           <button
             onClick={() => handleSave("submitted")}
-            disabled={saving || !form.title}
+            disabled={saving || !form.title || !listingActive}
+            title={listingActive ? undefined : "An active plan is required to submit for review"}
             className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {saving ? (

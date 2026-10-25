@@ -196,8 +196,8 @@ const HomePage: React.FC = () => {
   const { t } = useTranslation("home");
   const trendingTools = React.useMemo(
     () =>
-      tools
-        .filter((t) => (t as any).featured)
+      // Dữ liệu tools.ts mới không còn `featured` -> fallback lấy toàn bộ, xếp theo rating
+      (tools.some((t) => t.featured) ? tools.filter((t) => t.featured) : tools)
         .slice()
         .sort(
           (a: any, b: any) => (Number(b.rating) || 0) - (Number(a.rating) || 0),

@@ -39,6 +39,8 @@ export interface VendorPlan {
   featured_listing: boolean
   stripe_price_id_monthly: string | null
   stripe_price_id_yearly: string | null
+  paypal_plan_id_monthly: string | null
+  paypal_plan_id_yearly: string | null
   is_active: boolean
   sort_order: number
   created_at: string
@@ -52,6 +54,8 @@ export interface VendorSubscription {
   status: SubscriptionStatus
   stripe_subscription_id: string | null
   stripe_customer_id: string | null
+  paypal_subscription_id: string | null
+  gateway: string | null
   current_period_start: string | null
   current_period_end: string | null
   cancel_at_period_end: boolean
@@ -63,8 +67,17 @@ export interface VendorSubscription {
   plan?: VendorPlan
 }
 
+/** Gói còn hiệu lực listing? (khớp với hàm SQL public.vendor_active_plan) */
+export function isSubscriptionActive(sub: VendorSubscription | null | undefined): boolean {
+  if (!sub || (sub.status !== 'active' && sub.status !== 'trialing')) return false
+  if (!sub.cancel_at_period_end) return true
+  return !!sub.current_period_end && new Date(sub.current_period_end) > new Date()
+}
+
 // ── Vendor Profile ──
 export interface Vendor {
+  /** Thời điểm bắt đầu dùng thử 14 ngày (mỗi tài khoản 1 lần) */
+  trial_started_at: string | null
   id: string
   user_id: string
   brand_name: string

@@ -29,6 +29,10 @@ export function ChatBotWindow({ isOpen, onClose }: ChatBotWindowProps) {
     t("chatbot:suggestions.notionVsObsidian"),
   ];
 
+  const geminiOptions = {
+    onError: (err: Error) => console.error("Chat error:", err),
+  };
+
   const {
     messages,
     isLoading,
@@ -36,10 +40,7 @@ export function ChatBotWindow({ isOpen, onClose }: ChatBotWindowProps) {
     sendMessage,
     cancelStreaming,
     clearHistory,
-  } = useGeminiChat({
-    systemPrompt: undefined,
-    onError: (err) => console.error("Chat error:", err),
-  });
+  } = useGeminiChat(geminiOptions);
 
   // Auto-scroll to bottom
   useEffect(() => {

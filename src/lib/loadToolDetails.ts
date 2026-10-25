@@ -6,7 +6,7 @@ let toolDetailsCache: Partial<ToolDetail>[] | null = null;
 export async function loadToolDetails(): Promise<Partial<ToolDetail>[]> {
   if (toolDetailsCache) return toolDetailsCache;
 
-  const { TOOL_DETAILS } = await import('../data/toolDetails.ts');
+  const { TOOL_DETAILS } = await import('../data/toolDetails');
   toolDetailsCache = TOOL_DETAILS as unknown as Partial<ToolDetail>[];
   return toolDetailsCache;
 }

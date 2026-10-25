@@ -80,7 +80,7 @@ VITE_GEMINI_API_URL=https://generativelanguage.googleapis.com/v1beta/models/gemi
 VITE_GEMINI_MODEL=gemini-pro
 ```
 
-Current `.env` has placeholder key: `AIzaSyDXmetoS57wBRe3KuvwQ4nJg4NQiOUAnQI`
+Current `.env` has placeholder key: `YOUR_GEMINI_API_KEY`
 
 ---
 

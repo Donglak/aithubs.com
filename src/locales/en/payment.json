@@ -1,0 +1,81 @@
+{
+  "paypal": {
+    "name": "PayPal",
+    "description": "Pay with your PayPal account or any debit/credit card. No PayPal account required.",
+    "secure": "Secure checkout powered by PayPal. We never see your card details."
+  },
+  "checkout": {
+    "total": "Total",
+    "payButton": "Pay {{price}} with PayPal",
+    "redirecting": "Redirecting to PayPal...",
+    "signInRequired": "Please sign in to continue checkout.",
+    "failed": "Checkout failed. Please try again.",
+    "invalidTitle": "Product not found",
+    "invalidBody": "Please choose a plan or product to purchase.",
+    "browseEbooks": "Browse ebooks"
+  },
+  "vip": {
+    "title": "Upgrade to VIP",
+    "subtitle": "Unlock all premium AI tools, courses & ebooks",
+    "mostPopular": "Most popular",
+    "perInterval": {
+      "month": "/month",
+      "year": "/year"
+    },
+    "plans": {
+      "vip_monthly": {
+        "label": "Monthly",
+        "features": []
+      },
+      "vip_yearly": {
+        "label": "Yearly (save 17%)",
+        "features": []
+      }
+    },
+    "subscribeButton": "Start 7-day free trial, then {{price}}{{interval}}",
+    "trialNote": "Cancel anytime. You won't be charged if you cancel within the 7-day trial."
+  },
+  "success": {
+    "confirming": "Confirming your payment...",
+    "doNotClose": "Please don't close this page.",
+    "ebookTitle": "Payment successful! 🎉",
+    "ebookBody": "Thanks for purchasing <strong>{{title}}</strong>. We've also emailed you the download link.",
+    "download": "Download your ebook",
+    "vipTitle": "VIP activated! 🎉",
+    "vipBody": "Your VIP membership is active. Enjoy all premium features now.",
+    "pendingTitle": "Payment is processing",
+    "pendingBody": "PayPal hasn't confirmed the transaction yet. Your order will update automatically once it does.",
+    "failedTitle": "Payment not completed",
+    "failedBody": "The transaction didn't go through. You haven't been charged, or the charge will be reversed.",
+    "errorTitle": "We couldn't confirm your payment",
+    "errorBody": "If you were charged, your order will be processed automatically within a few minutes.",
+    "orderId": "Order ID",
+    "home": "Back to home"
+  },
+  "cancel": {
+    "title": "Payment cancelled",
+    "body": "You haven't been charged. You can try again whenever you're ready.",
+    "back": "Go back"
+  },
+  "dashboard": {
+    "title": "VIP {{plan}}",
+    "status": {
+      "active": "Active",
+      "trialing": "Free trial",
+      "canceled": "Canceled",
+      "past_due": "Payment overdue"
+    },
+    "renews": "Renews on",
+    "endsOn": "Access until",
+    "trialUntil": "Trial ends",
+    "amount": "Price",
+    "cancelsNotice": "⚠️ Cancelled — VIP stays active until {{date}}",
+    "manage": "Manage on PayPal",
+    "cancel": "Cancel subscription",
+    "cancelConfirm": "Cancel your VIP subscription? You'll keep VIP until the end of the current billing period and won't be charged again.",
+    "cancelFailed": "Couldn't cancel the subscription. Please try again.",
+    "none": "No VIP membership yet",
+    "noneBody": "Upgrade to unlock all premium features",
+    "upgrade": "Upgrade now"
+  }
+}

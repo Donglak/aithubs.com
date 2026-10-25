@@ -74,6 +74,7 @@ const Header: React.FC = () => {
     { to: "/blog", label: "Blog" },
     { to: "/courses", label: "Course" },
     { to: "/ebooks", label: "Ebooks" },
+    { to: "/marketplace", label: "Marketplace" },
     { to: "/become-vendor", label: "Sell" },
     { to: "/about", label: "About" },
     { to: "/contact", label: "Contact" },

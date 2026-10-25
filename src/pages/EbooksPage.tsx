@@ -1,6 +1,7 @@
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent, KeyboardEvent } from "react";
 import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   BookOpen,
@@ -283,7 +284,8 @@ const EbooksPage = () => {
     errorMessage: "",
   });
 
-  const user = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { toggleFavorite, isFavorite } = useFavorites();
 
   const openPreview = useCallback((ebook: Ebook, chapter: PreviewChapter) => {
@@ -351,19 +353,17 @@ const EbooksPage = () => {
   );
 
   const handleDownload = (ebook: Ebook) => {
-    if (!user && ebook.priceType !== "free") {
-      window.location.href = "/login";
-      return;
-    }
-
     if (ebook.priceType === "free") {
       window.open(ebook.googleDriveLink, "_blank", "noopener,noreferrer");
       return;
     }
 
-    window.alert(
-      `This ${getPriceTypeLabel(ebook.priceType)} ebook requires payment. ${ebook.price} USD checkout will be added soon.`
-    );
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    navigate(`/checkout/ebook?ebookId=${ebook.id}`);
   };
 
   const renderPreviewModal = () => {

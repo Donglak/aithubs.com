@@ -13,19 +13,15 @@ export type SubscriptionStatus =
   | 'incomplete_expired'
   | 'unpaid';
 
+// Số tiền KHÔNG gửi từ client — server tính theo ebook_id / plan
 export interface CheckoutRequest {
   type: PaymentType;
   gateway: PaymentGateway;
-  amount: number; // cents (USD) hoặc VND nguyên
   currency: Currency;
   metadata: {
     ebook_id?: string;
-    ebook_title?: string;
-    ebook_description?: string;
     plan?: SubscriptionPlan;
   };
-  returnUrl?: string;
-  cancelUrl?: string;
 }
 
 export interface CheckoutResponse {
@@ -37,9 +33,15 @@ export interface CheckoutResponse {
     vnpTxnRef?: string;
     momoOrderId?: string;
     subscriptionId?: string;
+    paypalOrderId?: string;
   };
   error?: string;
 }
+
+export type ConfirmResult =
+  | { status: 'COMPLETED'; type: 'ebook'; deliveryUrl: string; title: string }
+  | { status: 'COMPLETED'; type: 'vip_subscription'; plan: SubscriptionPlan }
+  | { status: 'PENDING' | 'FAILED'; type: PaymentType; reason?: string };
 
 export interface SubscriptionInfo {
   id: string;

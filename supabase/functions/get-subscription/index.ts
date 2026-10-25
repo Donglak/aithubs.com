@@ -32,6 +32,12 @@ serve(async (req) => {
       return new Response(JSON.stringify({ success: true, data: null }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
+    // Gói đã hủy và hết kỳ đã trả -> thu hồi VIP (PayPal không gửi event khi kỳ cuối kết thúc)
+    if (sub.cancel_at_period_end && sub.status !== 'canceled' && sub.stripe_current_period_end && new Date(sub.stripe_current_period_end) <= new Date()) {
+      await supabase.from('subscriptions').update({ status: 'canceled' }).eq('user_id', user.id);
+      sub.status = 'canceled';
+    }
+
     return new Response(JSON.stringify({ success: true, data: {
       id: sub.id,
       plan: sub.plan,

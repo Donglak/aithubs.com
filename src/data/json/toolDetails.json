@@ -1,0 +1,78 @@
+[
+  {
+    "id": 1,
+    "name": "elevenlabs",
+    "longDescription": "ElevenLabs is an advanced AI voice generation platform that transforms text into lifelike speech. Ideal for content creators, marketers, and developers, it offers text-to-speech, voice cloning, and multilingual support to enhance storytelling, media production, and digital experiences.",
+    "features": [
+      "Text-to-speech with lifelike expressive voices",
+      "Voice cloning from 10-second samples (Instant)",
+      "Voice design from text prompts",
+      "Multilingual support 70+ languages",
+      "Speech-to-speech conversion",
+      "Conversational AI agents 11.ai",
+      "Audio tags for emotion control"
+    ],
+    "pros": [
+      "Highly realistic voices, multilingual, strong cloning and APIs",
+      "Most human-like AI voices beating competitors",
+      "70+ languages with native emotion/clarity",
+      "Instant voice cloning from short samples",
+      "Multi-speaker conversational dialogue",
+      "Voice preservation for medical/ALS patients",
+      "Enterprise-ready with HIPAA compliance",
+      "Free tier for testing and small projects"
+    ],
+    "cons": [
+      "Credits burn fast on failed generations",
+      "Voice cloning requires clean professional audio",
+      "Support response times can take weeks",
+      "Popular voices overused and recognizable",
+      "Model limitations: Turbo V2 lacks emotion range",
+      "Multilingual accent bleed in long content"
+    ],
+    "useCases": [
+      "Content creators generating narration for videos and podcasts",
+      "Audiobook publishers creating natural-sounding narration",
+      "Game developers producing character voices and dialogue",
+      "Accessibility teams creating voiceovers for visually impaired",
+      "Voice preservation for individuals with speech impairments",
+      "Multilingual content creators dubbing in 70+ languages"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Looka",
+    "longDescription": "Looka is an AI design tool that helps businesses and entrepreneurs create professional logos and brand kits in minutes. With customizable templates, smart branding suggestions, and easy design tools, Looka makes building a unique and consistent brand simple and affordable",
+    "features": [
+      "AI-powered logo generator producing hundreds of custom logo options based on name, categories, styles, colors, and symbols",
+      "Real-time previews of logos across mockups like business cards, T-shirts, websites, and social media",
+      "Complete brand kit generation including color palettes, typography, and business card designs",
+      "Easy customization of logos with drag-and-drop editor",
+      "High-resolution file exports (PNG, SVG, EPS)",
+      "Social media kit with sized assets for all platforms",
+      "Brand guidelines document generation"
+    ],
+    "pros": [
+      "Extremely fast logo creation (minutes vs days)",
+      "No design skills required",
+      "Affordable compared to hiring a designer",
+      "Complete brand identity in one package",
+      "Easy iteration and customization",
+      "Good for startups and small businesses"
+    ],
+    "cons": [
+      "Limited uniqueness compared to custom design",
+      "Template-based approach can feel generic",
+      "Less control over fine details",
+      "May not scale well for complex brand needs",
+      "Subscription required for full access"
+    ],
+    "useCases": [
+      "Startups needing quick professional branding",
+      "Small businesses creating logos and brand kits",
+      "Entrepreneurs testing business ideas",
+      "Freelancers offering branding services",
+      "Non-profits with limited design budgets"
+    ]
+  }
+]

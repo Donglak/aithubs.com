@@ -26,3 +26,13 @@ dist-ssr
 
 # Local Netlify folder
 .netlify
+
+# Claude Code worktrees (bản sao tạm, không commit)
+.claude/worktrees/
+
+# File chứa bí mật thật / cấu hình cá nhân — KHÔNG commit
+.env.example
+.env.*
+!.env.local.template
+guide_document.txt
+.claude/settings.local.json

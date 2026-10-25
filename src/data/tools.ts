@@ -11,6 +11,7 @@ export interface Tool {
   freeTrial: boolean;
   website?: string;
   company?: string;
+  featured?: boolean;
 }
 
 export const tools: Tool[] = [

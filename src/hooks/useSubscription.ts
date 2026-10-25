@@ -4,7 +4,6 @@ import { SubscriptionInfo } from '../types/payment';
 
 const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-subscription`;
 const CANCEL_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cancel-subscription`;
-const PORTAL_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-portal-session`;
 
 export function useSubscription() {
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
@@ -46,7 +45,7 @@ export function useSubscription() {
       const { supabase } = await import('../lib/supabase');
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
-      if (!token) throw new Error('Chưa đăng nhập');
+      if (!token) throw new Error('Not signed in');
 
       const res = await fetch(CANCEL_URL, {
         method: 'POST',
@@ -58,27 +57,10 @@ export function useSubscription() {
         await fetchSubscription();
         return true;
       }
-      throw new Error(data.error || 'Huỷ thất bại');
+      throw new Error(data.error || 'Cancellation failed');
     } catch (err: any) {
       setError(err.message);
       return false;
-    }
-  };
-
-  const openBillingPortal = async () => {
-    try {
-      const { supabase } = await import('../lib/supabase');
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) throw new Error('Chưa đăng nhập');
-
-      const res = await fetch(PORTAL_URL, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data.url) window.location.href = data.url;
-    } catch (err: any) {
-      setError(err.message);
     }
   };
 
@@ -87,7 +69,6 @@ export function useSubscription() {
     loading,
     error,
     cancelSubscription,
-    openBillingPortal,
     refetch: fetchSubscription,
   };
 }

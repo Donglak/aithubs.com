@@ -34,12 +34,14 @@ async function postToSheets(payload: { sheet: string; data: Record<string, any> 
   const useNoCors = isGAS(url);
 
   // Gọi Apps Script trực tiếp → dùng no-cors, bỏ Content-Type (trình duyệt sẽ set text/plain)
-  const resp = await fetch(url, {
+  const fetchOptions: RequestInit = {
     method: 'POST',
-    ...(useNoCors ? ({ mode: 'no-cors' } as RequestInit) : {}),
-    headers: useNoCors ? undefined : { 'Content-Type': 'application/json' },
+    ...(useNoCors ? { mode: 'no-cors' as RequestMode } : {}),
+    ...(useNoCors ? {} : { headers: { 'Content-Type': 'application/json' } }),
     body,
-  });
+  };
+
+  const resp = await fetch(url, fetchOptions);
 
   // no-cors → response opaque, không đọc được status/json nhưng request vẫn gửi OK
   if (useNoCors) return { ok: true, opaque: true };

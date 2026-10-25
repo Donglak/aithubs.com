@@ -32,19 +32,25 @@ export default function AdminProductsPage() {
     });
   }, [filter]);
 
-  const updateStatus = async (id: string, status: string, reason?: string) => {
-    const payload: any = {
-      status,
-      reviewed_by: user?.id,
-      reviewed_at: new Date().toISOString(),
-    };
-    if (status === "approved") payload.is_approved = true;
-    if (reason) payload.rejection_reason = reason;
-    await vendorDb.from("digital_products").update(payload).eq("id", id);
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, ...payload } : p)),
-    );
+  const applyUpdate = async (id: string, payload: Partial<DigitalProduct>) => {
+    const { error } = await vendorDb.from("digital_products").update(payload).eq("id", id);
+    if (error) {
+      window.alert(`Update failed: ${error.message}`);
+      return;
+    }
+    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...payload } : p)));
   };
+
+  const updateStatus = (id: string, status: DigitalProduct["status"], reason?: string) =>
+    applyUpdate(id, {
+      status,
+      is_approved: status === "approved",
+      rejection_reason: status === "rejected" ? reason ?? null : null,
+      reviewed_by: user?.id ?? null,
+      reviewed_at: new Date().toISOString(),
+    });
+
+  const toggleFeatured = (p: DigitalProduct) => applyUpdate(p.id, { featured: !p.featured });
 
   const filtered = products.filter(
     (p) => !search || p.title?.toLowerCase().includes(search.toLowerCase()),
@@ -219,8 +225,9 @@ export default function AdminProductsPage() {
                               <button
                                 onClick={() => {
                                   const reason = window.prompt(
-                                    "Rejection reason (optional):",
+                                    "Rejection reason (shown to the vendor):",
                                   );
+                                  if (reason === null) return; // bấm Cancel
                                   updateStatus(
                                     p.id,
                                     "rejected",
@@ -232,6 +239,14 @@ export default function AdminProductsPage() {
                                 <XCircle className="w-3 h-3" /> Reject
                               </button>
                             </>
+                          )}
+                          {p.status === "approved" && (
+                            <button
+                              onClick={() => toggleFeatured(p)}
+                              className="text-xs px-2.5 py-1.5 rounded-md bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors"
+                            >
+                              {p.featured ? "Unfeature" : "Feature"}
+                            </button>
                           )}
                           {p.status === "approved" && (
                             <button

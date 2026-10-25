@@ -7,12 +7,14 @@ import enChatbot from "../locales/en/chatbot.json";
 import enNavigation from "../locales/en/navigation.json";
 import enHome from "../locales/en/home.json";
 import enProduct from "../locales/en/product.json";
+import enPayment from "../locales/en/payment.json";
 
 import viCommon from "../locales/vi/common.json";
 import viChatbot from "../locales/vi/chatbot.json";
 import viNavigation from "../locales/vi/navigation.json";
 import viHome from "../locales/vi/home.json";
 import viProduct from "../locales/vi/product.json";
+import viPayment from "../locales/vi/payment.json";
 
 const resources = {
   en: {
@@ -21,6 +23,7 @@ const resources = {
     navigation: enNavigation,
     home: enHome,
     product: enProduct,
+    payment: enPayment,
   },
   vi: {
     common: viCommon,
@@ -28,6 +31,7 @@ const resources = {
     navigation: viNavigation,
     home: viHome,
     product: viProduct,
+    payment: viPayment,
   },
 };
 
@@ -38,7 +42,7 @@ i18n
     resources,
     fallbackLng: "en",
     supportedLngs: ["en", "vi"],
-    ns: ["common", "chatbot", "navigation", "home", "product"],
+    ns: ["common", "chatbot", "navigation", "home", "product", "payment"],
     defaultNS: "common",
     interpolation: {
       escapeValue: false,

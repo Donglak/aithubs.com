@@ -13,6 +13,7 @@ export interface Ebook {
   coverImage: string;
   price: number;
   priceType: "free" | "basic" | "premium" | "vip";
+  // Chỉ dùng cho ebook free. Ebook trả phí được giao qua server sau khi thanh toán.
   googleDriveLink: string;
   category: string;
   pages: number;
@@ -124,6 +125,29 @@ export const ebooks: Ebook[] = [
     rating: 4.9,
     publishedDate: "2024-03-10",
     downloads: 15620,
+    hasPreview: true,
+    previewChapters: [
+      {
+        chapterNumber: 1,
+        title: "Introduction: The AI Revolution",
+        wordCount: 2840,
+        content: `
+<p>We are living through one of the most transformative periods in human history. Artificial Intelligence, once the stuff of science fiction, has become an accessible tool that anyone with an internet connection can use. But with great power comes great responsibility — and great opportunity.</p>
+
+<p>When I first started experimenting with AI tools in early 2022, I was overwhelmed. There were hundreds of tools, each claiming to revolutionize my workflow. Some were genuinely useful; others were expensive wrappers around free APIs. I wasted hundreds of dollars and countless hours before finding the tools that actually delivered results.</p>
+
+<p>This book is the guide I wish I had. It's not a comprehensive directory of every AI tool — that would be obsolete by the time it's published. Instead, it's a framework for <strong>evaluating, selecting, and mastering</strong> the AI tools that matter for your specific work.</p>
+
+<p>Whether you're a solo creator, a startup founder, a corporate knowledge worker, or a student — if you work with information, this book is for you. The principles apply regardless of your technical background.</p>
+
+<blockquote><p><strong>Key Insight:</strong> The best AI tool isn't the most powerful one — it's the one you actually use consistently. Mastery of a few tools beats superficial knowledge of many.</p></blockquote>
+
+<p>Each chapter includes practical exercises, real-world examples, and “Try This Now” boxes for immediate application. You don't need to read linearly — jump to the sections most relevant to your current challenges.</p>
+
+<p><em>This is a preview of Chapter 1. The full chapter includes 3 additional sections, 5 practical exercises, and a curated list of 12 starter prompts for different use cases.</em></p>
+        `,
+      },
+    ],
   },
   {
     id: 4,
@@ -212,7 +236,7 @@ export const ebooks: Ebook[] = [
       "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=600&fit=crop",
     price: 24.99,
     priceType: "premium",
-    googleDriveLink: "https://drive.google.com/file/d/example7/view",
+    googleDriveLink: "", // link giao hàng nằm ở supabase/functions/_shared/pricing.ts
     category: "Design",
     pages: 180,
     fileSize: "9.4 MB",
@@ -230,7 +254,7 @@ export const ebooks: Ebook[] = [
       "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=600&fit=crop",
     price: 39.99,
     priceType: "vip",
-    googleDriveLink: "https://drive.google.com/file/d/example8/view",
+    googleDriveLink: "", // link giao hàng nằm ở supabase/functions/_shared/pricing.ts
     category: "Finance",
     pages: 220,
     fileSize: "7.2 MB",

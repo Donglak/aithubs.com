@@ -1,5 +1,6 @@
 import { Bookmark, ExternalLink, Heart, Loader2, Star, Crown, Lock, Shield } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useUserLibrary } from "../hooks/useToolInteractions";
@@ -12,11 +13,18 @@ export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const { bookmarked, liked, saved, loading } = useUserLibrary();
   const [activeTab, setActiveTab] = useState<Tab>("saved");
+  const { subscription, loading: subLoading, cancelSubscription } = useSubscription();
+  const { t, i18n } = useTranslation("payment");
 
-  // Chưa đăng nhập → redirect login
+  // Chưa đăng nhập → redirect login (sau khi gọi đủ hook để giữ thứ tự hook ổn định)
   if (!authLoading && !user) return <Navigate to="/login" replace />;
 
-  const { subscription, loading: subLoading, cancelSubscription, openBillingPortal } = useSubscription();
+  const formatDate = (iso: string) => new Date(iso).toLocaleDateString(i18n.resolvedLanguage);
+
+  const handleCancel = async () => {
+    if (!window.confirm(t("dashboard.cancelConfirm"))) return;
+    if (!(await cancelSubscription(true))) window.alert(t("dashboard.cancelFailed"));
+  };
 
   const tabs: {
     key: Tab;
@@ -165,44 +173,59 @@ export default function DashboardPage() {
               {subscription ? (
                 <>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="font-semibold">Gói VIP {subscription.plan === 'vip_yearly' ? 'Hàng năm' : 'Hàng tháng'}</span>
+                    <span className="font-semibold">
+                      {t("dashboard.title", { plan: t(`vip.plans.${subscription.plan}.label`) })}
+                    </span>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                       subscription.status === 'active' ? 'bg-green-200 text-green-800' :
                       subscription.status === 'trialing' ? 'bg-blue-200 text-blue-800' :
                       'bg-red-200 text-red-800'
                     }`}>
-                      {subscription.status === 'active' ? 'Đang hoạt động' :
-                       subscription.status === 'trialing' ? 'Đang dùng thử' :
-                       subscription.status}
+                      {t(`dashboard.status.${subscription.status}`, { defaultValue: subscription.status })}
                     </span>
                   </div>
                   <div className="space-y-2 text-sm opacity-90">
-                    <div>Hết hạn: <strong>{subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString('vi-VN') : 'Vô hạn'}</strong></div>
-                    {subscription.trialEnd && <div>Dùng thử đến: <strong>{new Date(subscription.trialEnd).toLocaleDateString('vi-VN')}</strong></div>}
-                    <div>Số tiền: <strong>{formatCurrencyDisplay(subscription.amount, subscription.currency)}/{subscription.interval === 'month' ? 'tháng' : 'năm'}</strong></div>
-                    {subscription.cancelAtPeriodEnd && <div>⚠️ Sẽ huỷ vào ngày hết hạn</div>}
+                    {subscription.currentPeriodEnd && (
+                      <div>
+                        {t(subscription.cancelAtPeriodEnd ? "dashboard.endsOn" : "dashboard.renews")}:{" "}
+                        <strong>{formatDate(subscription.currentPeriodEnd)}</strong>
+                      </div>
+                    )}
+                    {subscription.trialEnd && <div>{t("dashboard.trialUntil")}: <strong>{formatDate(subscription.trialEnd)}</strong></div>}
+                    <div>
+                      {t("dashboard.amount")}:{" "}
+                      <strong>{formatCurrencyDisplay(subscription.amount, subscription.currency)}{t(`vip.perInterval.${subscription.interval}`)}</strong>
+                    </div>
+                    {subscription.cancelAtPeriodEnd && subscription.currentPeriodEnd && (
+                      <div>{t("dashboard.cancelsNotice", { date: formatDate(subscription.currentPeriodEnd) })}</div>
+                    )}
                   </div>
                   <div className="flex gap-3 mt-4">
-                    <button
-                      onClick={() => openBillingPortal()}
-                      className="flex-1 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-colors"
+                    <a
+                      href="https://www.paypal.com/myaccount/autopay/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm text-center transition-colors"
                     >
-                      Quản lý thanh toán (Stripe Portal)
-                    </button>
-                    <button
-                      onClick={() => cancelSubscription(true)}
-                      className="flex-1 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-sm transition-colors"
-                    >
-                      {subscription.cancelAtPeriodEnd ? 'Đã huỷ, bật lại' : 'Huỷ gói (giữ đến hết hạn)'}
-                    </button>
+                      {t("dashboard.manage")}
+                    </a>
+                    {/* Gói PayPal đã hủy không bật lại được -> ẩn nút khi đã hủy */}
+                    {!subscription.cancelAtPeriodEnd && subscription.status !== 'canceled' && (
+                      <button
+                        onClick={handleCancel}
+                        className="flex-1 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-sm transition-colors"
+                      >
+                        {t("dashboard.cancel")}
+                      </button>
+                    )}
                   </div>
                 </>
               ) : (
                 <>
-                  <h3 className="text-lg font-semibold mb-2">Chưa có gói VIP</h3>
-                  <p className="text-sm opacity-70 mb-4">Nâng cấp để mở khóa tất cả tính năng độc quyền</p>
+                  <h3 className="text-lg font-semibold mb-2">{t("dashboard.none")}</h3>
+                  <p className="text-sm opacity-70 mb-4">{t("dashboard.noneBody")}</p>
                   <Link to="/checkout/vip" className="inline-block px-6 py-3 bg-white text-purple-600 font-medium rounded-xl hover:bg-gray-100 transition-colors">
-                    Nâng cấp ngay
+                    {t("dashboard.upgrade")}
                   </Link>
                 </>
               )}

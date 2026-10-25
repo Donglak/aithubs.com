@@ -1,4 +1,4 @@
-// src/types/tool.ts
+export type Tool = ToolBase;
 
 export type VideoItem = {
   title: string;
@@ -17,16 +17,17 @@ export type ToolBase = {
   id: number;                          // SỐ nguyên                     // duy nhất
   name: string;
   image: string;
-  website: string;
+  website?: string;
   company?: string;
   categories: string | string[];         // có thể là mảng
   functions?: string | string[];
   rating?: number;
   reviews?: number;
-  featured: boolean;
+  featured?: boolean;                  // dữ liệu tools.ts mới không còn trường này
   price?: string;                      // 'Free', 'Free - $10', 'Contact price'
   freeTrial?: boolean;
   description?: string;
+  tags?: string | string[];
 };
 
 export type ToolDetail = ToolBase & {

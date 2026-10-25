@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Mail, Lock, AlertCircle, CheckCircle, Loader2, ArrowRight } from 'lucide-react';
 import { Ebook, PreviewChapter } from '../data/ebooks';
-import { useEmailCapture } from './useEmailCapture';
+import { useEmailCapture } from '../hooks/useEmailCapture';
 
 interface PreviewModalProps {
   ebook: Ebook;
@@ -111,9 +111,6 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
             {status === 'submitting' && (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-500 animate-spin" />
             )}
-            {status === 'success' && (
-              <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
-            )}
             {status === 'error' && (
               <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />
             )}
@@ -128,10 +125,10 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
 
           <button
             type="submit"
-            disabled={status === 'submitting' || status === 'success'}
+            disabled={status === 'submitting'}
             className="w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
-            <span>{status === 'submitting' ? 'Sending...' : status === 'success' ? 'Sent!' : 'Get Full Chapter Free'}</span>
+            <span>{status === 'submitting' ? 'Sending...' : 'Get Full Chapter Free'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 

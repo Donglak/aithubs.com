@@ -2,6 +2,18 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import Stripe from 'https://esm.sh/stripe@14?target=deno';
+import { getPaypalSubscription, verifyPaypalWebhook } from '../_shared/paypal.ts';
+import { syncVendorSubscription, vendorUserFromCustomId } from '../_shared/vendor.ts';
+import { isGatewayEnabled } from '../_shared/gateways.ts';
+import {
+  confirmPaypalOrder,
+  getOrder,
+  grantVipAccess as grantVip,
+  markFailed,
+  revokeVipAccess as revokeVip,
+  sendDownloadEmail,
+  syncPaypalSubscription,
+} from '../_shared/orders.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,15 +22,20 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY')!;
-const stripeWebhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
 const vnpHashSecret = Deno.env.get('VNP_HASH_SECRET')!;
 const momoSecretKey = Deno.env.get('MOMO_SECRET_KEY')!;
-const paypalWebhookId = Deno.env.get('PAYPAL_WEBHOOK_ID')!;
 const siteUrl = Deno.env.get('SITE_URL')!;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
-const stripe = new Stripe(stripeSecretKey, { apiVersion: '2023-10-16', httpClient: Stripe.createFetchHttpClient() });
+
+// Khởi tạo Stripe khi cần — tránh làm hỏng webhook PayPal khi chưa cấu hình Stripe
+let stripeClient: Stripe | null = null;
+function getStripe() {
+  const key = Deno.env.get('STRIPE_SECRET_KEY');
+  if (!key) throw new Error('Stripe is not configured');
+  stripeClient ??= new Stripe(key, { apiVersion: '2023-10-16', httpClient: Stripe.createFetchHttpClient() });
+  return stripeClient;
+}
 
 async function updateOrderStatus(orderId: string, status: 'COMPLETED' | 'FAILED', extra: any = {}) {
   const updates: any = { status, updated_at: new Date().toISOString(), ...extra };
@@ -27,39 +44,17 @@ async function updateOrderStatus(orderId: string, status: 'COMPLETED' | 'FAILED'
   await supabase.from('orders').update(updates).eq('id', orderId);
 }
 
-async function grantVipAccess(userId: string, subscriptionData: any) {
-  await supabase.from('profiles').update({ role: 'vip' }).eq('id', userId);
-  await supabase.from('subscriptions').upsert({
-    user_id: userId,
-    stripe_customer_id: subscriptionData.stripe_customer_id,
-    stripe_subscription_id: subscriptionData.stripe_subscription_id,
-    stripe_price_id: subscriptionData.stripe_price_id,
-    stripe_current_period_end: subscriptionData.current_period_end,
-    plan: subscriptionData.plan,
-    status: subscriptionData.status,
-    currency: subscriptionData.currency,
-    amount: subscriptionData.amount,
-    interval: subscriptionData.interval,
-    trial_end: subscriptionData.trial_end,
-    cancel_at_period_end: subscriptionData.cancel_at_period_end,
-    metadata: subscriptionData.metadata,
-  }, { onConflict: 'user_id' });
+/** custom_id "vendor:<uid>" -> thuê bao listing của vendor, còn lại là VIP */
+async function syncSubscription(subscriptionId: string) {
+  const sub = await getPaypalSubscription(subscriptionId);
+  if (vendorUserFromCustomId(sub.custom_id)) await syncVendorSubscription(supabase, sub);
+  else await syncPaypalSubscription(supabase, sub);
 }
 
-async function revokeVipAccess(userId: string) {
-  await supabase.from('profiles').update({ role: 'free' }).eq('id', userId);
-  await supabase.from('subscriptions').update({ status: 'canceled', canceled_at: new Date().toISOString() }).eq('user_id', userId);
-}
+const grantVipAccess = (userId: string, sub: Record<string, unknown>) => grantVip(supabase, userId, sub);
+const revokeVipAccess = (userId: string) => revokeVip(supabase, userId);
 
-async function sendDownloadEmail(orderId: string) {
-  await fetch(`${siteUrl}/functions/v1/send-download-link`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${supabaseServiceKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ orderId }),
-  });
-}
-
-function verifyVnpayHash(params: Record<string, string>, secret: string) {
+async function verifyVnpayHash(params: Record<string, string>, secret: string) {
   const { vnp_SecureHash, ...rest } = params;
   const sorted = Object.keys(rest).sort().map(k => `${k}=${rest[k]}`).join('&');
   const encoder = new TextEncoder();
@@ -82,16 +77,26 @@ async function verifyMomoSignature(data: any, secret: string) {
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-  const gateway = req.headers.get('x-gateway') || 'stripe';
+  // PayPal không gửi header x-gateway -> nhận diện qua header chữ ký của PayPal hoặc ?gateway=paypal
+  const gateway = req.headers.get('x-gateway')
+    || new URL(req.url).searchParams.get('gateway')
+    || (req.headers.get('paypal-transmission-id') ? 'paypal' : 'stripe');
+
+  // vnpay_return / vnpay_ipn -> vnpay, momo_ipn -> momo ...
+  if (!isGatewayEnabled(gateway.split('_')[0])) {
+    return new Response('Gateway disabled', { status: 404, headers: corsHeaders });
+  }
 
   try {
     // ===== STRIPE WEBHOOK =====
     if (gateway === 'stripe') {
+      const stripe = getStripe();
+      const stripeWebhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
       const sig = req.headers.get('stripe-signature')!;
       const body = await req.text();
       let event: Stripe.Event;
       try {
-        event = stripe.webhooks.constructEvent(body, sig, stripeWebhookSecret);
+        event = await stripe.webhooks.constructEventAsync(body, sig, stripeWebhookSecret);
       } catch (err) {
         console.error('Stripe webhook verify failed:', err);
         return new Response('Webhook signature verification failed', { status: 400, headers: corsHeaders });
@@ -252,40 +257,49 @@ serve(async (req) => {
 
     // ===== PAYPAL WEBHOOK =====
     if (gateway === 'paypal') {
-      const eventType = json.event_type;
-      const resource = json.resource;
+      const rawBody = await req.text();
 
-      if (eventType === 'CHECKOUT.ORDER.APPROVED' || eventType === 'PAYMENT.CAPTURE.COMPLETED') {
-        const orderId = resource.custom_id;
-        if (orderId) {
-          await updateOrderStatus(orderId, 'COMPLETED', { payment_intent_id: resource.id });
-          const { data: order } = await supabase.from('orders').select('type').eq('id', orderId).single();
-          if (order?.type === 'ebook') await sendDownloadEmail(orderId);
+      // Bắt buộc xác thực chữ ký — nếu không, ai cũng có thể giả event "đã thanh toán"
+      if (!(await verifyPaypalWebhook(req.headers, rawBody))) {
+        console.warn('PayPal webhook signature verification failed');
+        return new Response('Invalid signature', { status: 401, headers: corsHeaders });
+      }
+
+      const event = JSON.parse(rawBody);
+      const eventType: string = event.event_type;
+      const resource = event.resource ?? {};
+
+      switch (eventType) {
+        // Ebook: người mua đã approve / tiền đã về. confirmPaypalOrder tự capture
+        // nếu cần và đối chiếu số tiền; gọi lặp lại vẫn an toàn.
+        case 'CHECKOUT.ORDER.APPROVED':
+        case 'PAYMENT.CAPTURE.COMPLETED': {
+          const orderId = resource.custom_id ?? resource.purchase_units?.[0]?.custom_id;
+          const order = orderId ? await getOrder(supabase, orderId) : null;
+          if (order?.payment_gateway === 'paypal' && order.type === 'ebook') await confirmPaypalOrder(supabase, order);
+          break;
         }
-      } else if (eventType === 'BILLING.SUBSCRIPTION.ACTIVATED' || eventType === 'BILLING.SUBSCRIPTION.UPDATED') {
-        const subId = resource.id;
-        const userId = resource.custom_id;
-        const planId = resource.plan_id;
-        if (userId) {
-          await grantVipAccess(userId, {
-            stripe_customer_id: '',
-            stripe_subscription_id: subId,
-            stripe_price_id: planId,
-            current_period_end: new Date(resource.billing_info?.next_billing_time).toISOString(),
-            plan: planId?.includes('monthly') ? 'vip_monthly' : 'vip_yearly',
-            status: 'active',
-            currency: resource.billing_info?.last_payment?.amount?.currency_code?.toLowerCase() || 'usd',
-            amount: Math.round(parseFloat(resource.billing_info?.last_payment?.amount?.value || '0') * 100),
-            interval: resource.billing_info?.cycle_frequency?.interval_unit === 'MONTH' ? 'month' : 'year',
-            trial_end: null,
-            cancel_at_period_end: false,
-            metadata: { paypal_subscription_id: subId },
-          });
+
+        case 'PAYMENT.CAPTURE.DENIED': {
+          if (resource.custom_id) await markFailed(supabase, resource.custom_id, 'PayPal capture denied');
+          break;
         }
-      } else if (eventType === 'BILLING.SUBSCRIPTION.CANCELLED' || eventType === 'BILLING.SUBSCRIPTION.EXPIRED') {
-        const subId = resource.id;
-        const { data: sub } = await supabase.from('subscriptions').select('user_id').eq('stripe_subscription_id', subId).single();
-        if (sub?.user_id) await revokeVipAccess(sub.user_id);
+
+        // Subscription (VIP hoặc thuê bao listing của vendor): luôn đọc lại trạng thái từ PayPal
+        case 'BILLING.SUBSCRIPTION.ACTIVATED':
+        case 'BILLING.SUBSCRIPTION.UPDATED':
+        case 'BILLING.SUBSCRIPTION.RE-ACTIVATED':
+        case 'BILLING.SUBSCRIPTION.CANCELLED':
+        case 'BILLING.SUBSCRIPTION.EXPIRED':
+        case 'BILLING.SUBSCRIPTION.SUSPENDED':
+        case 'BILLING.SUBSCRIPTION.PAYMENT.FAILED':
+          await syncSubscription(resource.id);
+          break;
+
+        // Thanh toán gia hạn hàng tháng/năm
+        case 'PAYMENT.SALE.COMPLETED':
+          if (resource.billing_agreement_id) await syncSubscription(resource.billing_agreement_id);
+          break;
       }
 
       return new Response(JSON.stringify({ received: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });

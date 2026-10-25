@@ -5,10 +5,11 @@ import { useVendorContext } from "../../contexts/VendorContext";
 import { vendorDb } from "../../lib/supabase";
 import type { DigitalProduct } from "../../types/vendor";
 
-type FilterTab = "all" | "draft" | "submitted" | "approved" | "rejected";
+type FilterTab = "all" | "draft" | "submitted" | "approved" | "rejected" | "archived";
 
 export default function VendorProductsPage() {
-  const { vendor } = useVendorContext();
+  const { vendor, plan, listingActive, usedListings, refresh } = useVendorContext();
+  const [actionError, setActionError] = useState<string | null>(null);
   const [products, setProducts] = useState<DigitalProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<FilterTab>("all");
@@ -34,7 +35,24 @@ export default function VendorProductsPage() {
     { key: "submitted", label: "Submitted" },
     { key: "approved", label: "Approved" },
     { key: "rejected", label: "Rejected" },
+    { key: "archived", label: "Archived" },
   ];
+
+  // Archive giải phóng slot; restore đưa về nháp (gửi duyệt lại sẽ kiểm tra slot)
+  const setArchived = async (product: DigitalProduct, archived: boolean) => {
+    setActionError(null);
+    const status = archived ? "archived" : "draft";
+    const { error } = await vendorDb.from("digital_products").update({ status }).eq("id", product.id);
+    if (error) {
+      setActionError(error.message);
+      return;
+    }
+    setProducts((prev) => prev.map((p) => (p.id === product.id ? { ...p, status, is_approved: false } : p)));
+    refresh();
+  };
+
+  const limit = plan && listingActive ? plan.max_listings : 3;
+  const atLimit = usedListings >= limit;
 
   const filtered = products.filter((p) => {
     if (activeTab !== "all" && p.status !== activeTab) return false;
@@ -53,15 +71,6 @@ export default function VendorProductsPage() {
       archived: "bg-gray-100 text-gray-800 border border-gray-200",
       suspended: "bg-red-100 text-red-800 border border-red-200",
     };
-    const darkColors: Record<string, string> = {
-      draft: "bg-gray-800 text-gray-300 border border-gray-700",
-      submitted: "bg-blue-900/30 text-blue-400 border border-blue-800",
-      under_review: "bg-yellow-900/30 text-yellow-400 border border-yellow-800",
-      approved: "bg-green-900/30 text-green-400 border border-green-800",
-      rejected: "bg-red-900/30 text-red-400 border border-red-800",
-      archived: "bg-gray-800 text-gray-300 border border-gray-700",
-      suspended: "bg-red-900/30 text-red-400 border border-red-800",
-    };
     return (
       lightColors[status] || "bg-gray-100 text-gray-800 border border-gray-200"
     );
@@ -73,17 +82,34 @@ export default function VendorProductsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Products</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-            Manage your product listings
+            {listingActive && plan
+              ? `${usedListings} of ${plan.max_listings >= 999 ? "unlimited" : plan.max_listings} listings used on the ${plan.name} plan`
+              : `${usedListings} of 3 drafts — subscribe to publish`}
           </p>
         </div>
-        <Link
-          to="/vendor/products/new"
-          className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Add Product
-        </Link>
+        {atLimit ? (
+          <Link
+            to="/vendor/subscription"
+            className="flex items-center gap-2 border border-primary-600 text-primary-600 dark:text-primary-400 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+          >
+            {listingActive ? "Upgrade for more listings" : "Choose a plan"}
+          </Link>
+        ) : (
+          <Link
+            to="/vendor/products/new"
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Product
+          </Link>
+        )}
       </div>
+
+      {actionError && (
+        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-sm text-red-700 dark:text-red-400" role="alert">
+          {actionError}
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -216,7 +242,14 @@ export default function VendorProductsPage() {
                         >
                           Edit
                         </Link>
-                        {product.status === "approved" && (
+                        <button
+                          type="button"
+                          onClick={() => setArchived(product, product.status !== "archived")}
+                          className="text-xs px-3 py-1.5 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        >
+                          {product.status === "archived" ? "Restore" : "Archive"}
+                        </button>
+                        {product.status === "approved" && listingActive && (
                           <a
                             href={`/products/${product.slug}`}
                             target="_blank"

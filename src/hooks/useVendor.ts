@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useState } from 'react'
 import { vendorDb } from '../lib/supabase'
-import type { Vendor, VendorSubscription, VendorPlan } from '../types/vendor'
+import { isSubscriptionActive, type Vendor, type VendorSubscription, type VendorPlan } from '../types/vendor'
 import { useAuth } from './useAuth'
 
 export interface UseVendorReturn {
   vendor: Vendor | null
   subscription: VendorSubscription | null
   plan: VendorPlan | null
+  /** Gói còn hiệu lực -> được tạo/gửi duyệt sản phẩm và sản phẩm được hiển thị */
+  listingActive: boolean
+  /** Số sản phẩm đang chiếm slot (mọi trạng thái trừ archived/rejected) */
+  usedListings: number
   loading: boolean
   error: string | null
   refresh: () => Promise<void>
@@ -17,6 +21,7 @@ export function useVendor(): UseVendorReturn {
   const [vendor, setVendor] = useState<Vendor | null>(null)
   const [subscription, setSubscription] = useState<VendorSubscription | null>(null)
   const [plan, setPlan] = useState<VendorPlan | null>(null)
+  const [usedListings, setUsedListings] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -33,7 +38,6 @@ export function useVendor(): UseVendorReturn {
     setError(null)
 
     try {
-      // Fetch vendor profile
       const { data: vendorData, error: vendorError } = await vendorDb
         .from('vendors')
         .select('*')
@@ -46,32 +50,38 @@ export function useVendor(): UseVendorReturn {
         setVendor(null)
         setSubscription(null)
         setPlan(null)
-        setLoading(false)
         return
       }
 
       setVendor(vendorData as Vendor)
 
-      // Fetch subscription + plan in parallel
-      const { data: subData, error: subError } = await vendorDb
-        .from('vendor_subscriptions')
-        .select('*, plan:plan_id(*)')
-        .eq('vendor_id', vendorData.id)
-        .maybeSingle()
+      const [subRes, countRes] = await Promise.all([
+        // vendor_subscriptions.vendor_id là auth user id (không phải vendors.id)
+        vendorDb
+          .from('vendor_subscriptions')
+          .select('*, plan:plan_id(*)')
+          .eq('vendor_id', user.id)
+          .maybeSingle(),
+        vendorDb
+          .from('digital_products')
+          .select('id', { count: 'exact', head: true })
+          .eq('vendor_id', vendorData.id)
+          .not('status', 'in', '(archived,rejected)'),
+      ])
 
-      if (subError && subError.code !== 'PGRST116') throw subError
-
-      if (subData) {
-        const sub = subData as VendorSubscription & { plan: VendorPlan }
+      if (subRes.error) throw subRes.error
+      if (subRes.data) {
+        const sub = subRes.data as VendorSubscription & { plan: VendorPlan }
         setSubscription(sub)
         setPlan(sub.plan)
       } else {
         setSubscription(null)
         setPlan(null)
       }
-    } catch (err: any) {
+      setUsedListings(countRes.count ?? 0)
+    } catch (err) {
       console.error('useVendor error:', err)
-      setError(err?.message || 'Failed to load vendor data')
+      setError(err instanceof Error ? err.message : 'Failed to load vendor data')
     } finally {
       setLoading(false)
     }
@@ -81,5 +91,14 @@ export function useVendor(): UseVendorReturn {
     fetchVendor()
   }, [fetchVendor])
 
-  return { vendor, subscription, plan, loading, error, refresh: fetchVendor }
+  return {
+    vendor,
+    subscription,
+    plan,
+    listingActive: isSubscriptionActive(subscription),
+    usedListings,
+    loading,
+    error,
+    refresh: fetchVendor,
+  }
 }

@@ -1,0 +1,81 @@
+{
+  "paypal": {
+    "name": "PayPal",
+    "description": "Thanh toán bằng tài khoản PayPal hoặc thẻ ghi nợ/tín dụng. Không cần có tài khoản PayPal.",
+    "secure": "Thanh toán bảo mật qua PayPal. Chúng tôi không lưu thông tin thẻ của bạn."
+  },
+  "checkout": {
+    "total": "Tổng cộng",
+    "payButton": "Thanh toán {{price}} qua PayPal",
+    "redirecting": "Đang chuyển sang PayPal...",
+    "signInRequired": "Vui lòng đăng nhập để tiếp tục thanh toán.",
+    "failed": "Thanh toán thất bại. Vui lòng thử lại.",
+    "invalidTitle": "Không tìm thấy sản phẩm",
+    "invalidBody": "Vui lòng chọn gói hoặc sản phẩm để thanh toán.",
+    "browseEbooks": "Xem danh sách ebook"
+  },
+  "vip": {
+    "title": "Nâng cấp VIP",
+    "subtitle": "Mở khóa tất cả công cụ AI, khóa học & ebook độc quyền",
+    "mostPopular": "Phổ biến nhất",
+    "perInterval": {
+      "month": "/tháng",
+      "year": "/năm"
+    },
+    "plans": {
+      "vip_monthly": {
+        "label": "Hàng tháng",
+        "features": []
+      },
+      "vip_yearly": {
+        "label": "Hàng năm (tiết kiệm 17%)",
+        "features": []
+      }
+    },
+    "subscribeButton": "Dùng thử miễn phí 7 ngày, sau đó {{price}}{{interval}}",
+    "trialNote": "Hủy bất cứ lúc nào. Không bị tính phí nếu hủy trong 7 ngày dùng thử."
+  },
+  "success": {
+    "confirming": "Đang xác nhận thanh toán...",
+    "doNotClose": "Vui lòng không đóng trang này.",
+    "ebookTitle": "Thanh toán thành công! 🎉",
+    "ebookBody": "Cảm ơn bạn đã mua <strong>{{title}}</strong>. Link tải cũng đã được gửi tới email của bạn.",
+    "download": "Tải ebook ngay",
+    "vipTitle": "Đã kích hoạt VIP! 🎉",
+    "vipBody": "Gói VIP đã được kích hoạt. Bạn có thể dùng tất cả tính năng độc quyền ngay bây giờ.",
+    "pendingTitle": "Thanh toán đang được xử lý",
+    "pendingBody": "PayPal chưa xác nhận giao dịch. Đơn hàng sẽ tự động cập nhật khi có xác nhận.",
+    "failedTitle": "Thanh toán không thành công",
+    "failedBody": "Giao dịch không hoàn tất. Bạn chưa bị trừ tiền hoặc sẽ được hoàn lại.",
+    "errorTitle": "Chưa xác nhận được thanh toán",
+    "errorBody": "Nếu bạn đã bị trừ tiền, đơn hàng sẽ được xử lý tự động trong vài phút.",
+    "orderId": "Mã đơn",
+    "home": "Về trang chủ"
+  },
+  "cancel": {
+    "title": "Đã hủy thanh toán",
+    "body": "Bạn chưa bị trừ tiền. Bạn có thể thử lại bất cứ lúc nào.",
+    "back": "Quay lại"
+  },
+  "dashboard": {
+    "title": "Gói VIP {{plan}}",
+    "status": {
+      "active": "Đang hoạt động",
+      "trialing": "Đang dùng thử",
+      "canceled": "Đã hủy",
+      "past_due": "Quá hạn thanh toán"
+    },
+    "renews": "Gia hạn vào",
+    "endsOn": "Hiệu lực đến",
+    "trialUntil": "Dùng thử đến",
+    "amount": "Giá",
+    "cancelsNotice": "⚠️ Đã hủy — VIP còn hiệu lực đến {{date}}",
+    "manage": "Quản lý trên PayPal",
+    "cancel": "Hủy gói",
+    "cancelConfirm": "Hủy gói VIP? Bạn vẫn giữ VIP đến hết kỳ hiện tại và sẽ không bị trừ tiền nữa.",
+    "cancelFailed": "Không hủy được gói. Vui lòng thử lại.",
+    "none": "Chưa có gói VIP",
+    "noneBody": "Nâng cấp để mở khóa tất cả tính năng độc quyền",
+    "upgrade": "Nâng cấp ngay"
+  }
+}

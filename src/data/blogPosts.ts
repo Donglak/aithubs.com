@@ -25,6 +25,8 @@ import nocodeRaw from "../content/posts/no-code-rise.md?raw";
 import nocodeRaw1 from "../content/posts/no-code-tools.md?raw";
 import shopifyRaw from "../content/posts/shopify-vs-woocommerce.md?raw";
 import ultimateRaw from "../content/posts/ultimate-guide-ai-tools.md?raw";
+import aiFutureRaw from "../content/posts/ai-in-the-future.md?raw";
+import techTrendsRaw from "../content/posts/tech-trends-future.md?raw";
 
 // lightweight frontmatter stripper — avoids bundling gray-matter in the client
 function stripFrontmatter(md: string) {
@@ -49,14 +51,16 @@ const automationHTML = marked(
 const nocodeHTML = marked(applyHighlightSyntax(stripFrontmatter(nocodeRaw)));
 const nocodeHTML1 = marked(applyHighlightSyntax(stripFrontmatter(nocodeRaw1)));
 const shopifyHTML = marked(applyHighlightSyntax(stripFrontmatter(shopifyRaw)));
+const aiFutureHTML = marked(applyHighlightSyntax(stripFrontmatter(aiFutureRaw)));
+const techTrendsHTML = marked(applyHighlightSyntax(stripFrontmatter(techTrendsRaw)));
 
 // Try to extract an `excerpt` field from the YAML frontmatter if present.
-function extractFrontmatterExcerpt(raw: string) {
+function extractFrontmatterExcerpt(raw: string): string {
   const fmMatch = raw.match(/^---([\s\S]*?)---/m);
-  if (!fmMatch) return undefined;
+  if (!fmMatch || !fmMatch[1]) return "";
   const fm = fmMatch[1];
   const excerptMatch = fm.match(/excerpt:\s*(?:"([^"]+)"|'([^']+)'|([^\n]+))/m);
-  if (!excerptMatch) return undefined;
+  if (!excerptMatch) return "";
   return (excerptMatch[1] || excerptMatch[2] || excerptMatch[3] || "").trim();
 }
 
@@ -67,6 +71,8 @@ const automationExcerpt = extractFrontmatterExcerpt(automationRaw);
 const nocodeExcerpt = extractFrontmatterExcerpt(nocodeRaw);
 const nocodeExcerpt1 = extractFrontmatterExcerpt(nocodeRaw1);
 const shopifyExcerpt = extractFrontmatterExcerpt(shopifyRaw);
+const aiFutureExcerpt = extractFrontmatterExcerpt(aiFutureRaw);
+const techTrendsExcerpt = extractFrontmatterExcerpt(techTrendsRaw);
 
 export const BLOG_POSTS: BlogPost[] = [
   {
@@ -179,6 +185,48 @@ export const BLOG_POSTS: BlogPost[] = [
       "https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop",
     tags: ["E-commerce", "Shopify", "WooCommerce"],
     featured: false,
+  },
+  {
+    id: 8,
+    slug: "ai-in-the-future",
+    title: "AI in the Future: How Artificial Intelligence Will Shape Our World by 2030",
+    content: aiFutureHTML,
+    excerpt: aiFutureExcerpt,
+    category: "guides",
+    author: "AIHub Team",
+    authorBio:
+      "The AIHub team explores the intersection of artificial intelligence, technology, and society. We bring you deep dives into the AI revolution.",
+    authorImage:
+      "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    date: "2024-12-15",
+    readTime: "10 min read",
+    image:
+      "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop",
+    tags: ["Artificial Intelligence", "Future Technology", "AI Trends", "Machine Learning", "Innovation"],
+    views: 0,
+    shares: 0,
+    featured: true,
+  },
+  {
+    id: 9,
+    slug: "tech-trends-future",
+    title: "Technology Trends 2025-2030: The Innovations Reshaping Our World",
+    content: techTrendsHTML,
+    excerpt: techTrendsExcerpt,
+    category: "guides",
+    author: "AIHub Research Team",
+    authorBio:
+      "The AIHub Research Team tracks emerging technology across AI, bio, climate, computing, and frontier tech. We publish quarterly deep-dives and maintain the Trend Intelligence Platform for builders and investors.",
+    authorImage:
+      "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    date: "2024-12-20",
+    readTime: "12 min read",
+    image:
+      "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop",
+    tags: ["Technology Trends", "Future Technology", "Innovation", "Emerging Tech", "Digital Transformation"],
+    views: 0,
+    shares: 0,
+    featured: true,
   },
 ];
 

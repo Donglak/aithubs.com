@@ -6,7 +6,6 @@ export default defineConfig({
   base: "/",
   plugins: [react()],
   optimizeDeps: {
-
     exclude: ['lucide-react', 'src/data/tools.ts', 'src/data/toolDetails.ts', 'src/data/categoryTemplates.ts'],
   },
   build: {
@@ -15,16 +14,21 @@ export default defineConfig({
         manualChunks: (id: string) => {
           // Vendor chunks
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom') || id.includes('react-helmet-async')) {
+            // Match theo tên package chính xác; `includes('react')` cũ bắt nhầm
+            // lucide-react, react-i18next... gây circular chunk vendor-react <-> vendor-other
+            const pkg = id.split(/node_modules[\\/]/).pop()!.split(/[\\/]/);
+            const name = pkg[0].startsWith('@') ? `${pkg[0]}/${pkg[1]}` : pkg[0];
+
+            if (['react', 'react-dom', 'scheduler', 'react-router', 'react-router-dom', '@remix-run/router', 'react-helmet-async', 'react-fast-compare', 'invariant', 'shallowequal', 'prop-types', 'react-is', 'object-assign'].includes(name)) {
               return 'vendor-react';
             }
-            if (id.includes('@supabase/supabase-js')) {
+            if (name.startsWith('@supabase/')) {
               return 'vendor-supabase';
             }
-            if (id.includes('lucide-react')) {
+            if (name === 'lucide-react') {
               return 'vendor-icons';
             }
-            if (id.includes('dompurify') || id.includes('marked') || id.includes('gray-matter') || id.includes('framer-motion')) {
+            if (['dompurify', 'marked', 'gray-matter', 'framer-motion', 'motion-dom', 'motion-utils'].includes(name)) {
               return 'vendor-utils';
             }
             return 'vendor-other';
@@ -44,20 +48,8 @@ export default defineConfig({
             return 'data-content';
           }
 
-          // Page chunks
-          if (id.includes('/pages/vendor/')) {
-            return 'pages-vendor';
-          }
-          if (id.includes('/pages/admin/')) {
-            return 'pages-admin';
-          }
-          if (id.includes('/pages/Blog') || id.includes('/pages/AuthorPage')) {
-            return 'pages-blog';
-          }
-          if (id.includes('/components/vendor/') || id.includes('/contexts/VendorContext')) {
-            return 'components-vendor';
-          }
-
+          // Pages đã được lazy() trong App.tsx nên để Rollup tự tách;
+          // gom thủ công sẽ kéo module dùng chung (supabase, useAuth) vào chunk trang
           // Let other modules be auto-split
           return undefined;
         },
@@ -67,4 +59,3 @@ export default defineConfig({
     chunkSizeWarningLimit: 500,
   },
 });
-

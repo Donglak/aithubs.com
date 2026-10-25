@@ -32,6 +32,7 @@ export default function ProductDetailPage() {
   const [leadMessage, setLeadMessage] = useState("");
   const [leadSending, setLeadSending] = useState(false);
   const [leadSent, setLeadSent] = useState(false);
+  const [leadsEnabled, setLeadsEnabled] = useState(false);
   const { t } = useTranslation(["product"]);
 
   useEffect(() => {
@@ -43,6 +44,8 @@ export default function ProductDetailPage() {
       .select("*, category:category_id(*)")
       .eq("slug", slug)
       .eq("is_approved", true)
+      .order("created_at", { ascending: true })
+      .limit(1)
       .maybeSingle()
       .then(async ({ data, error }) => {
         if (error || !data) {
@@ -70,6 +73,9 @@ export default function ProductDetailPage() {
           .eq("id", p.vendor_id)
           .single();
         setVendor(vendorData as Vendor);
+
+        const { data: leadsOn } = await vendorDb.rpc("vendor_leads_enabled", { p_vendor_id: p.vendor_id });
+        setLeadsEnabled(leadsOn === true);
 
         setLoading(false);
       });
@@ -115,13 +121,13 @@ export default function ProductDetailPage() {
         <div className="text-center">
           <Package className="w-16 h-16 text-gray-400 dark:text-gray-400 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            t("notFoundTitle")
+            {t("notFoundTitle")}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mb-6">
-            t("notFoundDescription").
+            {t("notFoundDescription")}
           </p>
           <Link
-            to="/tools"
+            to="/marketplace"
             className="text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300"
           >
             Browse Products
@@ -144,7 +150,7 @@ export default function ProductDetailPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back link */}
         <Link
-          to={vendor ? `/vendors/${vendor.slug}` : "/tools"}
+          to={vendor ? `/vendors/${vendor.slug}` : "/marketplace"}
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 mb-6 transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -217,7 +223,7 @@ export default function ProductDetailPage() {
             {product.media && product.media.length > 0 && (
               <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  t("galleryTitle")
+                  {t("galleryTitle")}
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
                   {product.media.map((m, i) => (
@@ -241,25 +247,26 @@ export default function ProductDetailPage() {
                 className="inline-flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors mb-6"
               >
                 <ExternalLink className="w-4 h-4" />
-                t("viewDemo")
+                {t("viewDemo")}
               </a>
             )}
 
-            {/* Lead Form */}
+            {/* Lead Form — chỉ khi gói của vendor có tính năng lead */}
+            {leadsEnabled && (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                t("leadFormTitle")
+                {t("leadFormTitle")}
               </h2>
               {leadSent ? (
                 <div className="bg-green-50 dark:bg-green-900/20 border border-green-500/30 rounded-lg p-4 text-green-700 dark:text-green-400 text-sm">
-                  t("leadFormSuccess").
+                  {t("leadFormSuccess")}
                 </div>
               ) : (
                 <form onSubmit={handleLeadSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <input
                       className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-900 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white text-sm placeholder-gray-400 focus:ring-2 focus:ring-primary-500 outline-none"
-                      placeholder="t(leadForm:nameLabel) *"
+                      placeholder={`${t("leadForm.nameLabel")} *`}
                       value={leadName}
                       onChange={(e) => setLeadName(e.target.value)}
                       required
@@ -289,11 +296,12 @@ export default function ProductDetailPage() {
                     ) : (
                       <Send className="w-4 h-4" />
                     )}
-                    t("sendInquiry")
+                    {t("sendInquiry")}
                   </button>
                 </form>
               )}
             </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -337,7 +345,7 @@ export default function ProductDetailPage() {
                       className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
                     >
                       <Globe className="w-4 h-4" />
-                      t("website")
+                      {t("website")}
                     </a>
                   )}
                   {vendor.support_email && (
@@ -346,7 +354,7 @@ export default function ProductDetailPage() {
                       className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
                     >
                       <Mail className="w-4 h-4" />
-                      t("contact")
+                      {t("contact")}
                     </a>
                   )}
                 </div>
@@ -374,7 +382,7 @@ export default function ProductDetailPage() {
                 className="flex items-center justify-center gap-2 bg-primary-600 text-white w-full px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
-                t("getThisProduct")
+                {t("getThisProduct")}
               </a>
             )}
           </div>

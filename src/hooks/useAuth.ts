@@ -24,10 +24,11 @@ export function useAuth() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const signInWithGoogle = async () => {
+  /** redirectPath: đường dẫn nội bộ để quay lại sau khi đăng nhập Google */
+  const signInWithGoogle = async (redirectPath = '/') => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin }
+      options: { redirectTo: `${window.location.origin}${redirectPath}` }
     })
   }
 

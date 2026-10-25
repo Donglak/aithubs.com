@@ -23,6 +23,7 @@ const EbooksPage = lazy(() => import("./pages/EbooksPage"));
 const BecomeVendorPage = lazy(() => import("./pages/BecomeVendorPage"));
 const VendorStorefrontPage = lazy(() => import("./pages/VendorStorefrontPage"));
 const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
+const MarketplacePage = lazy(() => import("./pages/MarketplacePage"));
 
 // Payment pages
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
@@ -104,6 +105,7 @@ export default function App() {
                   path="/vendors/:slug"
                   element={<VendorStorefrontPage />}
                 />
+                <Route path="/marketplace" element={<MarketplacePage />} />
                 <Route path="/products/:slug" element={<ProductDetailPage />} />
 
                 {/* Vendor workspace (protected) */}
@@ -136,8 +138,8 @@ export default function App() {
                 </Route>
 
                 {/* Admin pages */}
-                <Route path="/admin/vendors" element={<AdminVendorsPage />} />
-                <Route path="/admin/products" element={<AdminProductsPage />} />
+                <Route path="/admin/vendors" element={<ProtectedRoute requireAdmin><AdminVendorsPage /></ProtectedRoute>} />
+                <Route path="/admin/products" element={<ProtectedRoute requireAdmin><AdminProductsPage /></ProtectedRoute>} />
               </Routes>
             </Suspense>
           </main>

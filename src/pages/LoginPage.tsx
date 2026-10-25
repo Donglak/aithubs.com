@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export default function LoginPage() {
@@ -11,6 +11,10 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // Chỉ cho phép đường dẫn nội bộ (chặn open redirect kiểu //evil.com)
+  const rawRedirect = searchParams.get("redirect") || "/";
+  const redirect = rawRedirect.startsWith("/") && !rawRedirect.startsWith("//") ? rawRedirect : "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +26,7 @@ export default function LoginPage() {
         alert("welcome to our platform.!");
       } else {
         await signInWithEmail(email, password);
-        navigate("/");
+        navigate(redirect);
       }
     } catch (err: any) {
       setError(err.message);
@@ -40,7 +44,7 @@ export default function LoginPage() {
 
         {/* Google Login */}
         <button
-          onClick={signInWithGoogle}
+          onClick={() => signInWithGoogle(redirect)}
           className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg px-4 py-3 mb-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           <img src="https://www.google.com/favicon.ico" className="w-5 h-5" />

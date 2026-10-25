@@ -152,7 +152,7 @@ export async function syncPaypalSubscription(
       .maybeSingle();
 
     // Chỉ đụng tới subscription đang gắn với user
-    if (current?.stripe_subscription_id === sub.id) {
+    if (current && current.stripe_subscription_id === sub.id) {
       const periodEnd = current.stripe_current_period_end ? new Date(current.stripe_current_period_end) : null;
       if (status === 'CANCELLED' && periodEnd && periodEnd > new Date()) {
         // Đã trả tiền tới hết kỳ -> giữ VIP, get-subscription sẽ thu hồi khi hết hạn

@@ -15,9 +15,10 @@ export interface PaidEbook {
 
 export const PAID_EBOOKS: Record<string, PaidEbook> = {
   // Ebook 1–6 hiện miễn phí (xem src/data/ebooks.ts).
-  // TODO: thay link thật cho các ebook dưới đây trước khi mở bán
-  '7': { title: 'UX Design Principles', price_usd: 2499, deliveryUrl: '' },
-  '8': { title: 'Financial Planning Guide', price_usd: 3999, deliveryUrl: '' },
+  // Link giao hàng đặt trong Supabase Secrets (EBOOK_<id>_URL), KHÔNG ghi vào đây vì repo GitHub công khai.
+  // Giá đang để thấp (12/13 cent) để test sandbox — tăng lại trước khi bán thật.
+  '7': { title: 'UX Design Principles', price_usd: 12, deliveryUrl: Deno.env.get('EBOOK_7_URL') ?? '' },
+  '8': { title: 'Financial Planning Guide', price_usd: 13, deliveryUrl: Deno.env.get('EBOOK_8_URL') ?? '' },
 };
 
 export const VIP_PRICES: Record<VipPlan, { usd: number; vnd: number; interval: 'month' | 'year' }> = {

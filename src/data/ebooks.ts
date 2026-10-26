@@ -234,7 +234,7 @@ export const ebooks: Ebook[] = [
       "Create user-centered designs with this guide to UX principles, wireframing, prototyping, and user testing.",
     coverImage:
       "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=600&fit=crop",
-    price: 24.99,
+    price: 0.12,
     priceType: "premium",
     googleDriveLink: "", // link giao hàng nằm ở supabase/functions/_shared/pricing.ts
     category: "Design",
@@ -252,7 +252,7 @@ export const ebooks: Ebook[] = [
       "Take control of your finances with practical advice on budgeting, investing, and building wealth for the future.",
     coverImage:
       "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=600&fit=crop",
-    price: 39.99,
+    price: 0.13,
     priceType: "vip",
     googleDriveLink: "", // link giao hàng nằm ở supabase/functions/_shared/pricing.ts
     category: "Finance",

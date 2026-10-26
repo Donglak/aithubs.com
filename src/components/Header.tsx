@@ -69,15 +69,14 @@ const Header: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { to: "/", label: "Home" },
     { to: "/tools", label: "Tools" },
+    { to: "/deals", label: "Deals" },
+    { to: "/use-cases", label: "Use cases" },
     { to: "/blog", label: "Blog" },
-    { to: "/courses", label: "Course" },
     { to: "/ebooks", label: "Ebooks" },
     { to: "/marketplace", label: "Marketplace" },
-    { to: "/become-vendor", label: "Sell" },
+    { to: "/become-vendor", label: "Submit tool" },
     { to: "/about", label: "About" },
-    { to: "/contact", label: "Contact" },
   ];
 
   const avatarUrl =
@@ -113,7 +112,7 @@ const Header: React.FC = () => {
               <Zap className="h-5 w-5 text-white" />
             </span>
             <span className="truncate text-xl font-bold text-gray-900 dark:text-white">
-              AIThub
+              AIThubs
             </span>
           </Link>
 

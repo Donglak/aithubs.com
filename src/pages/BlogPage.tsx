@@ -56,7 +56,7 @@ const BlogPage = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 pt-16">
       <Helmet>
-        <title>Digital Tools Blog — Expert Insights & Reviews | AIThub</title>
+        <title>Digital Tools Blog — Expert Insights & Reviews | AIThubs</title>
         <meta
           name="description"
           content="Expert reviews, guides, and practical tutorials for digital tools, AI, marketing automation, and making money online."
@@ -66,13 +66,13 @@ const BlogPage = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Blog",
-            name: "AIThub Blog",
+            name: "AIThubs Blog",
             description:
               "Expert reviews, guides, and practical tutorials for digital tools.",
             url: "https://aithubs.com/blog",
             publisher: {
               "@type": "Organization",
-              name: "AIThub",
+              name: "AIThubs",
               logo: {
                 "@type": "ImageObject",
                 url: "https://aithubs.com/logo.svg",

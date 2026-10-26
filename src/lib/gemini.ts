@@ -134,7 +134,7 @@ Language Instructions:
 
 export function createSystemPrompt(options: SystemPromptOptions = {}): GeminiMessage {
   const { context, language } = options;
-  const basePrompt = `You are an AI assistant for DigitalToolsHub (AIThub), a platform that helps users discover and compare digital tools, AI tools, courses, and ebooks.
+  const basePrompt = `You are an AI assistant for AIThubs, a platform that helps users discover and compare digital tools, AI tools, courses, and ebooks.
 
 Your role:
 - Help users find the right tools for their needs

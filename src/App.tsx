@@ -24,6 +24,10 @@ const BecomeVendorPage = lazy(() => import("./pages/BecomeVendorPage"));
 const VendorStorefrontPage = lazy(() => import("./pages/VendorStorefrontPage"));
 const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
 const MarketplacePage = lazy(() => import("./pages/MarketplacePage"));
+const DealsPage = lazy(() => import("./pages/DealsPage"));
+const UseCasesPage = lazy(() => import("./pages/UseCasesPage"));
+const StatsPage = lazy(() => import("./pages/StatsPage"));
+const BadgePage = lazy(() => import("./pages/BadgePage"));
 
 // Payment pages
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
@@ -93,6 +97,11 @@ export default function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/ebooks" element={<EbooksPage />} />
+                <Route path="/deals" element={<DealsPage />} />
+                <Route path="/use-cases" element={<UseCasesPage />} />
+                <Route path="/use-cases/:slug" element={<UseCasesPage />} />
+                <Route path="/stats" element={<StatsPage />} />
+                <Route path="/badge" element={<BadgePage />} />
 
                 {/* Payment routes */}
                 <Route path="/checkout/:type" element={<CheckoutPage />} />

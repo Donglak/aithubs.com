@@ -133,7 +133,7 @@ const ToolsPage = () => {
   return (
     <div className="pt-16 min-h-screen bg-gray-50 dark:bg-gray-900">
       <Helmet>
-        <title>Explore the Best Digital Tools | DigitalToolsHub</title>
+        <title>Explore the Best Digital Tools | AIThubs</title>
         <meta
           name="description"
           content="Filter AI & digital tools by categories and functions. Compare pricing, features, and ratings to pick the best tool for your use case."

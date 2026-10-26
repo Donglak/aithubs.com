@@ -7,7 +7,7 @@ import VendorSidebar from "./VendorSidebar";
 function VendorLayoutInner() {
   const { user, loading: authLoading } = useAuth();
   // Dùng chung state với các trang con (refresh() ở trang Subscription cập nhật luôn layout)
-  const { vendor, subscription, listingActive, loading: vendorLoading } = useVendorContext();
+  const { vendor, listingActive, loading: vendorLoading } = useVendorContext();
   const location = useLocation();
 
   if (authLoading || vendorLoading) {
@@ -112,30 +112,16 @@ function VendorLayoutInner() {
       <VendorSidebar />
       <main className="flex-1 overflow-auto">
         <div className="p-6 lg:p-8 max-w-6xl mx-auto">
-          {listingActive && subscription?.gateway === "trial" && subscription.current_period_end &&
-            location.pathname !== "/vendor/subscription" && location.pathname !== "/vendor" && (
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/20">
-              <p className="text-sm text-primary-800 dark:text-primary-300">
-                Free trial ends {new Date(subscription.current_period_end).toLocaleDateString()}. Subscribe to keep your products visible.
-              </p>
-              <Link
-                to="/vendor/subscription"
-                className="shrink-0 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors"
-              >
-                View plans
-              </Link>
-            </div>
-          )}
           {!listingActive && location.pathname !== "/vendor/subscription" && location.pathname !== "/vendor" && (
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
               <p className="text-sm text-amber-800 dark:text-amber-300">
-                Your products are not visible on the marketplace. Choose a plan to start listing.
+                Your products are not visible on the marketplace right now.
               </p>
               <Link
                 to="/vendor/subscription"
                 className="shrink-0 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors"
               >
-                View plans
+                View plan
               </Link>
             </div>
           )}

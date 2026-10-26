@@ -15,6 +15,8 @@ import { vendorDb } from "../lib/supabase";
 import type { DigitalProduct, ProductCategory, Vendor } from "../types/vendor";
 import { supabase } from "../lib/supabase";
 import { useTranslation } from "react-i18next";
+import DealCard from "../components/DealCard";
+
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
@@ -107,6 +109,20 @@ export default function ProductDetailPage() {
     }
   };
 
+  const trackOutbound = async (url: string) => {
+    if (!product) return;
+    try {
+      await supabase.from("product_analytics_events").insert({
+        product_id: product.id,
+        vendor_id: product.vendor_id,
+        event_type: "outbound_click",
+        metadata: { url },
+      });
+    } catch (error) {
+      console.error("Failed to track outbound click", error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 pt-20 flex items-center justify-center">
@@ -140,7 +156,7 @@ export default function ProductDetailPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 pt-16">
       <Helmet>
-        <title>{product.seo_title || `${product.title} - AIThub`}</title>
+        <title>{product.seo_title || `${product.title} - AIThubs`}</title>
         <meta
           name="description"
           content={product.seo_description || product.short_description || ""}
@@ -174,6 +190,11 @@ export default function ProductDetailPage() {
                 </div>
               )}
               <div className="p-6">
+                {product.featured && (
+                  <span className="inline-block mb-2 text-xs font-medium px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                    Featured
+                  </span>
+                )}
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
                   {product.title}
                 </h1>
@@ -306,6 +327,18 @@ export default function ProductDetailPage() {
 
           {/* Sidebar */}
           <div className="space-y-4">
+            {product.deal_code && (
+              <DealCard
+                headline={product.deal_discount_percent ? `${product.deal_discount_percent}% off` : "Exclusive discount"}
+                code={product.deal_code}
+                terms={product.deal_terms}
+                expiresAt={product.deal_expires_at}
+                url={product.affiliate_url || product.external_sales_link}
+                sponsored={!!product.affiliate_url}
+                onClick={() => trackOutbound(product.affiliate_url || product.external_sales_link || "")}
+              />
+            )}
+
             {/* Vendor Card */}
             {vendor && (
               <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
@@ -362,23 +395,13 @@ export default function ProductDetailPage() {
             )}
 
             {/* Purchase CTA */}
-            {product.external_sales_link && (
+            {(product.affiliate_url || product.external_sales_link) && (
               <a
-                href={product.external_sales_link}
+                href={product.affiliate_url || product.external_sales_link || undefined}
                 target="_blank"
-                rel="noopener noreferrer"
-                onClick={async () => {
-                  try {
-                    await supabase.from("product_analytics_events").insert({
-                      product_id: product.id,
-                      vendor_id: product.vendor_id,
-                      event_type: "outbound_click",
-                      metadata: { url: product.external_sales_link },
-                    });
-                  } catch (error) {
-                    console.error("Failed to track outbound click", error);
-                  }
-                }}
+                // Link affiliate phải gắn sponsored; link bán hàng thường là dofollow
+                rel={product.affiliate_url ? "sponsored noopener noreferrer" : "noopener noreferrer"}
+                onClick={() => trackOutbound(product.affiliate_url || product.external_sales_link || "")}
                 className="flex items-center justify-center gap-2 bg-primary-600 text-white w-full px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />

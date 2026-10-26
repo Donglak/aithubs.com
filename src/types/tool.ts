@@ -13,6 +13,46 @@ export type PricingTier = {
   features: string[];
 };
 
+/** Kết luận review: mua / chờ / bỏ qua */
+export type ReviewVerdict = "buy" | "wait" | "skip";
+
+/** Review có chính kiến theo khung chuẩn của AIThubs */
+export type ToolReview = {
+  verdict: ReviewVerdict;
+  /** Kết luận trong một dòng, kèm lý do */
+  verdictReason: string;
+  bestFor?: string[];
+  notFor?: string[];
+  /** Chi phí thực tế mỗi tháng ở mức dùng thật, ví dụ "$22–$45/mo for 2 videos a week" */
+  realMonthlyCost?: string;
+  /** Ngày dùng thử thật (ISO) */
+  testedAt: string;
+  /** Ảnh chụp kết quả thật từ lần dùng thử */
+  resultScreenshots?: string[];
+};
+
+/** Deal đã được AIThubs kiểm tra */
+export type ToolDeal = {
+  /** id trong tools.json; bỏ trống nếu tool chưa có trong danh mục */
+  toolId?: number;
+  toolName: string;
+  /** Ví dụ "30% off annual plans" */
+  headline: string;
+  code?: string;
+  terms?: string;
+  url: string;
+  /** url là link affiliate -> gắn rel="sponsored" và hiện disclosure */
+  affiliate?: boolean;
+  lifetime?: boolean;
+  /** Deal độc quyền cho độc giả AIThubs */
+  exclusive?: boolean;
+  /** Kết luận một dòng cho newsletter / trang deal */
+  verdict?: string;
+  expiresAt?: string;
+  /** Ngày kiểm tra deal còn chạy (ISO) */
+  checkedAt: string;
+};
+
 export type ToolBase = {
   id: number;                          // SỐ nguyên                     // duy nhất
   name: string;

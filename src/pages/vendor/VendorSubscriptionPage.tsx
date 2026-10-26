@@ -2,6 +2,8 @@ import { AlertCircle, CheckCircle2, CreditCard, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useVendorContext } from "../../contexts/VendorContext";
+import { Link } from "react-router-dom";
+import { ListingTiers } from "../../components/vendor/ListingTiers";
 import { IntervalToggle, VendorPlanCards } from "../../components/vendor/VendorPlanCards";
 import { useVendorPlans, yearlySavings } from "../../hooks/useVendorPlans";
 import {
@@ -81,8 +83,9 @@ export default function VendorSubscriptionPage() {
     if (subscription?.billing_interval) setBillingInterval(subscription.billing_interval);
   }, [subscription?.billing_interval]);
 
-  const isTrial = subscription?.gateway === "trial";
-  const hasPaidPlan = listingActive && !isTrial;
+  // Trial cũ còn hạn cũng tính như listing free
+  const isFree = !plan || plan.slug === "free" || subscription?.gateway === "trial";
+  const hasPaidPlan = listingActive && !isFree;
 
   const handleSelect = async (p: VendorPlan) => {
     if (hasPaidPlan && !window.confirm(
@@ -134,9 +137,9 @@ export default function VendorSubscriptionPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Subscription</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Plan</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-          An active plan is required to list products on the marketplace.
+          Listing on AIThubs is free while we grow. We only charge once our traffic is worth paying for.
         </p>
       </div>
 
@@ -165,22 +168,29 @@ export default function VendorSubscriptionPage() {
       {/* Current plan */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Current plan</h2>
-        {isTrial && subscription ? (
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Free Trial</h3>
-              <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${listingActive ? STATUS_STYLES.trialing : STATUS_STYLES.canceled}`}>
-                {listingActive ? "active" : "ended"}
-              </span>
+        {isFree ? (
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Free listing</h3>
+                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${listingActive ? STATUS_STYLES.active : STATUS_STYLES.canceled}`}>
+                  {listingActive ? "active" : "inactive"}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                No payment needed. Each product needs either the AIThubs badge on your site, or an exclusive deal
+                (20%+ off with your affiliate link) to qualify as a Deal Partner and get featured.
+              </p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 mt-3">
+                Listings used: <strong>{usedListings}</strong> / {plan?.max_listings ?? 3}
+              </p>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {listingActive && periodEnd
-                ? `Up to ${plan?.max_listings ?? 3} listings until ${periodEnd}. No payment needed during the trial.`
-                : "Your trial has ended and your products are hidden. Subscribe to publish them again — approved products go live instantly."}
-            </p>
-            <p className="text-sm text-gray-700 dark:text-gray-300 mt-3">
-              Listings used: <strong>{usedListings}</strong> / {plan?.max_listings ?? 3}
-            </p>
+            <Link
+              to="/badge"
+              className="shrink-0 text-center px-4 py-2 text-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg md:w-48"
+            >
+              Get your badge
+            </Link>
           </div>
         ) : plan && subscription && status !== "canceled" ? (
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -240,27 +250,35 @@ export default function VendorSubscriptionPage() {
         )}
       </div>
 
-      {/* Plans */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {hasPaidPlan ? "Change plan" : "Choose a plan"}
-        </h2>
-        <IntervalToggle value={interval} onChange={setBillingInterval} maxSavings={maxSavings} />
-      </div>
+      {/* Listing options */}
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Listing options</h2>
+      <ListingTiers />
 
-      <VendorPlanCards
-        plans={plans}
-        interval={interval}
-        currentPlanId={hasPaidPlan && !subscription?.cancel_at_period_end ? subscription?.plan_id : null}
-        currentInterval={subscription?.billing_interval}
-        busySlug={busySlug}
-        ctaLabel={(_, isCurrent) => (isCurrent ? "Current plan" : hasPaidPlan ? "Switch to this plan" : "Subscribe with PayPal")}
-        onSelect={handleSelect}
-      />
+      {/* Gói trả phí theo tháng/năm: chỉ hiện khi admin bật lại (vendor_plans.is_active) */}
+      {plans.length > 0 && (
+        <div className="mt-12">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              {hasPaidPlan ? "Change plan" : "Choose a plan"}
+            </h2>
+            <IntervalToggle value={interval} onChange={setBillingInterval} maxSavings={maxSavings} />
+          </div>
 
-      <p className="mt-6 text-xs text-gray-500 dark:text-gray-400 text-center">
-        Billed through PayPal. You can pay with a PayPal account or a debit/credit card. Cancel anytime.
-      </p>
+          <VendorPlanCards
+            plans={plans}
+            interval={interval}
+            currentPlanId={hasPaidPlan && !subscription?.cancel_at_period_end ? subscription?.plan_id : null}
+            currentInterval={subscription?.billing_interval}
+            busySlug={busySlug}
+            ctaLabel={(_, isCurrent) => (isCurrent ? "Current plan" : hasPaidPlan ? "Switch to this plan" : "Subscribe with PayPal")}
+            onSelect={handleSelect}
+          />
+
+          <p className="mt-6 text-xs text-gray-500 dark:text-gray-400 text-center">
+            Billed through PayPal. You can pay with a PayPal account or a debit/credit card. Cancel anytime.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

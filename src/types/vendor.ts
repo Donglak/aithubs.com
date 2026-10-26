@@ -74,6 +74,21 @@ export function isSubscriptionActive(sub: VendorSubscription | null | undefined)
   return !!sub.current_period_end && new Date(sub.current_period_end) > new Date()
 }
 
+/** Ngưỡng Deal Partner (khớp với hàm SQL public.is_deal_partner) */
+export const DEAL_PARTNER_MIN_DISCOUNT = 20
+
+export function isDealPartner(p: {
+  deal_code?: string | null
+  deal_discount_percent?: number | string | null
+  affiliate_url?: string | null
+}): boolean {
+  return (
+    Number(p.deal_discount_percent || 0) >= DEAL_PARTNER_MIN_DISCOUNT &&
+    !!p.deal_code?.trim() &&
+    !!p.affiliate_url?.trim()
+  )
+}
+
 // ── Vendor Profile ──
 export interface Vendor {
   /** Thời điểm bắt đầu dùng thử 14 ngày (mỗi tài khoản 1 lần) */
@@ -136,6 +151,14 @@ export interface DigitalProduct {
   is_approved: boolean
   seo_title: string | null
   seo_description: string | null
+  /** Mã giảm giá độc quyền cho độc giả AIThubs */
+  deal_code: string | null
+  deal_discount_percent: number | null
+  deal_terms: string | null
+  deal_expires_at: string | null
+  affiliate_url: string | null
+  /** Trang trên site vendor có gắn badge "Featured on AIThubs" (bắt buộc với listing free) */
+  badge_url: string | null
   total_views: number
   total_clicks: number
   total_saves: number
@@ -267,6 +290,12 @@ export interface ProductFormData {
   cover_image: string
   seo_title: string
   seo_description: string
+  deal_code: string
+  deal_discount_percent: string
+  deal_terms: string
+  deal_expires_at: string
+  affiliate_url: string
+  badge_url: string
   media: { url: string; type: MediaType; alt_text: string }[]
 }
 
@@ -304,5 +333,11 @@ export const defaultProductForm: ProductFormData = {
   cover_image: '',
   seo_title: '',
   seo_description: '',
+  deal_code: '',
+  deal_discount_percent: '',
+  deal_terms: '',
+  deal_expires_at: '',
+  affiliate_url: '',
+  badge_url: '',
   media: [],
 }

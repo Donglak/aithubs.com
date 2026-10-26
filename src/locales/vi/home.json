@@ -1,7 +1,7 @@
 {
   "sections": {
     "discovery": {
-      "description": "Khám phá nhanh công cụ theo danh mục và chức năng phù hợp với nhu cầu của bạn",
+      "description": "Công cụ AI và deal cho side hustle, kênh faceless, blog affiliate, freelance và thương mại điện tử. Mỗi review đều kết luận mua, chờ hay bỏ qua",
       "categoryDescriptions": {
         "marketingAdvertising": "Công cụ cho marketing, quảng cáo và tăng trưởng.",
         "financeFintechAccounting": "Công cụ cho tài chính, fintech và kế toán.",
@@ -38,8 +38,8 @@
       "title": "Cộng đồng của chúng tôi đang tạo ra kết quả ấn tượng"
     },
     "newsletter": {
-      "description": "Nhận cập nhật mới nhất về công cụ số, ưu đãi nổi bật và nội dung chuyên sâu mỗi tuần.",
-      "caption": "Tham gia cùng hơn 50.000 chuyên gia. Hủy đăng ký bất cứ lúc nào."
+      "description": "Mỗi tuần 5 deal AI tốt nhất cho solopreneur, mỗi deal kèm kết luận một dòng. Kèm bảng Lifetime Deal Tracker cập nhật hàng tuần",
+      "caption": "Mỗi tuần một email. Không spam, hủy đăng ký bất cứ lúc nào"
     }
   }
 }

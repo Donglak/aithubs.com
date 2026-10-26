@@ -83,7 +83,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
         <div className="text-center">
           <div className="font-semibold">Thank you for subscribing!</div>
           <div className="text-sm text-white/80">
-            We'll send you the most valuable insights to your email.
+            Check your inbox for the Lifetime Deal Tracker.
           </div>
         </div>
       </div>
@@ -133,7 +133,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
       </div>
 
       <p className="text-white/70 text-sm text-center">
-        Join 50,000+ subscribers. No spam, unsubscribe anytime.
+        5 AI deals a week, each with a one-line verdict. Unsubscribe anytime.
       </p>
     </form>
   );

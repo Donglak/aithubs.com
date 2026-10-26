@@ -1,4 +1,4 @@
-import { BarChart3, Link2, Loader2, MessageSquare, Shield, Store, Zap } from "lucide-react";
+import { Award, BarChart3, Link2, Loader2, Megaphone, Shield, Tag } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,23 +6,24 @@ import { useAuth } from "../hooks/useAuth";
 import { useVendor } from "../hooks/useVendor";
 import { vendorDb } from "../lib/supabase";
 import { startVendorSubscription } from "../lib/vendorBilling";
+import { ListingTiers } from "../components/vendor/ListingTiers";
 import { IntervalToggle, VendorPlanCards } from "../components/vendor/VendorPlanCards";
 import { useVendorPlans, yearlySavings } from "../hooks/useVendorPlans";
 import type { BillingInterval, VendorPlan } from "../types/vendor";
 
 const BENEFITS = [
-  { icon: Store, title: "Your own storefront", description: "A public vendor page that showcases your brand and all your products." },
-  { icon: Link2, title: "Keep 100% of sales", description: "Buyers purchase through your own checkout link. We never take a commission." },
-  { icon: Zap, title: "Easy listing", description: "Create and manage listings from a simple dashboard." },
-  { icon: BarChart3, title: "Analytics", description: "Track views and outbound clicks on every product." },
-  { icon: MessageSquare, title: "Lead capture", description: "Collect inquiries from interested buyers (Pro and above)." },
-  { icon: Shield, title: "Curated marketplace", description: "Every listing is reviewed, so buyers trust what they find here." },
+  { icon: Award, title: "An honest review you can reuse", description: "We test your tool and publish a clear buy / wait / skip verdict. Quote it on your site, emails and socials." },
+  { icon: Tag, title: "Deals that convert", description: "Your exclusive code shows exactly how many customers AIThubs sends you." },
+  { icon: Link2, title: "Dofollow link", description: "Your sales link is a regular dofollow link. Affiliate links are labeled sponsored, as Google requires." },
+  { icon: Megaphone, title: "Deal newsletter", description: "Deal Partners are included in our weekly email of the best AI deals for solopreneurs." },
+  { icon: BarChart3, title: "Analytics", description: "Track views and outbound clicks on every listing." },
+  { icon: Shield, title: "No pay-to-win", description: "Featured listings are always labeled and verdicts never change for money, so readers trust them." },
 ];
 
 const STEPS = [
-  "Create your store — your 14-day free trial starts instantly, no credit card",
-  "Add up to 3 products — each one is reviewed before it goes live",
-  "Subscribe monthly or yearly to keep listing and unlock more products",
+  "Create your store: free, no credit card",
+  "Add your tool with an exclusive deal (20%+ off) or the AIThubs badge on your site",
+  "We review it, publish the listing and share deals in our newsletter",
 ];
 
 function toSlug(v: string) {
@@ -32,8 +33,8 @@ function toSlug(v: string) {
 export default function BecomeVendorPage() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { vendor, subscription, listingActive, loading: vendorLoading, refresh } = useVendor();
-  const hasPaidPlan = listingActive && subscription?.gateway !== "trial";
+  const { vendor, subscription, plan, listingActive, loading: vendorLoading, refresh } = useVendor();
+  const hasPaidPlan = listingActive && !!plan && plan.slug !== "free" && subscription?.gateway !== "trial";
   const { plans, loading: plansLoading } = useVendorPlans();
 
   const [interval, setBillingInterval] = useState<BillingInterval>("month");
@@ -101,11 +102,12 @@ export default function BecomeVendorPage() {
       await goToPayPal(selected.slug, selected.interval);
       setCreating(false);
     } else {
-      // Trial 14 ngày được database tự kích hoạt khi tạo store
-      navigate("/vendor");
+      // Store mới dùng gói free (public.vendor_active_plan)
+      navigate("/vendor/products/new");
     }
   };
 
+  // Gói trả phí đang tạm dừng (vendor_plans.is_active = false) -> plans rỗng, chỉ hiện listing free
   const maxSavings = Math.max(0, ...plans.map(yearlySavings));
   const ready = !authLoading && !vendorLoading;
   const inputClass =
@@ -114,23 +116,23 @@ export default function BecomeVendorPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 pt-20">
       <Helmet>
-        <title>Sell on AIThubs - List Your Digital Products</title>
+        <title>Submit Your AI Tool for Free - AIThubs</title>
         <meta
           name="description"
-          content="List your AI tools, courses, ebooks and templates on the AIThubs marketplace. Simple monthly or yearly plans, no commission on sales."
+          content="List your AI tool on AIThubs for free. Offer an exclusive deal to our solopreneur readers and get a featured listing, an honest review and a spot in our deal newsletter."
         />
       </Helmet>
 
       {/* Hero */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-          Sell your digital products on <span className="text-primary-600 dark:text-primary-400">AIThubs</span>
+          List your AI tool on <span className="text-primary-600 dark:text-primary-400">AIThubs</span> for free
         </h1>
         <p className="text-lg text-gray-700 dark:text-gray-400 max-w-2xl mx-auto mb-8">
-          Showcase your AI tools, courses, ebooks and templates to a global audience. One flat subscription,
-          zero commission — buyers check out on your own site.
+          We review AI tools for solopreneurs who make money online. Give our readers an exclusive deal and your
+          affiliate link, and we'll feature your tool and include it in our deal newsletter.
           <span className="block mt-3 font-medium text-gray-900 dark:text-white">
-            Start with a 14-day free trial. No credit card required.
+            No listing fee. You only pay commission on the customers we send you.
           </span>
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -140,7 +142,7 @@ export default function BecomeVendorPage() {
             </Link>
           ) : (
             <a href={user ? "#start" : loginUrl} className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
-              Start free trial
+              List your tool free
             </a>
           )}
           <Link to="/marketplace" className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
@@ -171,40 +173,42 @@ export default function BecomeVendorPage() {
         </div>
       </section>
 
-      {/* Plans */}
+      {/* Listing options */}
       <section id="plans" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 scroll-mt-20">
         <div className="text-center mb-10">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Simple, flat pricing</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Try free for 14 days with up to 3 products, then pick a plan. No commission. Cancel anytime.
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Transparent pricing</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Free while we grow. Paid tiers open only once our public traffic numbers justify them.
           </p>
-          <IntervalToggle value={interval} onChange={setBillingInterval} maxSavings={maxSavings} />
         </div>
+        <ListingTiers cta={ready && vendor ? { label: "Add a product", to: "/vendor/products/new" } : undefined} />
 
         {error && (
-          <div className="mb-6 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-sm text-red-700 dark:text-red-400 text-center" role="alert">
+          <div className="mt-6 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-sm text-red-700 dark:text-red-400 text-center" role="alert">
             {error}
           </div>
         )}
 
-        {plansLoading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
+        {plansLoading ? null : plans.length > 0 && (
+          <div className="mt-16">
+            <div className="text-center mb-8">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Monthly plans for more listings</h3>
+              <IntervalToggle value={interval} onChange={setBillingInterval} maxSavings={maxSavings} />
+            </div>
+            <VendorPlanCards
+              plans={plans}
+              interval={interval}
+              busySlug={busySlug}
+              ctaLabel={(p) =>
+                selected?.slug === p.slug && selected.interval === interval
+                  ? "Selected — complete your profile below"
+                  : hasPaidPlan
+                    ? "Manage subscription"
+                    : `Choose ${p.name}`
+              }
+              onSelect={handleSelectPlan}
+            />
           </div>
-        ) : (
-          <VendorPlanCards
-            plans={plans}
-            interval={interval}
-            busySlug={busySlug}
-            ctaLabel={(p) =>
-              selected?.slug === p.slug && selected.interval === interval
-                ? "Selected — complete your profile below"
-                : hasPaidPlan
-                  ? "Manage subscription"
-                  : `Choose ${p.name}`
-            }
-            onSelect={handleSelectPlan}
-          />
         )}
       </section>
 
@@ -225,7 +229,7 @@ export default function BecomeVendorPage() {
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {selected
                   ? `Next you'll be taken to PayPal to start the ${plans.find((p) => p.slug === selected.slug)?.name ?? ""} plan.`
-                  : "Your 14-day free trial starts right away — list up to 3 products, no credit card needed."}
+                  : "Listing is free. Add up to 3 tools, no credit card needed."}
               </p>
             </div>
             <label className="block">
@@ -281,7 +285,7 @@ export default function BecomeVendorPage() {
               className="w-full inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white py-3 rounded-lg font-medium"
             >
               {creating && <Loader2 className="w-4 h-4 animate-spin" />}
-              {selected ? "Create store & continue to PayPal" : "Create store & start free trial"}
+              {selected ? "Create store & continue to PayPal" : "Create store"}
             </button>
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
               By creating a store you agree to list only products you own the rights to. Listings are reviewed before publishing.

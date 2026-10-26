@@ -37,7 +37,7 @@ const BookmarksPage = () => {
   return (
     <div className="pt-16 min-h-screen bg-gray-50 dark:bg-gray-900">
       <Helmet>
-        <title>My Bookmarks | DigitalToolsHub</title>
+        <title>My Bookmarks | AIThubs</title>
         <meta
           name="description"
           content="View your bookmarked digital tools and favorites."

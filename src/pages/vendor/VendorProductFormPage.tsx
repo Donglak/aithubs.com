@@ -4,7 +4,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useVendorContext } from "../../contexts/VendorContext";
 import { vendorDb } from "../../lib/supabase";
 import {
+  DEAL_PARTNER_MIN_DISCOUNT,
   defaultProductForm,
+  isDealPartner,
   type ProductCategory,
   type ProductFormData,
   type PriceModel,
@@ -13,7 +15,7 @@ import {
 export default function VendorProductFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { vendor, listingActive, refresh } = useVendorContext();
+  const { vendor, plan, listingActive, refresh } = useVendorContext();
   const isEdit = !!id;
 
   const [form, setForm] = useState<ProductFormData>(defaultProductForm);
@@ -63,6 +65,12 @@ export default function VendorProductFormPage() {
             cover_image: p.cover_image || "",
             seo_title: p.seo_title || "",
             seo_description: p.seo_description || "",
+            deal_code: p.deal_code || "",
+            deal_discount_percent: p.deal_discount_percent?.toString() || "",
+            deal_terms: p.deal_terms || "",
+            deal_expires_at: p.deal_expires_at || "",
+            affiliate_url: p.affiliate_url || "",
+            badge_url: p.badge_url || "",
             media: (p.media || []).map((m: any) => ({
               url: m.url,
               type: m.type,
@@ -127,6 +135,19 @@ export default function VendorProductFormPage() {
       return;
     }
 
+    const isFreePlan = !plan || plan.slug === "free";
+    if (status === "submitted" && isFreePlan && !isDealPartner(form) && !/^https:\/\//i.test(form.badge_url)) {
+      setMessage({
+        type: "error",
+        text: `Add the URL of the page showing the AIThubs badge, or offer an exclusive deal of ${DEAL_PARTNER_MIN_DISCOUNT}%+ with an affiliate link.`,
+      });
+      return;
+    }
+    if (form.affiliate_url && !/^https:\/\//i.test(form.affiliate_url)) {
+      setMessage({ type: "error", text: "The affiliate link must start with https://" });
+      return;
+    }
+
     setSaving(true);
     const slug = form.slug || autoSlug(form.title);
 
@@ -145,6 +166,12 @@ export default function VendorProductFormPage() {
       cover_image: form.cover_image || null,
       seo_title: form.seo_title || null,
       seo_description: form.seo_description || null,
+      deal_code: form.deal_code.trim() || null,
+      deal_discount_percent: form.deal_discount_percent ? parseInt(form.deal_discount_percent, 10) : null,
+      deal_terms: form.deal_terms.trim() || null,
+      deal_expires_at: form.deal_expires_at || null,
+      affiliate_url: form.affiliate_url.trim() || null,
+      badge_url: form.badge_url.trim() || null,
       status,
     };
 
@@ -229,7 +256,7 @@ export default function VendorProductFormPage() {
 
       {!listingActive && (
         <div className="mb-6 px-4 py-3 rounded-lg text-sm bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-          You can save drafts now. <Link to="/vendor/subscription" className="underline font-medium">Choose a plan</Link> to submit products for review.
+          Your listing is not active, so you can only save drafts. <Link to="/vendor/subscription" className="underline font-medium">View plan</Link>
         </div>
       )}
 
@@ -360,6 +387,87 @@ export default function VendorProductFormPage() {
           </div>
         </section>
 
+        {/* Deal Partner / badge */}
+        <section className={sectionClass}>
+          <div className="flex items-center justify-between gap-3 mb-1">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Exclusive deal &amp; badge</h2>
+            {isDealPartner(form) && (
+              <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                Qualifies as Deal Partner
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            Free listings need one of these: an exclusive code of {DEAL_PARTNER_MIN_DISCOUNT}%+ off for AIThubs readers
+            with your affiliate link (Deal Partner, eligible for featured placement), or the{" "}
+            <Link to="/badge" className="underline" target="_blank">
+              "Featured on AIThubs" badge
+            </Link>{" "}
+            on your site.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={labelLightClass}>Exclusive discount code</label>
+              <input
+                className={inputClass}
+                value={form.deal_code}
+                onChange={(e) => update("deal_code", e.target.value)}
+                placeholder="AITHUBS30"
+                maxLength={40}
+              />
+            </div>
+            <div>
+              <label className={labelLightClass}>Discount (%)</label>
+              <input
+                className={inputClass}
+                type="number"
+                min="1"
+                max="100"
+                value={form.deal_discount_percent}
+                onChange={(e) => update("deal_discount_percent", e.target.value)}
+                placeholder="30"
+              />
+            </div>
+            <div>
+              <label className={labelLightClass}>Deal expires</label>
+              <input
+                className={inputClass}
+                type="date"
+                value={form.deal_expires_at}
+                onChange={(e) => update("deal_expires_at", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelLightClass}>Affiliate link</label>
+              <input
+                className={inputClass}
+                value={form.affiliate_url}
+                onChange={(e) => update("affiliate_url", e.target.value)}
+                placeholder="https://your-site.com/?ref=aithubs"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelLightClass}>Deal terms</label>
+              <input
+                className={inputClass}
+                value={form.deal_terms}
+                onChange={(e) => update("deal_terms", e.target.value)}
+                placeholder="First year on any annual plan, new customers only"
+                maxLength={200}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelLightClass}>Page with the AIThubs badge</label>
+              <input
+                className={inputClass}
+                value={form.badge_url}
+                onChange={(e) => update("badge_url", e.target.value)}
+                placeholder="https://your-site.com/ (where the badge is displayed)"
+              />
+            </div>
+          </div>
+        </section>
+
         {/* Media */}
         <section className={sectionClass}>
           <h2 className={headingClass}>Media</h2>
@@ -484,7 +592,7 @@ export default function VendorProductFormPage() {
                 className={inputClass}
                 value={form.seo_title}
                 onChange={(e) => update("seo_title", e.target.value)}
-                placeholder="Product Name - AIThub"
+                placeholder="Product Name - AIThubs"
               />
             </div>
             <div>
@@ -516,7 +624,7 @@ export default function VendorProductFormPage() {
           <button
             onClick={() => handleSave("submitted")}
             disabled={saving || !form.title || !listingActive}
-            title={listingActive ? undefined : "An active plan is required to submit for review"}
+            title={listingActive ? undefined : "Your listing is not active"}
             className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {saving ? (

@@ -9,12 +9,16 @@ import {
   Twitter,
 } from "lucide-react";
 
+import { tools } from "../data/tools";
+import { USE_CASES } from "../data/useCases";
+
 const AboutPage = () => {
+  // Chỉ dùng số thật; số traffic công khai ở trang /stats
   const stats = [
-    { number: "450+", label: "Tools Reviewed" },
-    { number: "50K+", label: "Happy Users" },
-    { number: "98%", label: "Success Rate" },
-    { number: "$2M+", label: "Saved by Users" },
+    { number: `${tools.length}`, label: "Tools listed" },
+    { number: `${USE_CASES.length}`, label: "Money-making tool stacks" },
+    { number: "Weekly", label: "Deal checks" },
+    { number: "$0", label: "Paid for our verdicts" },
   ];
 
   const team = [
@@ -27,7 +31,7 @@ const AboutPage = () => {
       social: {
         linkedin: "#",
         twitter: "#",
-        email: "sarah@digitaltoolshub.com",
+        email: "sarah@aithubs.com",
       },
     },
     {
@@ -39,7 +43,7 @@ const AboutPage = () => {
       social: {
         linkedin: "#",
         twitter: "#",
-        email: "mike@digitaltoolshub.com",
+        email: "mike@aithubs.com",
       },
     },
     {
@@ -51,7 +55,7 @@ const AboutPage = () => {
       social: {
         linkedin: "#",
         twitter: "#",
-        email: "emily@digitaltoolshub.com",
+        email: "emily@aithubs.com",
       },
     },
   ];
@@ -89,7 +93,7 @@ const AboutPage = () => {
       <section className="bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-900 dark:to-gray-800 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            About DigitalToolsHub
+            About AIThubs
           </h1>
           <p className="text-xl text-gray-900 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
             We're on a mission to help entrepreneurs, creators, and businesses
@@ -128,7 +132,7 @@ const AboutPage = () => {
 
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-gray-900 dark:text-gray-300 leading-relaxed mb-6">
-              DigitalToolsHub was born from a simple frustration: the
+              AIThubs was born from a simple frustration: the
               overwhelming number of digital tools available today makes it
               nearly impossible to know which ones actually work and which ones
               are worth your investment.
@@ -143,7 +147,7 @@ const AboutPage = () => {
             </p>
 
             <p className="text-gray-900 dark:text-gray-300 leading-relaxed mb-6">
-              That's when we decided to create DigitalToolsHub - a platform
+              That's when we decided to create AIThubs - a platform
               where real experts test, review, and recommend only the tools that
               truly make a difference. Every tool in our directory has been
               personally tested by our team, and every review is based on
@@ -199,7 +203,7 @@ const AboutPage = () => {
               Meet Our Team
             </h2>
             <p className="text-xl text-gray-900 dark:text-gray-300">
-              The experts behind DigitalToolsHub
+              The experts behind AIThubs
             </p>
           </div>
 
@@ -259,7 +263,7 @@ const AboutPage = () => {
           </h2>
           <p className="text-xl text-white/90 mb-8">
             Join thousands of entrepreneurs and creators who trust
-            DigitalToolsHub for their tool recommendations.
+            AIThubs for their tool recommendations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a

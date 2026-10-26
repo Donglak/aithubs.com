@@ -2,7 +2,7 @@ import { CheckCircle2, Loader2, Package, XCircle, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { vendorDb } from "../../lib/supabase";
-import type { DigitalProduct, Vendor } from "../../types/vendor";
+import { isDealPartner, type DigitalProduct, type Vendor } from "../../types/vendor";
 
 export default function AdminProductsPage() {
   const { user } = useAuth();
@@ -156,7 +156,7 @@ export default function AdminProductsPage() {
                       Status
                     </th>
                     <th className="px-5 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-                      Price
+                      Price / listing
                     </th>
                     <th className="px-5 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       Created
@@ -206,6 +206,28 @@ export default function AdminProductsPage() {
                           : p.price
                             ? `$${p.price}`
                             : "-"}
+                        {/* Deal Partner nên được Feature; listing free cần kiểm tra badge trên site vendor */}
+                        <div className="mt-1 space-y-0.5 text-xs">
+                          {isDealPartner(p) ? (
+                            <span className="block text-green-700 dark:text-green-400">
+                              Deal Partner · {p.deal_discount_percent}% · <code>{p.deal_code}</code>
+                            </span>
+                          ) : p.deal_code ? (
+                            <span className="block text-gray-500">
+                              Deal {p.deal_discount_percent ?? "?"}% (below partner threshold)
+                            </span>
+                          ) : null}
+                          {p.badge_url && (
+                            <a
+                              href={p.badge_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block text-primary-600 dark:text-primary-400 underline"
+                            >
+                              Check badge
+                            </a>
+                          )}
+                        </div>
                       </td>
                       <td className="px-5 py-4 text-sm text-gray-900 dark:text-gray-400">
                         {new Date(p.created_at).toLocaleDateString()}

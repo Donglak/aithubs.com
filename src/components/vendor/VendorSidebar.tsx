@@ -19,7 +19,7 @@ const navItems = [
   { to: "/vendor/products", label: "Products", icon: Package },
   { to: "/vendor/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/vendor/leads", label: "Leads", icon: MessageSquare },
-  { to: "/vendor/subscription", label: "Subscription", icon: CreditCard },
+  { to: "/vendor/subscription", label: "Plan", icon: CreditCard },
   { to: "/vendor/settings", label: "Settings", icon: Settings },
 ];
 

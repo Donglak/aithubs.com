@@ -491,7 +491,7 @@ const EbooksPage = () => {
   return (
     <>
       <Helmet>
-        <title>Ebooks Library | DigitalToolsHub</title>
+        <title>Ebooks Library | AIThubs</title>
         <meta
           name="description"
           content="Browse and download our collection of premium ebooks on various topics. Free and paid options available."

@@ -4,4 +4,48 @@
     <loc>https://aithubs.com/</loc>
     <priority>1.00</priority>
   </url>
+  <url>
+    <loc>https://aithubs.com/deals</loc>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://aithubs.com/use-cases</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://aithubs.com/use-cases/faceless-youtube</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://aithubs.com/use-cases/etsy-print-on-demand</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://aithubs.com/use-cases/affiliate-blogging</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://aithubs.com/use-cases/freelancers</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://aithubs.com/use-cases/side-hustle-starter</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://aithubs.com/tools</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://aithubs.com/become-vendor</loc>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://aithubs.com/stats</loc>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>https://aithubs.com/badge</loc>
+    <priority>0.40</priority>
+  </url>
 </urlset>

@@ -298,7 +298,7 @@ export default function VendorProfilePage() {
                 className={inputClass}
                 value={form.seo_title}
                 onChange={(e) => update("seo_title", e.target.value)}
-                placeholder="Brand Name - AIThub"
+                placeholder="Brand Name - AIThubs"
               />
             </div>
             <div>

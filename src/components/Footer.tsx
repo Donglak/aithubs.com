@@ -73,13 +73,13 @@ const Footer = () => {
                 <Zap className="w-5 h-5 text-gray-900 dark:text-white" />
               </div>
               <span className="text-xl font-bold text-gray-900 dark:text-gray-900 dark:text-white">
-                DigitalToolsHub
+                AIThubs
               </span>
             </div>
             <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed max-w-md">
-              Discover the best digital tools for AI, marketing automation, and
-              making money online. Expert reviews, comparisons, and exclusive
-              deals to boost your productivity and income.
+              AI tools and deals for solopreneurs who make money online. Every
+              review ends with a clear verdict (buy, wait or skip) and the real
+              monthly cost.
             </p>
 
             {/* Newsletter Signup */}
@@ -88,7 +88,7 @@ const Footer = () => {
                 className="font-semibold text-gray-900 dark:text-gray-900 dark:text-white"
                 id="newsletter-heading"
               >
-                Stay Updated
+                5 AI deals a week
               </h4>
               {isSuccess ? (
                 <div
@@ -235,6 +235,22 @@ const Footer = () => {
               <ul className="space-y-2">
                 <li>
                   <Link
+                    to="/deals"
+                    className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  >
+                    Deal Tracker
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/use-cases"
+                    className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  >
+                    Tool stacks by use case
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/blog"
                     className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                   >
@@ -286,6 +302,38 @@ const Footer = () => {
                 </li>
                 <li>
                   <Link
+                    to="/become-vendor"
+                    className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  >
+                    Submit your tool
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/badge"
+                    className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  >
+                    Get the AIThubs badge
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/stats"
+                    className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  >
+                    Traffic stats
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/courses"
+                    className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  >
+                    Courses
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/contact"
                     className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                   >
@@ -318,15 +366,15 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex flex-col md:flex-row items-center gap-4 mb-4 md:mb-0">
               <p className="text-gray-300">
-                © 2024 DigitalToolsHub. All rights reserved.
+                © 2026 AIThubs. All rights reserved.
               </p>
               <div className="flex gap-6">
-                <a
-                  href="#"
+                <Link
+                  to="/stats#how-we-make-money"
                   className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                 >
                   Affiliate Disclosure
-                </a>
+                </Link>
                 <a
                   href="#"
                   className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"

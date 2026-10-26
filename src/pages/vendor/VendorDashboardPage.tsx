@@ -110,10 +110,7 @@ export default function VendorDashboardPage() {
 
   if (!vendor) return null;
 
-  const isTrial = subscription?.gateway === "trial";
-  const daysLeft = subscription?.current_period_end
-    ? Math.max(0, Math.ceil((new Date(subscription.current_period_end).getTime() - Date.now()) / 86400000))
-    : 0;
+  const isFree = plan?.slug === "free";
   const storefrontUrl = `${window.location.origin}/vendors/${vendor.slug}`;
 
   const steps = [
@@ -166,46 +163,39 @@ export default function VendorDashboardPage() {
         </Link>
       </div>
 
-      {/* Plan / trial status */}
+      {/* Plan status */}
       <div className={`${card} p-5 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4`}>
         <div>
-          {listingActive && isTrial ? (
+          {listingActive && plan ? (
             <>
               <p className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary-600 dark:text-primary-400" />
-                Free trial — {daysLeft} {daysLeft === 1 ? "day" : "days"} left
+                {isFree ? "Free listing" : `${plan.name} plan`}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {usedListings} of {plan?.max_listings ?? 3} listings used. Subscribe before your trial ends to keep your products visible.
-              </p>
-            </>
-          ) : listingActive && plan ? (
-            <>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">{plan.name} plan</p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {usedListings} of {plan.max_listings >= 999 ? "unlimited" : plan.max_listings} listings used
-                {subscription?.cancel_at_period_end && subscription.current_period_end
+                {subscription?.cancel_at_period_end && subscription.current_period_end && !isFree
                   ? ` · ends ${new Date(subscription.current_period_end).toLocaleDateString()}`
                   : ""}
+                {isFree &&
+                  ". Add the AIThubs badge to your site, or offer an exclusive deal (20%+ off) to become a Deal Partner and get featured."}
               </p>
             </>
           ) : (
             <>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {isTrial ? "Your free trial has ended" : "No active plan"}
-              </p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">Listing not active</p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Your products are hidden from the marketplace. Subscribe to publish them again — approved products go live instantly.
+                Your products are hidden from the marketplace. Contact support if you think this is a mistake.
               </p>
             </>
           )}
         </div>
-        {(!listingActive || isTrial) && (
+        {listingActive && isFree && (
           <Link
-            to="/vendor/subscription"
+            to="/badge"
             className="shrink-0 text-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg"
           >
-            {listingActive ? "Choose a plan" : "Subscribe"}
+            Get your badge
           </Link>
         )}
       </div>

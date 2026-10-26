@@ -13,7 +13,9 @@ with c as (
     to_regprocedure('public.protect_profile_billing_columns()') is not null          as m04,
     to_regprocedure('public.vendor_active_plan(uuid)') is not null                   as m05,
     exists (select 1 from information_schema.columns
-            where table_schema = 'public' and table_name = 'vendors' and column_name = 'trial_started_at') as m06
+            where table_schema = 'public' and table_name = 'vendors' and column_name = 'trial_started_at') as m06,
+    exists (select 1 from information_schema.columns
+            where table_schema = 'public' and table_name = 'digital_products' and column_name = 'deal_code') as m07
 )
 select buoc, file, trang_thai
 from c, lateral (values
@@ -24,6 +26,7 @@ from c, lateral (values
   (5, '20240101000003_add_rls_and_helpers.sql',     case when m03  then 'đã chạy'          else 'CẦN CHẠY' end),
   (6, '20240101000004_secure_payments.sql',         case when m04  then 'đã chạy (chạy lại an toàn)' else 'CẦN CHẠY' end),
   (7, '20240101000005_vendor_marketplace.sql',      case when m05  then 'đã chạy (chạy lại an toàn)' else 'CẦN CHẠY' end),
-  (8, '20240101000006_vendor_trial_analytics.sql',  case when m06  then 'đã chạy (chạy lại an toàn)' else 'CẦN CHẠY' end)
+  (8, '20240101000006_vendor_trial_analytics.sql',  case when m06  then 'đã chạy (chạy lại an toàn)' else 'CẦN CHẠY' end),
+  (9, '20240101000007_free_listing_deal_partner.sql', case when m07 then 'đã chạy (chạy lại an toàn)' else 'CẦN CHẠY' end)
 ) as t(buoc, file, trang_thai)
 order by buoc;

@@ -84,7 +84,7 @@ export default function VendorProductsPage() {
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
             {listingActive && plan
               ? `${usedListings} of ${plan.max_listings >= 999 ? "unlimited" : plan.max_listings} listings used on the ${plan.name} plan`
-              : `${usedListings} of 3 drafts — subscribe to publish`}
+              : `${usedListings} of 3 drafts`}
           </p>
         </div>
         {atLimit ? (
@@ -92,7 +92,7 @@ export default function VendorProductsPage() {
             to="/vendor/subscription"
             className="flex items-center gap-2 border border-primary-600 text-primary-600 dark:text-primary-400 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
           >
-            {listingActive ? "Upgrade for more listings" : "Choose a plan"}
+            Listing limit reached
           </Link>
         ) : (
           <Link

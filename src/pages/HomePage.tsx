@@ -22,7 +22,10 @@ import {
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
+import BlackFridayBanner from "../components/BlackFridayBanner";
 import NewsletterForm from "../components/NewsletterForm";
+import { TOOL_DEALS, isDealActive } from "../data/deals";
+import { USE_CASES } from "../data/useCases";
 import {
   FUNCTIONS_DESCRIPTIONS,
   categories_DESCRIPTIONS,
@@ -237,11 +240,12 @@ const HomePage: React.FC = () => {
     return sorted.map(([label, count]) => ({ label, value: count }));
   }, []);
 
+  // Chỉ dùng số thật (không phóng đại) — số traffic công khai ở trang /stats
   const stats = [
-    { number: `1000+`, label: "Digital Tools" },
-    { number: "50K+", label: "Happy Users" },
-    { number: "98%", label: "Success Rate" },
-    { number: "$2M+", label: "Saved by Users" },
+    { number: `${tools.length}`, label: "Tools listed" },
+    { number: `${USE_CASES.length}`, label: "Money-making tool stacks" },
+    { number: `${TOOL_DEALS.filter((d) => isDealActive(d)).length}`, label: "Deals checked this week" },
+    { number: "$0", label: "Paid for our verdicts" },
   ];
 
   // Brand logos (use local files in public/brands)
@@ -305,17 +309,17 @@ const HomePage: React.FC = () => {
       <style>{marqueeCSS}</style>
       {/* Meta */}
       <Helmet>
-        <title>DigitalToolsHub — Explore by categories & Functions</title>
+        <title>AIThubs: AI Tools & Deals for Solopreneurs Who Make Money Online</title>
         <meta
           name="description"
-          content="Find the best digital tools filtered by categories and functions. Compare pricing, features, and ratings to pick the best tool for your use case."
+          content="AI tools and deals for side hustles, faceless content, affiliate blogs, freelancing and e-commerce. Clear buy / wait / skip verdicts and real monthly costs."
         />
         <link rel="canonical" href="https://aithubs.com/" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: "AIThub",
+            name: "AIThubs",
             url: "https://aithubs.com",
             description:
               "Discover the best digital tools for AI, marketing automation, and making money online. Expert reviews, comparisons, and exclusive deals.",
@@ -330,7 +334,7 @@ const HomePage: React.FC = () => {
             },
             publisher: {
               "@type": "Organization",
-              name: "AIThub",
+              name: "AIThubs",
               logo: {
                 "@type": "ImageObject",
                 url: "https://aithubs.com/logo.svg",
@@ -339,6 +343,8 @@ const HomePage: React.FC = () => {
           })}
         </script>
       </Helmet>
+
+      <BlackFridayBanner />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20 lg:py-32">
@@ -353,13 +359,13 @@ const HomePage: React.FC = () => {
             <div className="animate-slide-in-left">
               <div className="inline-flex items-center gap-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
                 <Zap className="w-4 h-4" />
-                <span>1000+ Digital Tools Available</span>
+                <span>For solopreneurs who make money online</span>
               </div>
               <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
-                Discover the Best
+                AI tools worth paying for,
                 <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
                   {" "}
-                  Digital Tools
+                  with a clear verdict
                 </span>
               </h1>
               <p className="text-xl text-gray-900 dark:text-gray-300 mb-8 leading-relaxed">
@@ -367,17 +373,17 @@ const HomePage: React.FC = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  to="/tools"
+                  to="/deals"
                   className="group bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
                 >
-                  Explore All Tools
+                  This week&apos;s deals
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
-                  to="/blog"
+                  to="/use-cases"
                   className="group border-2 border-primary-600 text-primary-600 dark:text-primary-400 hover:bg-primary-600 hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all flex items-center justify-center gap-2"
                 >
-                  Read Guides
+                  Find your tool stack
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
@@ -386,15 +392,15 @@ const HomePage: React.FC = () => {
               <div className="mt-10 flex items-center gap-6 text-sm text-gray-900 dark:text-gray-400">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>Verified Tools</span>
+                  <span>Buy / wait / skip verdicts</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span>Expert Reviews</span>
+                  <span>Real monthly costs</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span>Regular Updates</span>
+                  <span>Deals checked weekly</span>
                 </div>
               </div>
             </div>
@@ -629,102 +635,43 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* How we review */}
       <section className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Success Stories
+              How we review
             </h2>
             <p className="text-xl text-gray-900 dark:text-gray-300">
-              {t("sections.testimonials.title")}
+              One question: will this tool help you make money, and what will it really cost?
             </p>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              {
-                name: "Sarah Johnson",
-                role: "Digital Marketer",
-                image:
-                  "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-                quote:
-                  "DigitalToolsHub helped me discover AI tools that increased my productivity by 300%. The reviews are honest and detailed.",
-                rating: 5,
-                earnings: "$15K+ saved on tools",
-              },
-              {
-                name: "Mike Chen",
-                role: "Online Entrepreneur",
-                image:
-                  "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-                quote:
-                  "Found the perfect marketing automation stack through this platform. My conversion rates doubled in 3 months.",
-                rating: 5,
-                earnings: "$50K+ revenue increase",
-              },
-              {
-                name: "Emily Rodriguez",
-                role: "Content Creator",
-                image:
-                  "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-                quote:
-                  "The MMO tools section is a goldmine. I built my entire online business using recommendations from here.",
-                rating: 5,
-                earnings: "$25K+ monthly income",
-              },
-            ].map((t, index) => (
+              { title: "A verdict in one line", text: "Every review ends with buy, wait or skip, and the reason why." },
+              { title: "Real monthly cost", text: "What you will pay at real usage, not just the list price." },
+              { title: "Who it is not for", text: "We say who should skip a tool, and suggest 2–3 alternatives." },
+              { title: "No pay-to-win", text: "Featured spots are always labeled. Verdicts never change for money." },
+            ].map((item) => (
               <div
-                key={index}
-                className="group bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-200 dark:hover:border-primary-700"
+                key={item.title}
+                className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700"
               >
-                <div className="flex items-center mb-6">
-                  <div className="relative">
-                    <img
-                      loading="lazy"
-                      src={t.image}
-                      alt={`${t.name} avatar`}
-                      className="w-14 h-14 rounded-full object-cover mr-4 ring-2 ring-white dark:ring-gray-700"
-                    />
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg
-                        className="w-3 h-3 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900 dark:text-white">
-                      {t.name}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {t.role}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex mb-4">
-                  {[...Array(t.rating)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 text-yellow-400 fill-current"
-                    />
-                  ))}
-                </div>
-                <blockquote className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
-                  "{t.quote}"
-                </blockquote>
-                <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4" />
-                  {t.earnings}
-                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{item.title}</h3>
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{item.text}</p>
               </div>
+            ))}
+          </div>
+          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {USE_CASES.map((u) => (
+              <Link
+                key={u.slug}
+                to={`/use-cases/${u.slug}`}
+                className="group flex items-center justify-between gap-2 rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-3 text-sm font-medium text-gray-900 dark:text-white hover:border-primary-400"
+              >
+                {u.title}
+                <ArrowRight className="w-4 h-4 shrink-0 text-primary-600 group-hover:translate-x-1 transition-transform" />
+              </Link>
             ))}
           </div>
         </div>
@@ -744,12 +691,12 @@ const HomePage: React.FC = () => {
               <Mail className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-              Stay Ahead of the Curve
+              Get the Lifetime Deal Tracker
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
               {t("sections.newsletter.description")}.
             </p>
-            <NewsletterForm />
+            <NewsletterForm source="deal_tracker_home" />
             <p className="text-sm text-white/70 mt-4">
               {t("sections.newsletter.caption")}.
             </p>

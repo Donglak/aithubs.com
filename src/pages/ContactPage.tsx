@@ -48,8 +48,8 @@ const ContactPage = () => {
       icon: Mail,
       title: "Email Us",
       description: "Send us an email and we'll respond within 24 hours",
-      contact: "hello@digitaltoolshub.com",
-      action: "mailto:hello@digitaltoolshub.com",
+      contact: "hello@aithubs.com",
+      action: "mailto:hello@aithubs.com",
     },
     {
       icon: MessageCircle,
@@ -88,7 +88,7 @@ const ContactPage = () => {
         'Yes! We welcome tool submissions from developers and companies. Please use the contact form with the "Tool Suggestion" category.',
     },
     {
-      question: "How can I partner with DigitalToolsHub?",
+      question: "How can I partner with AIThubs?",
       answer:
         "We offer various partnership opportunities including affiliate programs, sponsored content, and strategic partnerships. Contact us to discuss options.",
     },
@@ -280,7 +280,7 @@ const ContactPage = () => {
                 <MapPin className="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0" />
                 <div>
                   <p className="text-gray-900 dark:text-white font-medium">
-                    DigitalToolsHub HQ
+                    AIThubs HQ
                   </p>
                   <p className="text-gray-900 dark:text-gray-300">
                     123 Innovation Drive

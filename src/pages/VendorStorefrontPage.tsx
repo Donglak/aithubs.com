@@ -87,14 +87,14 @@ export default function VendorStorefrontPage() {
     <div className="min-h-screen bg-white dark:bg-gray-900 pt-16">
       <Helmet>
         <title>
-          {vendor.seo_title || `${vendor.brand_name} - AIThub Vendor`}
+          {vendor.seo_title || `${vendor.brand_name} - AIThubs Vendor`}
         </title>
         <meta
           name="description"
           content={
             vendor.seo_description ||
             vendor.bio ||
-            `${vendor.brand_name} on AIThub`
+            `${vendor.brand_name} on AIThubs`
           }
         />
       </Helmet>

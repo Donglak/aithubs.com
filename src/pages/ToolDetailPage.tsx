@@ -11,11 +11,20 @@ import {
 import { useMemo, useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useParams } from "react-router-dom";
+import DealCard from "../components/DealCard";
 import VideoReviews from "../components/VideoReviews";
+import { activeDealForTool } from "../data/deals";
+import { TOOL_REVIEWS, VERDICT_LABELS } from "../data/reviews";
 import { tools } from "../data/tools";
 import { buildToolDetailsAsync } from "../lib/buildToolDetails";
 import { useTranslation } from "react-i18next";
 import { toSlug } from "../utils/slug";
+
+const VERDICT_STYLES = {
+  buy: "border-green-300 bg-green-50 text-green-900 dark:border-green-800 dark:bg-green-900/20 dark:text-green-200",
+  wait: "border-amber-300 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200",
+  skip: "border-red-300 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200",
+} as const;
 
 const ToolDetailPage = () => {
   const { t } = useTranslation("product");
@@ -40,8 +49,19 @@ const ToolDetailPage = () => {
 
   const [tool, setTool] = useState<any | null>(null);
   const toolSlug = useMemo(() => toSlug(tool?.name || ""), [tool]);
-   const relatedTools = useMemo(() => {
+  const review = toolBase ? TOOL_REVIEWS[toolBase.id] : undefined;
+  const deal = toolBase ? activeDealForTool(toolBase.id) : undefined;
+
+  // Lựa chọn thay thế: ưu tiên danh sách biên tập (tool.alternatives), không có thì lấy tool cùng ngành
+  const relatedTools = useMemo(() => {
     if (!tool) return [];
+    const picked: number[] = tool.alternatives ?? [];
+    if (picked.length > 0) {
+      return picked
+        .map((id) => tools.find((item) => item.id === id))
+        .filter((item): item is (typeof tools)[number] => !!item)
+        .slice(0, 3);
+    }
     return tools
       .filter((item) => item.id !== tool.id)
       .filter((item) => {
@@ -157,7 +177,7 @@ const ToolDetailPage = () => {
           rel="canonical"
           href={tool.seo?.canonical ?? `https://aithubs.com/tools/${toolSlug}`}
         />
-        <meta property="og:title" content={`${tool.name} | DigitalToolsHub`} />
+        <meta property="og:title" content={`${tool.name} | AIThubs`} />
         <meta
           property="og:description"
           content={tool.seo?.description ?? tool.description}
@@ -229,6 +249,23 @@ const ToolDetailPage = () => {
                 </div>
               </div>
 
+              {review && (
+                <div className={`mt-5 rounded-xl border p-4 ${VERDICT_STYLES[review.verdict]}`}>
+                  <p className="text-xs font-semibold uppercase tracking-wide">
+                    Our verdict · tested{" "}
+                    {new Date(review.testedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                  </p>
+                  <p className="mt-1 text-lg font-bold">
+                    {VERDICT_LABELS[review.verdict]}: <span className="font-medium">{review.verdictReason}</span>
+                  </p>
+                  {review.realMonthlyCost && (
+                    <p className="mt-1 text-sm">
+                      <strong>Real monthly cost:</strong> {review.realMonthlyCost}
+                    </p>
+                  )}
+                </div>
+              )}
+
               <p className="mt-4 text-gray-700 dark:text-gray-300 leading-relaxed">
                 {tool.longDescription ?? tool.description}
               </p>
@@ -276,6 +313,54 @@ const ToolDetailPage = () => {
                   className="mt-6 flex flex-col gap-6"
                   tabIndex={0}
                 >
+                  {(review?.bestFor?.length || review?.notFor?.length) ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {review?.bestFor && review.bestFor.length > 0 && (
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Who it&apos;s for</h3>
+                          <ul className="space-y-2">
+                            {review.bestFor.map((f) => (
+                              <li key={f} className="flex items-start gap-2">
+                                <Check className="w-4 h-4 mt-1 text-green-600" />
+                                <span className="text-gray-700 dark:text-gray-300">{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {review?.notFor && review.notFor.length > 0 && (
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Who should skip it</h3>
+                          <ul className="space-y-2">
+                            {review.notFor.map((f) => (
+                              <li key={f} className="flex items-start gap-2">
+                                <X className="w-4 h-4 mt-1 text-red-600" />
+                                <span className="text-gray-700 dark:text-gray-300">{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
+
+                  {review?.resultScreenshots && review.resultScreenshots.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Results from our test</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {review.resultScreenshots.map((src) => (
+                          <img
+                            key={src}
+                            src={src}
+                            alt={`${tool.name} test result`}
+                            loading="lazy"
+                            className="rounded-lg border border-gray-200 dark:border-gray-800"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Left column: Features + Usecases */}
                   <div className="flex flex-col gap-6">
                     {/* Features */}
@@ -449,6 +534,18 @@ const ToolDetailPage = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="flex flex-col gap-6">
+              {deal && (
+                <DealCard
+                  headline={deal.headline}
+                  code={deal.code}
+                  terms={deal.terms}
+                  expiresAt={deal.expiresAt}
+                  checkedAt={deal.checkedAt}
+                  url={deal.url}
+                  sponsored={deal.affiliate}
+                />
+              )}
+
               {/* Info card */}
               <aside className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6 sticky top-6">
                 <div className="space-y-4">
@@ -506,6 +603,10 @@ const ToolDetailPage = () => {
                   >
                     Visit website <ExternalLink className="w-4 h-4" />
                   </a>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                    Some links are affiliate links. We may earn a commission at no extra cost to you. It never
+                    changes our verdict.
+                  </p>
                 </div>
               </aside>
 
@@ -513,7 +614,7 @@ const ToolDetailPage = () => {
               {relatedTools.length > 0 && (
                 <aside className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6">
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-                    Related Tools
+                    {tool.name} alternatives
                   </h3>
                   <div className="space-y-4">
                     {relatedTools.map((relatedTool) => (

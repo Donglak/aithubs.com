@@ -1,7 +1,7 @@
 {
   "sections": {
     "discovery": {
-      "description": "Quickly explore tools by category and function based on your needs.",
+      "description": "AI tools and deals for side hustles, faceless content, affiliate blogs, freelancing and e-commerce. Every review ends with buy, wait or skip",
       "categoryDescriptions": {
         "marketingAdvertising": "Tools for marketing, advertising, and growth.",
         "financeFintechAccounting": "Tools for finance, fintech, and accounting.",
@@ -38,8 +38,8 @@
       "title": "See the results our community is achieving"
     },
     "newsletter": {
-      "description": "Get weekly updates on digital tools, standout deals, and expert insights.",
-      "caption": "Join 50,000+ professionals. Unsubscribe anytime."
+      "description": "Every week: the 5 best AI deals for solopreneurs, each with a one-line verdict. Plus our Lifetime Deal Tracker, updated weekly",
+      "caption": "One email a week. No spam, unsubscribe anytime"
     }
   }
 }

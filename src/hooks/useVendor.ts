@@ -6,8 +6,9 @@ import { useAuth } from './useAuth'
 export interface UseVendorReturn {
   vendor: Vendor | null
   subscription: VendorSubscription | null
+  /** Gói đang áp dụng: gói trả phí còn hạn, nếu không thì gói free */
   plan: VendorPlan | null
-  /** Gói còn hiệu lực -> được tạo/gửi duyệt sản phẩm và sản phẩm được hiển thị */
+  /** Còn gói hiệu lực (trả phí hoặc free) -> được gửi duyệt và sản phẩm được hiển thị */
   listingActive: boolean
   /** Số sản phẩm đang chiếm slot (mọi trạng thái trừ archived/rejected) */
   usedListings: number
@@ -70,13 +71,14 @@ export function useVendor(): UseVendorReturn {
       ])
 
       if (subRes.error) throw subRes.error
-      if (subRes.data) {
-        const sub = subRes.data as VendorSubscription & { plan: VendorPlan }
-        setSubscription(sub)
+      const sub = (subRes.data as (VendorSubscription & { plan: VendorPlan }) | null) ?? null
+      setSubscription(sub)
+      if (sub && isSubscriptionActive(sub)) {
         setPlan(sub.plan)
       } else {
-        setSubscription(null)
-        setPlan(null)
+        // Không có gói trả phí hiệu lực -> gói free (khớp với public.vendor_active_plan)
+        const { data: freePlan } = await vendorDb.from('vendor_plans').select('*').eq('slug', 'free').maybeSingle()
+        setPlan((freePlan as VendorPlan | null) ?? null)
       }
       setUsedListings(countRes.count ?? 0)
     } catch (err) {
@@ -95,7 +97,7 @@ export function useVendor(): UseVendorReturn {
     vendor,
     subscription,
     plan,
-    listingActive: isSubscriptionActive(subscription),
+    listingActive: vendor?.status === 'approved' && !!plan,
     usedListings,
     loading,
     error,
